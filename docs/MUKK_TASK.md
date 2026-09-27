@@ -95,4 +95,13 @@ PNG under `/tmp/fake_display/`, and sends commands when you type `p`, `n`,
 
 ## Open questions (Mukk session: add here, don't change the protocol)
 
-- _(none yet)_
+- **`play_pause` from idle/stopped** (2026-09-27): Mukk only replays its
+  last current track; with no current track it does nothing (PROTOCOL.md
+  says "start the selected track"). Mukk keeps its transport-bar behaviour.
+  *ESP32 side: accepted as is; the display just shows the resulting
+  `state`.*
+- **`next` under repeat ONE** (2026-09-27): Mukk sends the current track as
+  `next`, since that is what it would play. *ESP32 side: accepted, matches
+  the field's meaning ("the track `next` would play").*
+- FYI: `next` follows Mukk's *selected* folder in the tree, not always the
+  playing folder (existing Mukk behaviour).
