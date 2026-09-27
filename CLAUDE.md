@@ -88,8 +88,10 @@ messages), `player` (session, position extrapolation, 15 s offline rule),
 - IDF 6 gotcha: the WS handler is **not** called for the handshake any
   more; `hello` goes out from `ws_post_handshake_cb`
   (`CONFIG_HTTPD_WS_POST_HANDSHAKE_CB_SUPPORT`).
-- Verified on the board 2026-09-27 with `tools/fake_mukk.py`: hello, track,
-  heartbeats, newest-client-wins.
+- Verified on the board 2026-09-27 with `tools/fake_mukk.py` (hello, track,
+  heartbeats, newest-client-wins, knob turns both ways: CW = volume up),
+  then with the **real Mukk** (its DisplayLink): screen and knob (volume,
+  press/double/long) work, per the user.
 
 ## Open questions
 - Which fields to show (the OLED prototype is meant to answer this).
@@ -118,6 +120,6 @@ connects to the display, sends a small playlist (Cyrillic, long title, no
 tags, unknown duration) and obeys the knob, printing each `cmd`.
 
 ## Next step
-Test against the real Mukk once its side (`docs/MUKK_TASK.md`) lands. Then
-decide from using it which fields earn their place, and cover art (64x64
-`mono1`: change `hello`, take the binary frames in `link.c`).
+Use it with Mukk for a while and decide which fields earn their place. Then
+cover art (64x64 `mono1`: change `hello`, take the binary frames in
+`link.c`).
