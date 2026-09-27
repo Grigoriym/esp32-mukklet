@@ -43,8 +43,10 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
   Full frame 134 KB: draw in strips, never hold a full framebuffer. Cover size: the
   user prefers **more text over a big cover** (2026-09-27): ask Mukk for
   ~160×160 `rgb565` (51 KB, fits in RAM, so it can be kept and redrawn),
-  text below it (title, artist, album, next, progress). Also considered:
-  Waveshare 2.0" 240×320 ST7789V IPS (same wiring, labels DIN/CLK/RST/BL).
+  text below it (title, artist, album (year), progress; no room for
+  "Next:" at 280 px). **Chosen by the user (2026-09-27)** over the
+  Waveshare 2.0" 240×320 ST7789V IPS (same wiring, labels DIN/CLK/RST/BL;
+  the fallback if 1.69" turns out too small) and a 2.8" ILI9341 (TN).
   Rejected: 1.8" 128×160 ST7735 (low-res, often TN), 1.3" 240×240 (tiny,
   many have no CS pin), 2.8" ILI9341 (TN, resistive touch).
 - **Planned TFT wiring**: SCL D18, SDA D23, RES GPIO17 (TX2), DC GPIO16
