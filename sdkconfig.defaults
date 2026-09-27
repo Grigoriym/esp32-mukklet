@@ -1,0 +1,13 @@
+# sdkconfig itself is gitignored; settings here apply when it's regenerated.
+
+# The link to Mukk is a WebSocket served by esp_http_server (docs/PROTOCOL.md).
+CONFIG_HTTPD_WS_SUPPORT=y
+# The handler isn't called for the handshake any more (IDF 6); link.c sends
+# "hello" from this callback instead.
+CONFIG_HTTPD_WS_POST_HANDSHAKE_CB_SUPPORT=y
+
+# 4 MB flash on these DevKits; the IDF default assumes 2 MB with a 1 MB app
+# partition (the desk display ran out of room with it). Large single app
+# partition: 1.5 MB.
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+CONFIG_PARTITION_TABLE_SINGLE_APP_LARGE=y
