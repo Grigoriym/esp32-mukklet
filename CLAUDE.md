@@ -35,7 +35,7 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
 - **Prototype screen**: the 128×64 SSD1315 I2C OLED (spare from the desk
   display's 3-pack) on D21/D22. Purpose: find out which info is actually
   worth showing before buying the colour screen. Asks Mukk for 64×64 `mono1`.
-- **Target screen (not bought yet)**: 1.69" IPS 240×280 **ST7789** SPI
+- **Target screen (not bought yet)**: 1.69" IPS 240×280 **ST7789V2** 4-wire SPI
   (GERUI, pack of 2): 3.3 V only (VCC → 3V3, never VIN), 8 pins
   GND/VCC/SCL/SDA/RES/DC/CS/BLK (SCL/SDA = SPI clock/data), BLK high = on
   (PWM for dimming), rounded corners, needs a **20 px row offset**
