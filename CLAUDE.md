@@ -39,7 +39,7 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
   (GERUI, pack of 2): 3.3 V only (VCC → 3V3, never VIN), 8 pins
   GND/VCC/SCL/SDA/RES/DC/CS/BLK (SCL/SDA = SPI clock/data), BLK high = on
   (PWM for dimming), rounded corners, needs a **20 px row offset**
-  (controller is 240×320), active area ~28×33 mm, 4× M2 holes 26×43 mm.
+  (controller is 240×320), active area 27.97×32.63 mm, PCB 31×48 mm, 4× M2 holes 26×43 mm.
   Full frame 134 KB: draw in strips, never hold a full framebuffer. Cover size: the
   user prefers **more text over a big cover** (2026-09-27): ask Mukk for
   ~160×160 `rgb565` (51 KB, fits in RAM, so it can be kept and redrawn),
