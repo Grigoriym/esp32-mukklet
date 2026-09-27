@@ -120,6 +120,6 @@ connects to the display, sends a small playlist (Cyrillic, long title, no
 tags, unknown duration) and obeys the knob, printing each `cmd`.
 
 ## Next step
-Use it with Mukk for a while and decide which fields earn their place. Then
-cover art (64x64 `mono1`: change `hello`, take the binary frames in
-`link.c`).
+Use it with Mukk for a while and decide which fields earn their place.
+No cover art on the OLED (decided 2026-09-27): covers wait for the ST7789;
+until then Mukk tests its cover code against `tools/fake_display.py`.
