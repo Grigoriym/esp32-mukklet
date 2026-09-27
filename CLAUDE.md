@@ -40,8 +40,11 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
   GND/VCC/SCL/SDA/RES/DC/CS/BLK (SCL/SDA = SPI clock/data), BLK high = on
   (PWM for dimming), rounded corners, needs a **20 px row offset**
   (controller is 240×320), active area ~28×33 mm, 4× M2 holes 26×43 mm.
-  Full frame 134 KB: draw in strips, never hold a full framebuffer. Will ask
-  Mukk for 240×240 `rgb565` (cover) + a 40 px strip for text.
+  Full frame 134 KB: draw in strips, never hold a full framebuffer. Cover size: the
+  user prefers **more text over a big cover** (2026-09-27): ask Mukk for
+  ~160×160 `rgb565` (51 KB, fits in RAM, so it can be kept and redrawn),
+  text below it (title, artist, album, next, progress). Also considered:
+  Waveshare 2.0" 240×320 ST7789V IPS (same wiring, labels DIN/CLK/RST/BL).
   Rejected: 1.8" 128×160 ST7735 (low-res, often TN), 1.3" 240×240 (tiny,
   many have no CS pin), 2.8" ILI9341 (TN, resistive touch).
 - **Planned TFT wiring**: SCL D18, SDA D23, RES GPIO17 (TX2), DC GPIO16
