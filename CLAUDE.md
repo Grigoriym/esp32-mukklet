@@ -125,7 +125,10 @@ anti-aliased), `gesture` (single/double/long press), `encoder_decode`
   `canvas_ellipse()`. Tuning constants at the top of that block.
 - **Knob**: turn = volume ±5 per detent (a fast spin is one `cmd`), press =
   play/pause (sent 300 ms after release, waiting for a double), double =
-  next, long (600 ms) = prev.
+  next, long (0.6-2 s, sent on release) = prev, hold 2 s = screen off
+  (backlight 0, no drawing; chosen by the user 2026-09-28 over triple
+  press / auto-off). While off, any input only wakes it. Verified on the
+  board by the user (2026-09-28).
 - IDF 6 gotcha: the WS handler is **not** called for the handshake any
   more; `hello` goes out from `ws_post_handshake_cb`
   (`CONFIG_HTTPD_WS_POST_HANDSHAKE_CB_SUPPORT`).

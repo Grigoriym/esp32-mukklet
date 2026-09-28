@@ -47,7 +47,8 @@ static void button_task(void *arg)
         if (g != GESTURE_NONE) {
             input_event_t ev = {.type = g == GESTURE_SINGLE   ? INPUT_PRESS
                                         : g == GESTURE_DOUBLE ? INPUT_DOUBLE
-                                                              : INPUT_LONG};
+                                        : g == GESTURE_LONG   ? INPUT_LONG
+                                                              : INPUT_HOLD};
             xQueueSend(s_events, &ev, 0);
         }
         vTaskDelay(pdMS_TO_TICKS(BTN_POLL_MS));

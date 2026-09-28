@@ -47,10 +47,16 @@ static void test_double(void)
     TEST_ASSERT_EQUAL(GESTURE_DOUBLE, hold(false, 1000));
 }
 
-static void test_long_fires_while_held_release_swallowed(void)
+static void test_long_fires_on_release(void)
 {
-    TEST_ASSERT_EQUAL(GESTURE_LONG, hold(true, GESTURE_LONG_MS + POLL_MS));
-    TEST_ASSERT_EQUAL(GESTURE_NONE, hold(true, 2000)); // only once per hold
+    TEST_ASSERT_EQUAL(GESTURE_NONE, hold(true, GESTURE_LONG_MS + POLL_MS)); // could still become a hold
+    TEST_ASSERT_EQUAL(GESTURE_LONG, hold(false, 1000));
+}
+
+static void test_hold_fires_while_held_release_swallowed(void)
+{
+    TEST_ASSERT_EQUAL(GESTURE_HOLD, hold(true, GESTURE_HOLD_MS + POLL_MS));
+    TEST_ASSERT_EQUAL(GESTURE_NONE, hold(true, 2000)); // only once per press
     TEST_ASSERT_EQUAL(GESTURE_NONE, hold(false, 1000));
 }
 
@@ -75,7 +81,8 @@ int main(void)
     UNITY_BEGIN();
     RUN_TEST(test_single_reported_after_double_window);
     RUN_TEST(test_double);
-    RUN_TEST(test_long_fires_while_held_release_swallowed);
+    RUN_TEST(test_long_fires_on_release);
+    RUN_TEST(test_hold_fires_while_held_release_swallowed);
     RUN_TEST(test_second_press_held_long_is_a_double);
     RUN_TEST(test_two_slow_presses_are_two_singles);
     return UNITY_END();

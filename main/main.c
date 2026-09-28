@@ -17,6 +17,7 @@ static player_t s_player;
 static bool s_display_ok;
 static ui_screen_t s_screen = UI_CONNECTING;
 static int64_t s_screen_since; // when s_screen came up
+static bool s_dark;            // screen turned off with a hold
 
 static int64_t now_ms(void)
 {
@@ -49,12 +50,20 @@ static void render(void)
     }
     f.in.screen_since_ms = s_screen_since;
     f.in.cover = link_cover_acquire(s_player.has_track ? s_player.track.id : "");
-    if (s_display_ok) display_frame(draw_strip, &f);
+    if (s_display_ok && !s_dark) display_frame(draw_strip, &f);
     link_cover_release();
 }
 
+// Backlight off, and no drawing until woken.
+static void set_dark(bool dark)
+{
+    s_dark = dark;
+    if (s_display_ok) display_backlight(dark ? 0 : 100);
+}
+
 // Knob mapping: turn = volume, press = play/pause, double = next, long =
-// prev. Waits up to wait for the first event, then takes whatever else is
+// prev, hold = screen off. While off, any input only turns it back on.
+// Waits up to wait for the first event, then takes whatever else is
 // queued; a fast spin becomes one volume command.
 static void handle_input(TickType_t wait)
 {
@@ -62,12 +71,21 @@ static void handle_input(TickType_t wait)
     input_event_t ev;
     while (encoder_wait_event(&ev, wait)) {
         wait = 0;
+        if (s_dark) {
+            s_dark = false;
+            render(); // bring the panel up to date before it lights up
+            set_dark(false);
+            // The rest of this burst (a spin) only woke it too.
+            while (encoder_wait_event(&ev, 0)) continue;
+            return;
+        }
         switch (ev.type) {
             case INPUT_CW: volume += VOLUME_STEP; break;
             case INPUT_CCW: volume -= VOLUME_STEP; break;
             case INPUT_PRESS: link_send_cmd(CMD_PLAY_PAUSE, 0); break;
             case INPUT_DOUBLE: link_send_cmd(CMD_NEXT, 0); break;
             case INPUT_LONG: link_send_cmd(CMD_PREV, 0); break;
+            case INPUT_HOLD: set_dark(true); break;
         }
     }
     if (volume != 0) link_send_cmd(CMD_VOLUME, volume);

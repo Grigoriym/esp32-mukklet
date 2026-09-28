@@ -10,20 +10,21 @@ gesture_t gesture_update(gesture_state_t *g, bool pressed, int64_t now_ms)
 {
     if (pressed && !g->down) {
         g->down = true;
-        g->long_fired = false;
+        g->hold_fired = false;
         g->down_ms = now_ms;
         return GESTURE_NONE;
     }
     if (pressed) {
-        if (!g->long_fired && g->clicks == 0 && now_ms - g->down_ms >= GESTURE_LONG_MS) {
-            g->long_fired = true;
-            return GESTURE_LONG;
+        if (!g->hold_fired && g->clicks == 0 && now_ms - g->down_ms >= GESTURE_HOLD_MS) {
+            g->hold_fired = true;
+            return GESTURE_HOLD;
         }
         return GESTURE_NONE;
     }
     if (g->down) {
         g->down = false;
-        if (g->long_fired) return GESTURE_NONE;
+        if (g->hold_fired) return GESTURE_NONE;
+        if (g->clicks == 0 && now_ms - g->down_ms >= GESTURE_LONG_MS) return GESTURE_LONG;
         g->up_ms = now_ms;
         if (++g->clicks == 2) {
             g->clicks = 0;
