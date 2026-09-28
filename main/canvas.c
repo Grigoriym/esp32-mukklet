@@ -27,8 +27,8 @@ static uint16_t blend(uint16_t bg, uint16_t fg, int a)
     return (uint16_t)((r << 11) | (g << 5) | b);
 }
 
-static void draw_glyph(canvas_t *c, const font_t *font, const font_glyph_t *g, int pen_x, int y, uint16_t color,
-                       int clip_x0, int clip_x1)
+static void draw_glyph(canvas_t *c, const font_t *font, const font_glyph_t *g, int pen_x, int y,
+                       uint16_t color, int clip_x0, int clip_x1)
 {
     const uint8_t *rows = &font->bitmap[g->offset];
     int stride = (g->w + 1) / 2;
@@ -49,12 +49,14 @@ static void draw_glyph(canvas_t *c, const font_t *font, const font_glyph_t *g, i
 int canvas_text_clipped(canvas_t *c, const font_t *font, int x, int y, const char *text, uint16_t color,
                         int clip_x0, int clip_x1)
 {
-    if (y + font->line_h <= c->y0 || y >= c->y0 + c->h) return font_text_width(font, text); // not in this band
+    if (y + font->line_h <= c->y0 || y >= c->y0 + c->h)
+        return font_text_width(font, text); // not in this band
     int start = x;
     uint32_t cp;
     while ((cp = utf8_next(&text)) != 0) {
         const font_glyph_t *g = font_glyph(font, cp);
-        if (x + g->x + g->w > clip_x0 && x + g->x < clip_x1) draw_glyph(c, font, g, x, y, color, clip_x0, clip_x1);
+        if (x + g->x + g->w > clip_x0 && x + g->x < clip_x1)
+            draw_glyph(c, font, g, x, y, color, clip_x0, clip_x1);
         x += g->advance;
     }
     return x - start;
