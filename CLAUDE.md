@@ -57,6 +57,9 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
   show the picture **rotated 180° with the pin header at the bottom**
   (not mirrored): fix in software for however it gets mounted. Screen #1
   has one small dark dot (fine by the user); #2 is clean.
+- **OLED no longer used** (2026-09-28): the firmware has no I2C code, and
+  the user was told the OLED can be unplugged from D21/D22 (not confirmed
+  whether they did).
 - **Planned TFT wiring**: SCL D18, SDA D23, RES GPIO17 (TX2), DC GPIO16
   (RX2), CS D5, BLK D4. Keeps I2C D21/D22 and the knob D25/D26/D27 free,
   avoids D2 (onboard LED).
@@ -81,10 +84,9 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
   the USB link. Flashing replaced it. If a board's serial log looks like
   noise, try `esptool chip-id` before suspecting the wiring.
 
-## Firmware (milestone 2: colour screen, text only, 2026-09-28)
-WiFi + mDNS `mukklet.local` + WebSocket server (`link.c`) + TFT text +
-knob commands. `hello` still asks for cover `"format": "none"`, so Mukk
-sends no art yet. Milestone 1 (OLED, 2026-09-27) is in git history before
+## Firmware (milestone 3: colour screen + cover art, 2026-09-28)
+WiFi + mDNS `mukklet.local` + WebSocket server (`link.c`) + TFT text,
+cover art + knob commands. Milestone 2 (text only) and milestone 1 (OLED, 2026-09-27) is in git history before
 this; the OLED code is gone. Pure, host-tested modules (no ESP-IDF):
 `proto` (parse/build messages), `player` (session, position extrapolation,
 15 s offline rule), `ui` (the screen from player state + time, stateless
@@ -154,6 +156,10 @@ as ASCII art), `tools/format.sh --check`, `tools/lint.sh`,
 `tools/size_check.sh`. Format and lint only see **git-tracked** files:
 `git add` new ones first, or CI catches what the local run missed. WiFi credentials: `main/wifi_secrets.h` (gitignored,
 template `.example`).
+
+To stop a background `fake_display.py`, kill its task (or use `pgrep` + `kill`
+on the PID): `pkill -f fake_display.py` matches the shell running that
+command too, and kills it (exit 144).
 
 Playing Mukk's role: `python3 tools/fake_mukk.py [--host IP] [--seconds N]`
 connects to the display, sends a small playlist (Cyrillic, long title, no
