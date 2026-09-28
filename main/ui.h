@@ -15,9 +15,20 @@ typedef struct {
     bool wifi;      // station connected
     const char *ip; // shown while waiting for Mukk; may be NULL
     const player_t *player;
-    int64_t waiting_since_ms; // when "Waiting for Mukk" came up (the eyes get sleepier)
-    const uint8_t *cover;     // the current track's art (PROTO_COVER_BYTES, big-endian), or NULL
+    int64_t screen_since_ms; // when the current ui_screen() came up (the idle eyes get sleepier)
+    const uint8_t *cover;    // the current track's art (PROTO_COVER_BYTES, big-endian), or NULL
 } ui_input_t;
+
+typedef enum {
+    UI_CONNECTING, // to WiFi
+    UI_WAITING,    // for Mukk to connect (eyes)
+    UI_OFFLINE,    // Mukk went silent
+    UI_NOTHING,    // connected, no track (eyes)
+    UI_PLAYING,
+} ui_screen_t;
+
+// Which screen ui_render() draws.
+ui_screen_t ui_screen(const ui_input_t *in, int64_t now_ms);
 
 void ui_render(canvas_t *c, const ui_input_t *in, int64_t now_ms);
 

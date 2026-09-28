@@ -117,10 +117,11 @@ anti-aliased), `gesture` (single/double/long press), `encoder_decode`
   artist / album (year), each centred or scrolling within 12 px margins,
   progress bar, then status icon, position, volume %, duration (18 px
   margins for the rounded corners).
-- **Waiting screen** (2026-09-28, "seems nice" per the user): bored
-  cartoon eyes above "Waiting for Mukk" (`eyes()` in `ui.c`): look around,
-  blink, roll, droop, nod off, sleep with z's, wake with a start; a ~2 min
-  cycle from `waiting_since_ms` (kept by `main.c`). Anti-aliased
+- **Idle screens** (2026-09-28, "seems nice" per the user): bored
+  cartoon eyes above "Waiting for Mukk" and "Nothing playing" (`eyes()`
+  in `ui.c`): look around, blink, roll, droop, nod off, sleep with z's,
+  wake with a start; a ~2 min cycle from `screen_since_ms` (`main.c`
+  resets it whenever `ui_screen()` changes). Anti-aliased
   `canvas_ellipse()`. Tuning constants at the top of that block.
 - **Knob**: turn = volume ±5 per detent (a fast spin is one `cmd`), press =
   play/pause (sent 300 ms after release, waiting for a double), double =

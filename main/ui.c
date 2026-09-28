@@ -305,11 +305,6 @@ static void progress_bar(canvas_t *c, const player_t *p, int64_t now_ms)
 
 static void now_playing(canvas_t *c, const player_t *p, const uint8_t *cover, int64_t now_ms)
 {
-    if (!p->has_track) {
-        canvas_text_center(c, &FONT_TEXT, 124, "Nothing playing", C_ARTIST);
-        bottom_row(c, p, now_ms);
-        return;
-    }
     int cover_x = (CANVAS_W - COVER_SIZE) / 2;
     if (cover) {
         canvas_image_be(c, cover_x, Y_COVER, COVER_SIZE, COVER_SIZE, cover);
@@ -335,20 +330,33 @@ static void now_playing(canvas_t *c, const player_t *p, const uint8_t *cover, in
     bottom_row(c, p, now_ms);
 }
 
+ui_screen_t ui_screen(const ui_input_t *in, int64_t now_ms)
+{
+    const player_t *p = in->player;
+    if (!in->wifi) return UI_CONNECTING;
+    if (!p->session) return UI_WAITING;
+    if (!player_online(p, now_ms)) return UI_OFFLINE;
+    return p->has_track ? UI_PLAYING : UI_NOTHING;
+}
+
 void ui_render(canvas_t *c, const ui_input_t *in, int64_t now_ms)
 {
     canvas_fill(c, 0, 0, CANVAS_W, CANVAS_H, C_BG);
     const player_t *p = in->player;
-    if (!in->wifi) {
-        message(c, "Connecting to WiFi", NULL, NULL);
-    } else if (!p->session) {
-        eyes(c, now_ms - in->waiting_since_ms);
-        canvas_text_center(c, &FONT_TEXT, 124, "Waiting for Mukk", C_ARTIST);
-        canvas_text_center(c, &FONT_TEXT, 148, "mukklet.local", C_DIM);
-        if (in->ip) canvas_text_center(c, &FONT_TEXT, 170, in->ip, C_DIM);
-    } else if (!player_online(p, now_ms)) {
-        message(c, "Mukk offline", NULL, NULL);
-    } else {
-        now_playing(c, p, in->cover, now_ms);
+    switch (ui_screen(in, now_ms)) {
+        case UI_CONNECTING: message(c, "Connecting to WiFi", NULL, NULL); break;
+        case UI_WAITING:
+            eyes(c, now_ms - in->screen_since_ms);
+            canvas_text_center(c, &FONT_TEXT, 124, "Waiting for Mukk", C_ARTIST);
+            canvas_text_center(c, &FONT_TEXT, 148, "mukklet.local", C_DIM);
+            if (in->ip) canvas_text_center(c, &FONT_TEXT, 170, in->ip, C_DIM);
+            break;
+        case UI_OFFLINE: message(c, "Mukk offline", NULL, NULL); break;
+        case UI_NOTHING:
+            eyes(c, now_ms - in->screen_since_ms);
+            canvas_text_center(c, &FONT_TEXT, 124, "Nothing playing", C_ARTIST);
+            bottom_row(c, p, now_ms);
+            break;
+        case UI_PLAYING: now_playing(c, p, in->cover, now_ms); break;
     }
 }

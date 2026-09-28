@@ -164,7 +164,7 @@ static int count_in_eye(int cx, uint16_t color)
 
 static void test_waiting_eyes_awake_then_asleep(void)
 {
-    in.waiting_since_ms = 5000;
+    in.screen_since_ms = 5000;
     render(5000);
     show("waiting: eyes open");
     TEST_ASSERT_TRUE(count_in_eye(EYE_L, C_SCLERA) > 1500);
@@ -330,6 +330,21 @@ static void test_nothing_playing(void)
     show("nothing playing");
     TEST_ASSERT_TRUE(has_centered(&FONT_TEXT, 124, "Nothing playing"));
     TEST_ASSERT_TRUE(has_centered(&FONT_TEXT, Y_BOTTOM, "55%"));
+    TEST_ASSERT_TRUE(count_in_eye(EYE_L, C_SCLERA) > 1500); // the bored eyes, as while waiting
+    TEST_ASSERT_TRUE(count_in_eye(EYE_R, C_SCLERA) > 1500);
+}
+
+static void test_screen_for_state(void)
+{
+    in.wifi = false;
+    TEST_ASSERT_EQUAL(UI_CONNECTING, ui_screen(&in, 0));
+    in.wifi = true;
+    TEST_ASSERT_EQUAL(UI_WAITING, ui_screen(&in, 0));
+    player_session_start(&p, 0);
+    TEST_ASSERT_EQUAL(UI_NOTHING, ui_screen(&in, 0));
+    TEST_ASSERT_EQUAL(UI_OFFLINE, ui_screen(&in, PLAYER_TIMEOUT_MS));
+    playing();
+    TEST_ASSERT_EQUAL(UI_PLAYING, ui_screen(&in, 0));
 }
 
 static void test_cyrillic_title(void)
@@ -357,6 +372,7 @@ int main(void)
     RUN_TEST(test_long_line_scrolls);
     RUN_TEST(test_strips_match_full_render);
     RUN_TEST(test_nothing_playing);
+    RUN_TEST(test_screen_for_state);
     RUN_TEST(test_cyrillic_title);
     return UNITY_END();
 }
