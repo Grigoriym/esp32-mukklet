@@ -11,11 +11,14 @@ each one.
     python3 tools/fake_mukk.py --host 192.168.1.50 --seconds 60
 
 The playlist has a Cyrillic title, a long one that has to scroll, a track
-without tags and one of unknown duration.
+without tags and one of unknown duration. Every track but the untagged one
+has a cover (a made-up pattern in its own colour, with the track number in
+the corner) in the size and format `hello` asks for.
 """
 
 import argparse
 import base64
+import colorsys
 import json
 import os
 import socket
@@ -32,6 +35,48 @@ PLAYLIST = [
     {"title": "Internet radio", "artist": "Somebody", "album": "", "year": 0, "durationMs": 0},
 ]
 HEARTBEAT_S = 5
+NO_COVER = {3}  # playlist indexes without art
+
+# 3x5 digits for the track number on the covers.
+DIGITS = ["111101101101111", "010110010010111", "111001111100111", "111001111001111", "101101111001001",
+          "111100111001111", "111100111101111", "111001001001001", "111101111101111", "111101111001111"]
+
+
+def cover_pixels(index, w, h):
+    """A diagonal ramp in the track's own hue with concentric rings and the
+    track number (1-based) in the top-left corner: -> rows of (r, g, b)."""
+    hue = index / len(PLAYLIST)
+    digit = DIGITS[(index + 1) % 10]
+    scale = max(1, w // 16)
+    rows = []
+    for y in range(h):
+        row = []
+        for x in range(w):
+            dx, dy = x - w / 2, y - h / 2
+            ring = int((dx * dx + dy * dy) ** 0.5 / (w / 8)) % 2
+            light = 0.25 + 0.5 * (x + y) / (w + h) + 0.15 * ring
+            r, g, b = colorsys.hls_to_rgb(hue, min(light, 0.9), 0.8)
+            gx, gy = (x - scale) // scale, (y - scale) // scale
+            if 0 <= gx < 3 and 0 <= gy < 5 and digit[gy * 3 + gx] == "1":
+                r = g = b = 1.0
+            row.append((int(r * 255), int(g * 255), int(b * 255)))
+        rows.append(row)
+    return rows
+
+
+def encode_cover(fmt, rows):
+    if fmt == "rgb565":  # big-endian
+        return b"".join(struct.pack(">H", ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3))
+                        for row in rows for r, g, b in row)
+    out = bytearray()  # mono1: plain threshold, MSB = leftmost
+    for row in rows:
+        for x in range(0, len(row), 8):
+            byte = 0
+            for i, (r, g, b) in enumerate(row[x:x + 8]):
+                if (r * 3 + g * 6 + b) / 10 >= 128:
+                    byte |= 0x80 >> i
+            out.append(byte)
+    return bytes(out)
 
 
 class Link:
@@ -93,6 +138,9 @@ class Link:
     def send(self, obj):
         self._send(0x1, json.dumps(obj, ensure_ascii=False).encode())
 
+    def send_binary(self, data):
+        self._send(0x2, data)
+
 
 class Player:
     def __init__(self):
@@ -117,7 +165,7 @@ class Player:
         t = PLAYLIST[self.index]
         n = PLAYLIST[(self.index + 1) % len(PLAYLIST)]
         track = dict(t, id=f"t{self.index}", albumArtist=t["artist"], genre="", trackNo=self.index + 1,
-                     format="FLAC", hasCover=False)
+                     format="FLAC", hasCover=self.index not in NO_COVER)
         return {"type": "track", "track": track, "next": {"title": n["title"], "artist": n["artist"]}}
 
     def state_msg(self):
@@ -141,6 +189,25 @@ class Player:
         return False
 
 
+def send_track(link, player, hello):
+    """track, then cover (+ its binary frames) as hello asked."""
+    link.send(player.track_msg())
+    spec = hello.get("cover") or {}
+    fmt, w, h = spec.get("format", "none"), spec.get("w", 0), spec.get("h", 0)
+    if fmt not in ("rgb565", "mono1"):
+        return
+    track_id = f"t{player.index}"
+    if player.index in NO_COVER:
+        link.send({"type": "cover", "trackId": track_id, "none": True})
+        return
+    data = encode_cover(fmt, cover_pixels(player.index, w, h))
+    link.send({"type": "cover", "trackId": track_id, "w": w, "h": h, "format": fmt, "size": len(data)})
+    chunk = hello.get("maxChunk", 4096)
+    for off in range(0, len(data), chunk):
+        link.send_binary(data[off:off + chunk])
+    print(f"-> cover {w}x{h} {fmt}, {len(data)} B in {-(-len(data) // chunk)} frames", flush=True)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--host", default="mukklet.local")
@@ -156,7 +223,7 @@ def main():
         raise SystemExit("expected hello first")
 
     player = Player()
-    link.send(player.track_msg())
+    send_track(link, player, hello)
     link.send(player.state_msg())
     start = last_state = time.monotonic()
     try:
@@ -170,7 +237,7 @@ def main():
                 print(f"<- {json.dumps(msg)}  => {player.status}, vol {player.volume}, "
                       f"{PLAYLIST[player.index]['title']}", flush=True)
                 if changed:
-                    link.send(player.track_msg())
+                    send_track(link, player, hello)
                 link.send(player.state_msg())
                 last_state = time.monotonic()
             elif msg:

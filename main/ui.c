@@ -8,7 +8,7 @@
 // Now-playing layout, top edges in px: the cover, three text lines, the
 // progress bar, then status icon, position, volume and duration along the
 // bottom. The panel's corners are rounded, hence the margins.
-#define COVER_SIZE 160
+#define COVER_SIZE PROTO_COVER_SIZE
 #define Y_COVER    8
 #define Y_TITLE    174
 #define Y_ARTIST   200
@@ -24,7 +24,7 @@
 #define C_TITLE  RGB(255, 255, 255)
 #define C_ARTIST RGB(210, 210, 210)
 #define C_DIM    RGB(140, 140, 140)
-#define C_COVER  RGB(40, 40, 40) // where the cover will go
+#define C_COVER  RGB(40, 40, 40) // the cover's place while there's no art
 #define C_TRACK  RGB(60, 60, 60) // progress bar background
 #define C_ACCENT RGB(255, 150, 40)
 
@@ -117,14 +117,19 @@ static void progress_bar(canvas_t *c, const player_t *p, int64_t now_ms)
     canvas_fill(c, MARGIN, Y_BAR, done, BAR_H, C_ACCENT);
 }
 
-static void now_playing(canvas_t *c, const player_t *p, int64_t now_ms)
+static void now_playing(canvas_t *c, const player_t *p, const uint8_t *cover, int64_t now_ms)
 {
     if (!p->has_track) {
         canvas_text_center(c, &FONT_TEXT, 124, "Nothing playing", C_ARTIST);
         bottom_row(c, p, now_ms);
         return;
     }
-    canvas_fill(c, (CANVAS_W - COVER_SIZE) / 2, Y_COVER, COVER_SIZE, COVER_SIZE, C_COVER);
+    int cover_x = (CANVAS_W - COVER_SIZE) / 2;
+    if (cover) {
+        canvas_image_be(c, cover_x, Y_COVER, COVER_SIZE, COVER_SIZE, cover);
+    } else {
+        canvas_fill(c, cover_x, Y_COVER, COVER_SIZE, COVER_SIZE, C_COVER);
+    }
 
     int64_t t = now_ms - p->track_since_ms;
     scroll_line(c, &FONT_TITLE, Y_TITLE, p->track.title, C_TITLE, t);
@@ -155,6 +160,6 @@ void ui_render(canvas_t *c, const ui_input_t *in, int64_t now_ms)
     } else if (!player_online(p, now_ms)) {
         message(c, "Mukk offline", NULL, NULL);
     } else {
-        now_playing(c, p, now_ms);
+        now_playing(c, p, in->cover, now_ms);
     }
 }

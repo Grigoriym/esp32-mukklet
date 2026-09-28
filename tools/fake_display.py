@@ -7,7 +7,7 @@ library only (no pip install). Listens on ws://localhost:<port>/ws, sends
 shows mono1 covers as text art and saves every cover as a PNG.
 
     python3 tools/fake_display.py                  # mono1 64x64, like the OLED
-    python3 tools/fake_display.py --format rgb565 --size 240   # like the TFT
+    python3 tools/fake_display.py --format rgb565 --size 160   # like the TFT
 
 In Mukk, set the display host to `localhost:8765`.
 

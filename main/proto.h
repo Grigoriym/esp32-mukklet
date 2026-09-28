@@ -13,6 +13,12 @@
 #define PROTO_ID_MAX   48
 #define PROTO_TEXT_MAX 160
 
+// The cover art hello asks for: square, RGB565 big-endian, in binary frames
+// of at most PROTO_MAX_CHUNK bytes.
+#define PROTO_COVER_SIZE  160
+#define PROTO_COVER_BYTES (PROTO_COVER_SIZE * PROTO_COVER_SIZE * 2)
+#define PROTO_MAX_CHUNK   4096
+
 typedef enum {
     PLAY_IDLE,
     PLAY_STOPPED,
@@ -41,9 +47,10 @@ typedef struct {
 } next_t;
 
 typedef enum {
-    MSG_OTHER, // valid, but nothing the display uses (cover, unknown types)
+    MSG_OTHER, // valid, but nothing the display uses (unknown types)
     MSG_TRACK,
     MSG_STATE,
+    MSG_COVER,
 } msg_type_t;
 
 typedef struct {
@@ -62,6 +69,13 @@ typedef struct {
             repeat_t repeat;
             bool shuffle;
         } state;
+        struct {
+            char track_id[PROTO_ID_MAX];
+            bool none;   // "none": true, no art for this track
+            int w, h;    // 0 when missing
+            bool rgb565; // format "rgb565"; anything else is of no use here
+            int32_t size;
+        } cover;
     };
 } proto_msg_t;
 
@@ -79,8 +93,8 @@ typedef enum {
     CMD_SEEK,   // arg = delta in ms
 } cmd_t;
 
-// The "hello" this display sends on connect: no cover art for now (text-only
-// milestone). Returns the length, or -1 if buf is too small.
+// The "hello" this display sends on connect, asking for PROTO_COVER_SIZE
+// square rgb565 covers. Returns the length, or -1 if buf is too small.
 int proto_hello(char *buf, size_t len);
 
 // A "cmd" message. Returns the length, or -1 if buf is too small.

@@ -77,12 +77,37 @@ static void test_state_example(void)
     TEST_ASSERT_FALSE(msg.state.shuffle);
 }
 
-static void test_cover_and_unknown_types_ignored(void)
+static void test_cover_example(void)
+{
+    char *json = read_example("cover.json");
+    TEST_ASSERT_TRUE(parse_str(json));
+    free(json);
+    TEST_ASSERT_EQUAL(MSG_COVER, msg.type);
+    TEST_ASSERT_EQUAL_STRING("a3f9c2", msg.cover.track_id);
+    TEST_ASSERT_FALSE(msg.cover.none);
+    TEST_ASSERT_EQUAL(64, msg.cover.w);
+    TEST_ASSERT_EQUAL(64, msg.cover.h);
+    TEST_ASSERT_FALSE(msg.cover.rgb565); // mono1
+    TEST_ASSERT_EQUAL(512, msg.cover.size);
+
+    TEST_ASSERT_TRUE(parse_str("{\"type\":\"cover\",\"trackId\":\"x\",\"w\":160,\"h\":160,"
+                               "\"format\":\"rgb565\",\"size\":51200}"));
+    TEST_ASSERT_TRUE(msg.cover.rgb565);
+    TEST_ASSERT_EQUAL(51200, msg.cover.size);
+}
+
+static void test_cover_none_example(void)
 {
     char *json = read_example("cover_none.json");
     TEST_ASSERT_TRUE(parse_str(json));
     free(json);
-    TEST_ASSERT_EQUAL(MSG_OTHER, msg.type);
+    TEST_ASSERT_EQUAL(MSG_COVER, msg.type);
+    TEST_ASSERT_EQUAL_STRING("a3f9c2", msg.cover.track_id);
+    TEST_ASSERT_TRUE(msg.cover.none);
+}
+
+static void test_unknown_types_ignored(void)
+{
     TEST_ASSERT_TRUE(parse_str("{\"type\":\"lyrics\",\"text\":\"la\"}"));
     TEST_ASSERT_EQUAL(MSG_OTHER, msg.type);
 }
@@ -143,7 +168,9 @@ static void test_hello(void)
     TEST_ASSERT_EQUAL_STRING("hello", cJSON_GetStringValue(cJSON_GetObjectItem(j, "type")));
     TEST_ASSERT_EQUAL(1, cJSON_GetNumberValue(cJSON_GetObjectItem(j, "v")));
     const cJSON *cover = cJSON_GetObjectItem(j, "cover");
-    TEST_ASSERT_EQUAL_STRING("none", cJSON_GetStringValue(cJSON_GetObjectItem(cover, "format")));
+    TEST_ASSERT_EQUAL_STRING("rgb565", cJSON_GetStringValue(cJSON_GetObjectItem(cover, "format")));
+    TEST_ASSERT_EQUAL(160, cJSON_GetNumberValue(cJSON_GetObjectItem(cover, "w")));
+    TEST_ASSERT_EQUAL(160, cJSON_GetNumberValue(cJSON_GetObjectItem(cover, "h")));
     TEST_ASSERT_EQUAL(4096, cJSON_GetNumberValue(cJSON_GetObjectItem(j, "maxChunk")));
     cJSON_Delete(j);
     TEST_ASSERT_EQUAL(-1, proto_hello(buf, 20));
@@ -178,7 +205,9 @@ int main(void)
     RUN_TEST(test_track_example);
     RUN_TEST(test_track_none_example);
     RUN_TEST(test_state_example);
-    RUN_TEST(test_cover_and_unknown_types_ignored);
+    RUN_TEST(test_cover_example);
+    RUN_TEST(test_cover_none_example);
+    RUN_TEST(test_unknown_types_ignored);
     RUN_TEST(test_not_protocol);
     RUN_TEST(test_length_bounds_the_input);
     RUN_TEST(test_missing_and_odd_fields);

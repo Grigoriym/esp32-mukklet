@@ -82,6 +82,16 @@ static void parse_state(const cJSON *root, proto_msg_t *out)
     out->state.shuffle = cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(root, "shuffle"));
 }
 
+static void parse_cover(const cJSON *root, proto_msg_t *out)
+{
+    copy_str(out->cover.track_id, sizeof(out->cover.track_id), root, "trackId");
+    out->cover.none = cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(root, "none"));
+    out->cover.w = (int)get_num(root, "w");
+    out->cover.h = (int)get_num(root, "h");
+    out->cover.rgb565 = is_str(root, "format", "rgb565");
+    out->cover.size = get_ms(root, "size"); // same clamping: 0..INT32_MAX
+}
+
 bool proto_parse(const char *json, size_t len, proto_msg_t *out)
 {
     memset(out, 0, sizeof(*out));
@@ -96,6 +106,9 @@ bool proto_parse(const char *json, size_t len, proto_msg_t *out)
     } else if (is_str(root, "type", "state")) {
         out->type = MSG_STATE;
         parse_state(root, out);
+    } else if (is_str(root, "type", "cover")) {
+        out->type = MSG_COVER;
+        parse_cover(root, out);
     } else {
         out->type = MSG_OTHER;
     }
@@ -112,7 +125,8 @@ int proto_hello(char *buf, size_t len)
 {
     return fitted(snprintf(buf, len,
                            "{\"type\":\"hello\",\"v\":1,\"device\":\"mukklet-st7789\","
-                           "\"cover\":{\"w\":64,\"h\":64,\"format\":\"none\"},\"maxChunk\":4096}"),
+                           "\"cover\":{\"w\":%d,\"h\":%d,\"format\":\"rgb565\"},\"maxChunk\":%d}",
+                           PROTO_COVER_SIZE, PROTO_COVER_SIZE, PROTO_MAX_CHUNK),
                   len);
 }
 

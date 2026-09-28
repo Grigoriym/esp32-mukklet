@@ -184,9 +184,10 @@ Mukk decodes the embedded art (the same bytes the Now Playing panel shows),
 | `mono1` | `w*h/8` | 1 bit per pixel, rows top to bottom, each row left to right, **MSB = leftmost pixel**, `1` = lit (white). Convert to grayscale, then **Floyd–Steinberg dither** at threshold 128. `w` is a multiple of 8. |
 | `rgb565` | `w*h*2` | 16 bits per pixel, rows top to bottom, **big-endian** (high byte first: the order ST7789 panels take over SPI). |
 
-The display asks for `mono1` 64×64 on the current OLED prototype and will
-ask for `rgb565` 240×240 once the colour TFT arrives. Mukk supports both
-from the start, so switching screens needs no Mukk change.
+The colour TFT (240×280) asks for `rgb565` 160×160 (51 200 bytes, 13
+frames of 4096), with text below the cover; the OLED prototype asked for
+`mono1` 64×64. Mukk supports both, so switching screens needs no Mukk
+change.
 
 ## Reconnects and robustness (Mukk side)
 

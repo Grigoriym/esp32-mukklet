@@ -18,6 +18,19 @@ void canvas_fill(canvas_t *c, int x, int y, int w, int h, uint16_t color)
     }
 }
 
+void canvas_image_be(canvas_t *c, int x, int y, int w, int h, const uint8_t *be565)
+{
+    int x0 = x < 0 ? 0 : x;
+    int x1 = x + w > CANVAS_W ? CANVAS_W : x + w;
+    int y0 = y < c->y0 ? c->y0 : y;
+    int y1 = y + h > c->y0 + c->h ? c->y0 + c->h : y + h;
+    for (int yy = y0; yy < y1; yy++) {
+        uint16_t *row = &c->px[(yy - c->y0) * CANVAS_W];
+        const uint8_t *src = &be565[((yy - y) * w + (x0 - x)) * 2];
+        for (int xx = x0; xx < x1; xx++, src += 2) row[xx] = (uint16_t)((src[0] << 8) | src[1]);
+    }
+}
+
 // fg over bg at coverage a (0-15), per RGB565 channel.
 static uint16_t blend(uint16_t bg, uint16_t fg, int a)
 {

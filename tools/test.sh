@@ -21,8 +21,7 @@ extra_sources() {
     case "$1" in
         test_font) echo main/font_data.c ;;
         test_canvas) echo main/font.c main/font_data.c ;;
-        test_ui) echo main/canvas.c main/font.c main/font_data.c main/player.c ;;
-    esac
+        test_ui) echo main/canvas.c main/font.c main/font_data.c main/player.c ;;    esac
 }
 
 failed=0

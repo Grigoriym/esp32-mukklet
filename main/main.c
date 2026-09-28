@@ -40,7 +40,9 @@ static void render(void)
         .in = {.wifi = wifi_ip(ip, sizeof(ip)), .ip = ip, .player = &s_player},
         .now_ms = now_ms(), // one moment for all strips of the frame
     };
+    f.in.cover = link_cover_acquire(s_player.has_track ? s_player.track.id : "");
     if (s_display_ok) display_frame(draw_strip, &f);
+    link_cover_release();
 }
 
 // Knob mapping: turn = volume, press = play/pause, double = next, long =

@@ -173,6 +173,29 @@ static void test_now_playing(void)
     TEST_ASSERT_NOT_EQUAL(0, canvas_get(&screen, CANVAS_W / 2, 80));
 }
 
+static void test_cover_art_drawn(void)
+{
+    // A horizontal red-to-blue ramp, big-endian like it comes from Mukk.
+    static uint8_t art[PROTO_COVER_BYTES];
+    for (int y = 0; y < PROTO_COVER_SIZE; y++) {
+        for (int x = 0; x < PROTO_COVER_SIZE; x++) {
+            uint16_t c = RGB(255 - x * 255 / 159, 0, x * 255 / 159);
+            art[(y * PROTO_COVER_SIZE + x) * 2] = c >> 8;
+            art[(y * PROTO_COVER_SIZE + x) * 2 + 1] = c & 0xFF;
+        }
+    }
+    playing();
+    in.cover = art;
+    render(1000);
+    show("cover");
+    const int x0 = (CANVAS_W - PROTO_COVER_SIZE) / 2, y0 = 8;
+    TEST_ASSERT_EQUAL_HEX16(RGB(255, 0, 0), canvas_get(&screen, x0, y0));
+    TEST_ASSERT_EQUAL_HEX16(RGB(0, 0, 255), canvas_get(&screen, x0 + 159, y0 + 159));
+    TEST_ASSERT_EQUAL_HEX16(0, canvas_get(&screen, x0 - 1, y0)); // nothing around it
+    TEST_ASSERT_EQUAL_HEX16(0, canvas_get(&screen, x0, y0 + 160));
+    TEST_ASSERT_TRUE(has_centered(&FONT_TITLE, Y_TITLE, "Paranoid Android"));
+}
+
 static void test_long_line_scrolls(void)
 {
     playing();
@@ -242,6 +265,7 @@ int main(void)
     RUN_TEST(test_waiting_shows_address);
     RUN_TEST(test_offline_after_silence);
     RUN_TEST(test_now_playing);
+    RUN_TEST(test_cover_art_drawn);
     RUN_TEST(test_long_line_scrolls);
     RUN_TEST(test_strips_match_full_render);
     RUN_TEST(test_nothing_playing);

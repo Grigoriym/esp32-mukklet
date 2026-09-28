@@ -148,6 +148,14 @@ connects to the display, sends a small playlist (Cyrillic, long title, no
 tags, unknown duration) and obeys the knob, printing each `cmd`.
 
 ## Next step
-Cover art: `hello` asks for ~160x160 `rgb565`, keep it in RAM (51 KB) and
-draw it into the placeholder. Check first that Mukk's cover code works
-against `tools/fake_display.py` with that size.
+Cover art (milestone 3): code written, host tests + format + lint + build +
+size check pass (2026-09-28; DRAM 87 KB free with the 51 KB cover buffer),
+**not yet run on the board**. `hello` asks for 160x160 `rgb565`
+(`PROTO_COVER_*` in `proto.h`); pure `cover.c` assembles the binary frames
+straight into a static 51 KB buffer in `link.c` (own mutex, held by
+`main.c` for a whole frame via `link_cover_acquire/release`);
+`canvas_image_be()` + `ui.c` draw it in place of the placeholder;
+`fake_mukk.py` sends made-up covers as `hello` asks. To do:
+1. Mukk's cover code against `tools/fake_display.py --format rgb565
+   --size 160` (user plays a track in Mukk, host `localhost:8765`).
+2. Flash, check with `tools/fake_mukk.py`, then the real Mukk.

@@ -71,6 +71,31 @@ static void test_text_clip(void)
     }
 }
 
+static void test_image_big_endian_and_clipped(void)
+{
+    // 3x2, pixel i = 0xA000 + i, sent high byte first.
+    uint8_t img[3 * 2 * 2];
+    for (int i = 0; i < 6; i++) {
+        img[i * 2] = 0xA0;
+        img[i * 2 + 1] = (uint8_t)i;
+    }
+    canvas_image_be(&full, 10, 20, 3, 2, img);
+    TEST_ASSERT_EQUAL_HEX16(0xA000, canvas_get(&full, 10, 20));
+    TEST_ASSERT_EQUAL_HEX16(0xA002, canvas_get(&full, 12, 20));
+    TEST_ASSERT_EQUAL_HEX16(0xA005, canvas_get(&full, 12, 21));
+    TEST_ASSERT_EQUAL_HEX16(0, canvas_get(&full, 13, 20));
+    TEST_ASSERT_EQUAL_HEX16(0, canvas_get(&full, 10, 22));
+
+    // Hanging off the left edge and cut by a band: the right pixels land.
+    uint16_t px[CANVAS_W * 1];
+    canvas_t band = {.px = px, .y0 = 21, .h = 1};
+    canvas_fill(&band, 0, 0, CANVAS_W, CANVAS_H, 0);
+    canvas_image_be(&band, -1, 20, 3, 2, img);
+    TEST_ASSERT_EQUAL_HEX16(0xA004, canvas_get(&band, 0, 21));
+    TEST_ASSERT_EQUAL_HEX16(0xA005, canvas_get(&band, 1, 21));
+    TEST_ASSERT_EQUAL_HEX16(0, canvas_get(&band, 2, 21));
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -79,5 +104,6 @@ int main(void)
     RUN_TEST(test_band_only_touches_its_rows);
     RUN_TEST(test_text_blends_and_reports_width);
     RUN_TEST(test_text_clip);
+    RUN_TEST(test_image_big_endian_and_clipped);
     return UNITY_END();
 }

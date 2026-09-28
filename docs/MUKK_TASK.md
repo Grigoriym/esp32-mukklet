@@ -68,7 +68,7 @@ From this repo (the path is `../esp32-mukklet` relative to Mukk):
 
 ```
 python3 tools/fake_display.py                          # acts like the OLED: 64x64 mono1
-python3 tools/fake_display.py --format rgb565 --size 240   # acts like the future TFT
+python3 tools/fake_display.py --format rgb565 --size 160   # acts like the TFT
 ```
 
 Standard library only. Set Mukk's display host to `localhost:8765`. The

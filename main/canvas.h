@@ -27,6 +27,10 @@ uint16_t canvas_get(const canvas_t *c, int x, int y);
 // Out-of-band and off-screen pixels are ignored by all drawing below.
 void canvas_fill(canvas_t *c, int x, int y, int w, int h, uint16_t color);
 
+// A w x h image of big-endian RGB565 pixels (as they come over the wire)
+// with its top-left at (x, y).
+void canvas_image_be(canvas_t *c, int x, int y, int w, int h, const uint8_t *be565);
+
 // Draws UTF-8 text with the top of its line at y and its pen starting at
 // x, blended over what's there, only in columns [clip_x0, clip_x1) (for
 // scrolling text within a box). Returns the width of the whole text in px.

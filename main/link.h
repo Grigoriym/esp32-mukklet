@@ -15,6 +15,12 @@ esp_err_t link_start(void);
 // Copies the current player state.
 void link_snapshot(player_t *out);
 
+// The finished cover art of this track (PROTO_COVER_BYTES, big-endian), or
+// NULL. Holds the cover until link_cover_release(), so a new one waits
+// instead of overwriting it mid-frame: keep it for one frame only.
+const uint8_t *link_cover_acquire(const char *track_id);
+void link_cover_release(void);
+
 // Sends a "cmd" to the connected client. False if there's none (or the
 // send couldn't be queued).
 bool link_send_cmd(cmd_t cmd, int arg);

@@ -3,6 +3,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include "link.h"
+#include "cover.h"
 #include "esp_http_server.h"
 #include "esp_log.h"
 #include "esp_timer.h"
@@ -22,6 +23,12 @@ static SemaphoreHandle_t s_lock; // guards the two below
 static int s_fd = -1;            // socket of the current client
 static player_t s_player;
 
+// Cover state, apart from s_lock because the main loop holds it for a whole
+// frame. The pixels are written without it (see cover.h).
+static SemaphoreHandle_t s_cover_lock;
+static cover_t s_cover;
+static uint8_t s_cover_px[PROTO_COVER_BYTES];
+
 static int64_t now_ms(void)
 {
     return esp_timer_get_time() / 1000;
@@ -36,6 +43,25 @@ void link_snapshot(player_t *out)
     xSemaphoreTake(s_lock, portMAX_DELAY);
     *out = s_player;
     xSemaphoreGive(s_lock);
+}
+
+const uint8_t *link_cover_acquire(const char *track_id)
+{
+    if (!s_cover_lock) return NULL;
+    xSemaphoreTake(s_cover_lock, portMAX_DELAY);
+    return cover_for(&s_cover, track_id);
+}
+
+void link_cover_release(void)
+{
+    if (s_cover_lock) xSemaphoreGive(s_cover_lock);
+}
+
+static void cover_locked(void (*fn)(cover_t *))
+{
+    xSemaphoreTake(s_cover_lock, portMAX_DELAY);
+    fn(&s_cover);
+    xSemaphoreGive(s_cover_lock);
 }
 
 // Sends a text frame to the current client; runs on the server task.
@@ -95,6 +121,7 @@ static esp_err_t on_open(httpd_req_t *req)
     s_fd = fd;
     player_session_start(&s_player, now_ms());
     xSemaphoreGive(s_lock);
+    cover_locked(cover_reset); // Mukk sends it again
 
     if (old >= 0 && old != fd) {
         ESP_LOGI(TAG, "new client (fd %d), closing the old one (fd %d)", fd, old);
@@ -118,6 +145,29 @@ static esp_err_t drain(httpd_req_t *req, httpd_ws_frame_t *frame)
     return err;
 }
 
+// A binary frame: the next piece of the cover, received straight into place.
+static esp_err_t recv_cover_chunk(httpd_req_t *req, httpd_ws_frame_t *frame)
+{
+    uint8_t *dst = cover_chunk_dst(&s_cover, frame->len);
+    if (!dst) {
+        ESP_LOGW(TAG, "unexpected %u-byte cover frame, dropping the cover", (unsigned)frame->len);
+        cover_cancel(&s_cover);
+        return drain(req, frame);
+    }
+    frame->payload = dst;
+    esp_err_t err = httpd_ws_recv_frame(req, frame, frame->len);
+    frame->payload = NULL;
+    if (err != ESP_OK) {
+        cover_cancel(&s_cover);
+        return err;
+    }
+    xSemaphoreTake(s_cover_lock, portMAX_DELAY);
+    bool done = cover_chunk_done(&s_cover, frame->len);
+    xSemaphoreGive(s_cover_lock);
+    if (done) ESP_LOGI(TAG, "cover for %s", s_cover.track_id);
+    return ESP_OK;
+}
+
 static esp_err_t ws_handler(httpd_req_t *req)
 {
     httpd_ws_frame_t frame = {0};
@@ -129,9 +179,11 @@ static esp_err_t ws_handler(httpd_req_t *req)
     bool current = fd == s_fd;
     xSemaphoreGive(s_lock);
 
-    // Covers (binary) aren't asked for yet; a stale client's last words and
-    // oversized frames are dropped too.
-    if (frame.type != HTTPD_WS_TYPE_TEXT || !current || frame.len > MSG_MAX) {
+    // A stale client's last words are dropped.
+    if (!current) return drain(req, &frame);
+    if (frame.type == HTTPD_WS_TYPE_BINARY) return recv_cover_chunk(req, &frame);
+    cover_cancel(&s_cover); // any other message ends a cover (never interleaved)
+    if (frame.type != HTTPD_WS_TYPE_TEXT || frame.len > MSG_MAX) {
         if (frame.len > MSG_MAX) ESP_LOGW(TAG, "dropping a %u-byte frame", (unsigned)frame.len);
         return drain(req, &frame);
     }
@@ -150,6 +202,14 @@ static esp_err_t ws_handler(httpd_req_t *req)
             xSemaphoreGive(s_lock);
             if (msg->type == MSG_TRACK) {
                 ESP_LOGI(TAG, "track: %s - %s", msg->track.track.artist, msg->track.track.title);
+            } else if (msg->type == MSG_COVER) {
+                xSemaphoreTake(s_cover_lock, portMAX_DELAY);
+                cover_begin(&s_cover, msg);
+                xSemaphoreGive(s_cover_lock);
+                if (!msg->cover.none && !s_cover.receiving) {
+                    ESP_LOGW(TAG, "cover %dx%d, size %ld: not what hello asked for", msg->cover.w,
+                             msg->cover.h, (long)msg->cover.size);
+                }
             }
         } else if (msg) {
             ESP_LOGW(TAG, "not a protocol message: %.*s", (int)(frame.len > 80 ? 80 : frame.len), buf);
@@ -164,12 +224,14 @@ static esp_err_t ws_handler(httpd_req_t *req)
 static void on_close(httpd_handle_t hd, int fd)
 {
     xSemaphoreTake(s_lock, portMAX_DELAY);
-    if (fd == s_fd) {
+    bool current = fd == s_fd;
+    if (current) {
         s_fd = -1;
         player_session_end(&s_player);
         ESP_LOGI(TAG, "client gone (fd %d)", fd);
     }
     xSemaphoreGive(s_lock);
+    if (current) cover_locked(cover_reset);
     close(fd);
 }
 
@@ -185,8 +247,10 @@ static esp_err_t start_mdns(void)
 esp_err_t link_start(void)
 {
     s_lock = xSemaphoreCreateMutex();
-    if (!s_lock) return ESP_ERR_NO_MEM;
+    s_cover_lock = xSemaphoreCreateMutex();
+    if (!s_lock || !s_cover_lock) return ESP_ERR_NO_MEM;
     player_init(&s_player);
+    cover_init(&s_cover, s_cover_px);
 
     esp_err_t err = start_mdns();
     if (err != ESP_OK) ESP_LOGW(TAG, "mDNS not used (use the IP instead): %s", esp_err_to_name(err));
