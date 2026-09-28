@@ -20,8 +20,8 @@ CFLAGS=(-std=gnu17 -Wall -Wextra -Werror -g -fsanitize=address,undefined -fno-om
 extra_sources() {
     case "$1" in
         test_font) echo main/font_data.c ;;
-        test_fb) echo main/font.c main/font_data.c ;;
-        test_ui) echo main/fb.c main/font.c main/font_data.c main/player.c ;;
+        test_canvas) echo main/font.c main/font_data.c ;;
+        test_ui) echo main/canvas.c main/font.c main/font_data.c main/player.c ;;
     esac
 }
 

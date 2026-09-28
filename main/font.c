@@ -35,14 +35,14 @@ uint32_t utf8_next(const char **p)
     return cp;
 }
 
-static const font_glyph_t *find(uint32_t cp)
+static const font_glyph_t *find(const font_t *font, uint32_t cp)
 {
     int lo = 0;
-    int hi = FONT_GLYPH_COUNT - 1;
+    int hi = font->count - 1;
     while (lo <= hi) {
         int mid = (lo + hi) / 2;
-        if (FONT_GLYPHS[mid].cp == cp) return &FONT_GLYPHS[mid];
-        if (FONT_GLYPHS[mid].cp < cp) {
+        if (font->glyphs[mid].cp == cp) return &font->glyphs[mid];
+        if (font->glyphs[mid].cp < cp) {
             lo = mid + 1;
         } else {
             hi = mid - 1;
@@ -51,36 +51,16 @@ static const font_glyph_t *find(uint32_t cp)
     return NULL;
 }
 
-// Punctuation that tags often use and the font lacks (it does have ’ “ ” „).
-static uint32_t look_alike(uint32_t cp)
+const font_glyph_t *font_glyph(const font_t *font, uint32_t cp)
 {
-    switch (cp) {
-        case 0x2018: // ‘ ‚ ′
-        case 0x201A:
-        case 0x2032: return '\'';
-        case 0x2033: return '"'; // ″
-        case 0x2010:             // hyphens and dashes, minus sign
-        case 0x2011:
-        case 0x2012:
-        case 0x2013:
-        case 0x2014:
-        case 0x2015:
-        case 0x2212: return '-';
-        case 0x2022: return 0x00B7; // bullet -> middle dot
-        default: return FONT_MISSING;
-    }
+    const font_glyph_t *g = find(font, cp);
+    return g ? g : find(font, FONT_MISSING); // FONT_MISSING is always in the table
 }
 
-const uint8_t *font_glyph(uint32_t cp)
+int font_text_width(const font_t *font, const char *text)
 {
-    const font_glyph_t *g = find(cp);
-    if (!g) g = find(look_alike(cp));
-    return g->rows; // FONT_MISSING is always in the table
-}
-
-int font_text_width(const char *text)
-{
-    int n = 0;
-    while (utf8_next(&text)) n++;
-    return n * FONT_W;
+    int w = 0;
+    uint32_t cp;
+    while ((cp = utf8_next(&text)) != 0) w += font_glyph(font, cp)->advance;
+    return w;
 }

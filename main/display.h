@@ -1,15 +1,19 @@
 #pragma once
 
-#include <stdbool.h>
 #include "esp_err.h"
-#include "driver/i2c_master.h"
-#include "fb.h"
+#include "canvas.h"
 
-// SSD1315/SSD1306 128x64 OLED on I2C.
+// 1.69" 240x280 ST7789V2 IPS TFT on SPI (VSPI pins), backlight PWM on BLK.
 
-// Probes the bus for the display at 0x3C/0x3D, runs the init sequence.
-esp_err_t display_init(i2c_master_bus_handle_t bus);
+esp_err_t display_init(void);
 
-// Sends the pages of fb that differ from what was sent last (all of them
-// the first time).
-esp_err_t display_show(const fb_t *fb);
+// Fills one band of the screen (canvas.h). Called for every strip of a
+// frame, top to bottom.
+typedef void (*display_draw_fn)(canvas_t *c, void *ctx);
+
+// Draws a frame strip by strip and sends only the strips whose pixels
+// differ from what was sent last (all of them the first time).
+esp_err_t display_frame(display_draw_fn draw, void *ctx);
+
+// 0-100 %.
+void display_backlight(int percent);

@@ -81,33 +81,47 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
   the USB link. Flashing replaced it. If a board's serial log looks like
   noise, try `esptool chip-id` before suspecting the wiring.
 
-## Firmware (milestone 1: text only, 2026-09-27)
-WiFi + mDNS `mukklet.local` + WebSocket server (`link.c`) + OLED text +
-knob commands. `hello` asks for cover `"format": "none"`, so Mukk sends no
-art yet. Pure, host-tested modules (no ESP-IDF): `proto` (parse/build
-messages), `player` (session, position extrapolation, 15 s offline rule),
-`ui` (whole screen from player state + time, stateless incl. scrolling),
-`fb` (framebuffer in SSD1306 page layout), `font` (UTF-8, 6x10),
-`gesture` (single/double/long press), `encoder_decode` (lifted).
-- **Font**: X11 misc-fixed 6x10 (public domain), ASCII + Latin-1/2/9/13/15
-  + Cyrillic, generated into `main/font_data.c` by `tools/gen_font.py`
-  (needs Pillow; rerun, don't hand-edit). 21 chars per line; longer lines
-  scroll. Unknown characters draw as a box.
-- **Layout** (128x64): title / artist / album (year) / "Next: …" /
-  progress bar / status icon, position, volume %, duration.
+## Firmware (milestone 2: colour screen, text only, 2026-09-28)
+WiFi + mDNS `mukklet.local` + WebSocket server (`link.c`) + TFT text +
+knob commands. `hello` still asks for cover `"format": "none"`, so Mukk
+sends no art yet. Milestone 1 (OLED, 2026-09-27) is in git history before
+this; the OLED code is gone. Pure, host-tested modules (no ESP-IDF):
+`proto` (parse/build messages), `player` (session, position extrapolation,
+15 s offline rule), `ui` (the screen from player state + time, stateless
+incl. scrolling), `canvas` (RGB565 band of the screen), `font` (UTF-8,
+anti-aliased), `gesture` (single/double/long press), `encoder_decode`
+(lifted).
+- **Drawing in strips**: `display_frame()` renders the whole UI once per
+  band of 20 rows into one 9.6 KB DMA buffer (`ui_render` skips what's
+  outside the band), hashes each strip and only sends the ones that
+  changed. A test checks the strips add up to the full-height render.
+- **Display driver**: `esp_lcd` ST7789, 40 MHz, RGB order + INVON, gap
+  (0, 20), backlight via LEDC on BLK (dark until the first frame).
+  `FLIP_180` in `display.c`: 1 = upright with the pin header at the
+  bottom; final mounting not decided (user: "fine for now").
+- **Font**: DejaVu Sans (Bitstream Vera license), 4-bit anti-aliased,
+  proportional: `FONT_TITLE` bold 20 px, `FONT_TEXT` 16 px. ASCII,
+  Latin-1, Latin Ext-A, Romanian, Cyrillic, typographic punctuation.
+  Generated into `main/font_data.c` by `tools/gen_font.py` (needs Pillow
+  + fonts-dejavu-core; rerun, don't hand-edit), ~69 KB. Unknown characters
+  draw as a box. Size readable on the panel, per the user.
+- **Layout** (240x280): grey 160x160 cover placeholder at the top, title /
+  artist / album (year), each centred or scrolling within 12 px margins,
+  progress bar, then status icon, position, volume %, duration (18 px
+  margins for the rounded corners).
 - **Knob**: turn = volume ±5 per detent (a fast spin is one `cmd`), press =
   play/pause (sent 300 ms after release, waiting for a double), double =
   next, long (600 ms) = prev.
 - IDF 6 gotcha: the WS handler is **not** called for the handshake any
   more; `hello` goes out from `ws_post_handshake_cb`
   (`CONFIG_HTTPD_WS_POST_HANDSHAKE_CB_SUPPORT`).
-- Verified on the board 2026-09-27 with `tools/fake_mukk.py` (hello, track,
-  heartbeats, newest-client-wins, knob turns both ways: CW = volume up),
-  then with the **real Mukk** (its DisplayLink): screen and knob (volume,
-  press/double/long) work, per the user.
+- Verified on the board 2026-09-28 with the **real Mukk**: connects,
+  shows tracks, right way up (pins at the bottom), text readable, per the
+  user.
 
 ## Open questions
-- Which fields to show (the OLED prototype is meant to answer this).
+- Which fields to show: the colour layout is a first guess.
+- Mounting orientation (see `FLIP_180`).
 
 ## Build / flash
 ESP-IDF, same setup as the desk display:
@@ -133,6 +147,6 @@ connects to the display, sends a small playlist (Cyrillic, long title, no
 tags, unknown duration) and obeys the knob, printing each `cmd`.
 
 ## Next step
-Use it with Mukk for a while and decide which fields earn their place.
-No cover art on the OLED (decided 2026-09-27): covers wait for the ST7789;
-until then Mukk tests its cover code against `tools/fake_display.py`.
+Cover art: `hello` asks for ~160x160 `rgb565`, keep it in RAM (51 KB) and
+draw it into the placeholder. Check first that Mukk's cover code works
+against `tools/fake_display.py` with that size.

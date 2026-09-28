@@ -80,7 +80,7 @@ typedef enum {
 } cmd_t;
 
 // The "hello" this display sends on connect: no cover art for now (text-only
-// OLED milestone). Returns the length, or -1 if buf is too small.
+// milestone). Returns the length, or -1 if buf is too small.
 int proto_hello(char *buf, size_t len);
 
 // A "cmd" message. Returns the length, or -1 if buf is too small.

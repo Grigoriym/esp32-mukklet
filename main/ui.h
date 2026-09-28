@@ -1,13 +1,14 @@
 #pragma once
 
-// Draws the whole screen for a moment in time. Pure and stateless (the
-// scrolling of long lines is a function of now_ms too), so the unit tests in
-// test/ can render any screen as ASCII art.
+// Draws the screen for a moment in time into one band of it (see canvas.h;
+// called once per strip). Pure and stateless (the scrolling of long lines is
+// a function of now_ms too), so every strip of a frame agrees, and the unit
+// tests in test/ can render any screen as ASCII art.
 
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include "fb.h"
+#include "canvas.h"
 #include "player.h"
 
 typedef struct {
@@ -16,7 +17,7 @@ typedef struct {
     const player_t *player;
 } ui_input_t;
 
-void ui_render(fb_t *fb, const ui_input_t *in, int64_t now_ms);
+void ui_render(canvas_t *c, const ui_input_t *in, int64_t now_ms);
 
 // "m:ss", or "h:mm:ss" from an hour on.
 void ui_format_time(char *buf, size_t len, int32_t ms);

@@ -111,7 +111,7 @@ static int fitted(int n, size_t len)
 int proto_hello(char *buf, size_t len)
 {
     return fitted(snprintf(buf, len,
-                           "{\"type\":\"hello\",\"v\":1,\"device\":\"mukklet-oled\","
+                           "{\"type\":\"hello\",\"v\":1,\"device\":\"mukklet-st7789\","
                            "\"cover\":{\"w\":64,\"h\":64,\"format\":\"none\"},\"maxChunk\":4096}"),
                   len);
 }

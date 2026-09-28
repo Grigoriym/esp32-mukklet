@@ -5,9 +5,21 @@
 #include "ui.h"
 #include "font.h"
 
-// SHOW_ART=1 tools/test.sh prints each rendered screen as ASCII art.
+// SHOW_ART=1 tools/test.sh prints each rendered screen as ASCII art ('#'
+// bright, '+' mid, '.' dark, ' ' black).
 
-static fb_t fb;
+// Layout rows from ui.c.
+#define Y_TITLE  174
+#define Y_ARTIST 200
+#define Y_ALBUM  220
+#define Y_BAR    246
+#define Y_BOTTOM 255
+#define MARGIN   12
+#define C_ACCENT RGB(255, 150, 40)
+#define C_TRACK  RGB(60, 60, 60)
+
+static uint16_t screen_px[CANVAS_W * CANVAS_H];
+static canvas_t screen = {.px = screen_px, .y0 = 0, .h = CANVAS_H};
 static player_t p;
 static ui_input_t in;
 
@@ -21,34 +33,54 @@ void tearDown(void)
 {
 }
 
+static int luma(uint16_t c)
+{
+    return ((c >> 11) * 255 / 31 * 3 + ((c >> 5) & 0x3F) * 255 / 63 * 6 + (c & 0x1F) * 255 / 31) / 10;
+}
+
 static void show(const char *name)
 {
     if (!getenv("SHOW_ART")) return;
     printf("--- %s\n", name);
-    for (int y = 0; y < FB_H; y++) {
+    for (int y = 0; y < CANVAS_H; y++) {
         putchar('|');
-        for (int x = 0; x < FB_W; x++) putchar(fb_get(&fb, x, y) ? '#' : ' ');
+        for (int x = 0; x < CANVAS_W; x++) {
+            int l = luma(canvas_get(&screen, x, y));
+            putchar(l > 170 ? '#' : l > 90 ? '+' : l > 0 ? '.' : ' ');
+        }
         puts("|");
     }
 }
 
-// True if text drawn alone at (x, y) matches the screen over its cells.
-static bool has_text_at(int x, int y, const char *text)
+static void render(int64_t now_ms)
 {
-    fb_t want;
-    fb_clear(&want);
-    int w = fb_text(&want, x, y, text);
-    for (int yy = y; yy < y + FONT_H; yy++) {
-        for (int xx = x; xx < x + w && xx < FB_W; xx++) {
-            if (fb_get(&want, xx, yy) != fb_get(&fb, xx, yy)) return false;
-        }
-    }
-    return true;
+    ui_render(&screen, &in, now_ms);
 }
 
-static bool has_centered(int y, const char *text)
+// True if text drawn alone (on black) at (x, y) matches the screen over
+// its line, so nothing else overlaps it either.
+static bool has_text_at(const font_t *font, int x, int y, const char *text)
 {
-    return has_text_at((FB_W - font_text_width(text)) / 2, y, text);
+    static uint16_t want_px[CANVAS_W * CANVAS_H];
+    canvas_t want = {.px = want_px, .y0 = 0, .h = CANVAS_H};
+    canvas_fill(&want, 0, 0, CANVAS_W, CANVAS_H, 0);
+    // Colour doesn't matter: compare where the text has ink.
+    int w = canvas_text(&want, font, x, y, text, RGB(255, 255, 255));
+    int ink = 0;
+    for (int yy = y; yy < y + font->line_h; yy++) {
+        for (int xx = x < 0 ? 0 : x; xx < x + w && xx < CANVAS_W; xx++) {
+            bool a = canvas_get(&want, xx, yy) != 0;
+            bool b = canvas_get(&screen, xx, yy) != 0;
+            if (a != b) return false;
+            ink += a;
+        }
+    }
+    return ink > 0;
+}
+
+static bool has_centered(const font_t *font, int y, const char *text)
+{
+    return has_text_at(font, (CANVAS_W - font_text_width(font, text)) / 2, y, text);
 }
 
 static void playing(void)
@@ -97,60 +129,85 @@ static void test_scroll_offset(void)
 static void test_no_wifi(void)
 {
     in.wifi = false;
-    ui_render(&fb, &in, 0);
+    render(0);
     show("no wifi");
-    TEST_ASSERT_TRUE(has_centered(8, "Mukklet"));
-    TEST_ASSERT_TRUE(has_centered(26, "Connecting to WiFi"));
+    TEST_ASSERT_TRUE(has_centered(&FONT_TITLE, 80, "Mukklet"));
+    TEST_ASSERT_TRUE(has_centered(&FONT_TEXT, 124, "Connecting to WiFi"));
 }
 
 static void test_waiting_shows_address(void)
 {
-    ui_render(&fb, &in, 0);
+    render(0);
     show("waiting");
-    TEST_ASSERT_TRUE(has_centered(26, "Waiting for Mukk"));
-    TEST_ASSERT_TRUE(has_centered(38, "mukklet.local"));
-    TEST_ASSERT_TRUE(has_centered(50, "192.168.1.50"));
+    TEST_ASSERT_TRUE(has_centered(&FONT_TEXT, 124, "Waiting for Mukk"));
+    TEST_ASSERT_TRUE(has_centered(&FONT_TEXT, 148, "mukklet.local"));
+    TEST_ASSERT_TRUE(has_centered(&FONT_TEXT, 170, "192.168.1.50"));
 }
 
 static void test_offline_after_silence(void)
 {
     playing();
-    ui_render(&fb, &in, PLAYER_TIMEOUT_MS);
+    render(PLAYER_TIMEOUT_MS);
     show("offline");
-    TEST_ASSERT_TRUE(has_centered(26, "Mukk offline"));
+    TEST_ASSERT_TRUE(has_centered(&FONT_TEXT, 124, "Mukk offline"));
 }
 
 static void test_now_playing(void)
 {
     playing();
-    ui_render(&fb, &in, 1000);
+    render(1000);
     show("now playing");
-    TEST_ASSERT_TRUE(has_text_at(0, 0, "Paranoid Android"));
-    TEST_ASSERT_TRUE(has_text_at(0, 11, "Radiohead"));
-    TEST_ASSERT_TRUE(has_text_at(0, 22, "OK Computer (1997)"));
-    TEST_ASSERT_TRUE(has_text_at(0, 33, "Next: Subterranean Homes")); // cut at the edge
-    TEST_ASSERT_TRUE(has_text_at(FONT_W + 3, 54, "2:06"));            // 1 s after 2:05
-    TEST_ASSERT_TRUE(has_centered(54, "80%"));
-    TEST_ASSERT_TRUE(has_text_at(FB_W - 4 * FONT_W, 54, "6:26"));
-    // Progress bar: filled to 126/386 of the width, then just the line.
-    TEST_ASSERT_TRUE(fb_get(&fb, 40, 46));
-    TEST_ASSERT_FALSE(fb_get(&fb, 42, 46));
-    TEST_ASSERT_TRUE(fb_get(&fb, 100, 47));
+    TEST_ASSERT_TRUE(has_centered(&FONT_TITLE, Y_TITLE, "Paranoid Android"));
+    TEST_ASSERT_TRUE(has_centered(&FONT_TEXT, Y_ARTIST, "Radiohead"));
+    TEST_ASSERT_TRUE(has_centered(&FONT_TEXT, Y_ALBUM, "OK Computer (1997)"));
+    TEST_ASSERT_TRUE(has_text_at(&FONT_TEXT, 18 + 12 + 5, Y_BOTTOM, "2:06")); // 1 s after 2:05
+    TEST_ASSERT_TRUE(has_centered(&FONT_TEXT, Y_BOTTOM, "80%"));
+    TEST_ASSERT_TRUE(
+        has_text_at(&FONT_TEXT, CANVAS_W - 18 - font_text_width(&FONT_TEXT, "6:26"), Y_BOTTOM, "6:26"));
+    // Progress bar: 126/386 of 216 px = 70 px done, the rest is track.
+    TEST_ASSERT_EQUAL_HEX16(C_ACCENT, canvas_get(&screen, MARGIN + 69, Y_BAR));
+    TEST_ASSERT_EQUAL_HEX16(C_TRACK, canvas_get(&screen, MARGIN + 71, Y_BAR));
+    TEST_ASSERT_EQUAL_HEX16(C_TRACK, canvas_get(&screen, CANVAS_W - MARGIN - 1, Y_BAR + 3));
+    TEST_ASSERT_EQUAL_HEX16(0, canvas_get(&screen, CANVAS_W - MARGIN, Y_BAR));
+    // The cover's place is held.
+    TEST_ASSERT_NOT_EQUAL(0, canvas_get(&screen, CANVAS_W / 2, 80));
 }
 
 static void test_long_line_scrolls(void)
 {
     playing();
-    // "Next: Subterranean Homesick Alien" is 33 chars = 198 px; at 3 s it
-    // has moved 30 px.
-    ui_render(&fb, &in, 3000);
-    show("scrolled");
-    TEST_ASSERT_TRUE(has_text_at(0, 0, "Paranoid Android")); // fits: stays
-    fb_t want;
-    fb_clear(&want);
-    fb_text(&want, -30, 33, "Next: Subterranean Homesick Alien");
-    for (int x = 0; x < FB_W; x++) {
-        for (int y = 33; y < 43; y++) TEST_ASSERT_EQUAL(fb_get(&want, x, y), fb_get(&fb, x, y));
+    strcpy(p.track.title, "Subterranean Homesick Alien (Remastered)");
+    int w = font_text_width(&FONT_TITLE, p.track.title);
+    TEST_ASSERT_TRUE(w > CANVAS_W - 2 * MARGIN);
+    render(0);
+    show("long title");
+    TEST_ASSERT_TRUE(has_text_at(&FONT_TITLE, MARGIN, Y_TITLE, "Subterranean")); // starts at the margin
+    render(3000); // 1 s into scrolling at 30 px/s
+    show("long title scrolled");
+    static uint16_t want_px[CANVAS_W * CANVAS_H];
+    canvas_t want = {.px = want_px, .y0 = 0, .h = CANVAS_H};
+    canvas_fill(&want, 0, 0, CANVAS_W, CANVAS_H, 0);
+    canvas_text_clipped(&want, &FONT_TITLE, MARGIN - 30, Y_TITLE, p.track.title, RGB(255, 255, 255), MARGIN,
+                        CANVAS_W - MARGIN);
+    for (int y = Y_TITLE; y < Y_TITLE + FONT_TITLE.line_h; y++) {
+        for (int x = 0; x < CANVAS_W; x++) {
+            TEST_ASSERT_EQUAL(canvas_get(&want, x, y), canvas_get(&screen, x, y));
+        }
+    }
+}
+
+// The device draws a frame as 14 bands of 20 rows; together they must be
+// exactly the full-height render.
+static void test_strips_match_full_render(void)
+{
+    playing();
+    strcpy(p.track.title, "Группа крови — Кино");
+    render(4321);
+    static uint16_t band_px[CANVAS_W * 20];
+    for (int y0 = 0; y0 < CANVAS_H; y0 += 20) {
+        canvas_t band = {.px = band_px, .y0 = y0, .h = 20};
+        ui_render(&band, &in, 4321);
+        TEST_ASSERT_EQUAL_MEMORY(&screen_px[y0 * CANVAS_W], band_px, sizeof(band_px));
     }
 }
 
@@ -161,19 +218,19 @@ static void test_nothing_playing(void)
     s.state.status = PLAY_IDLE;
     s.state.volume = 55;
     player_apply(&p, &s, 0);
-    ui_render(&fb, &in, 0);
+    render(0);
     show("nothing playing");
-    TEST_ASSERT_TRUE(has_centered(16, "Nothing playing"));
-    TEST_ASSERT_TRUE(has_centered(54, "55%"));
+    TEST_ASSERT_TRUE(has_centered(&FONT_TEXT, 124, "Nothing playing"));
+    TEST_ASSERT_TRUE(has_centered(&FONT_TEXT, Y_BOTTOM, "55%"));
 }
 
 static void test_cyrillic_title(void)
 {
     playing();
     strcpy(p.track.title, "Группа крови");
-    ui_render(&fb, &in, 0);
+    render(0);
     show("cyrillic");
-    TEST_ASSERT_TRUE(has_text_at(0, 0, "Группа крови"));
+    TEST_ASSERT_TRUE(has_centered(&FONT_TITLE, Y_TITLE, "Группа крови"));
 }
 
 int main(void)
@@ -186,6 +243,7 @@ int main(void)
     RUN_TEST(test_offline_after_silence);
     RUN_TEST(test_now_playing);
     RUN_TEST(test_long_line_scrolls);
+    RUN_TEST(test_strips_match_full_render);
     RUN_TEST(test_nothing_playing);
     RUN_TEST(test_cyrillic_title);
     return UNITY_END();

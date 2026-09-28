@@ -1,105 +1,130 @@
 #!/usr/bin/env python3
-"""Generates main/font_data.c from the X11 misc-fixed 6x10 font.
+"""Generates main/font_data.c: anti-aliased DejaVu Sans glyphs for the TFT.
 
-misc-fixed is public domain and ships with X11 as per-charset PCF files; the
-ones below cover ASCII, Latin-1, Central European, Turkish, Baltic and
-Cyrillic, which is what music tags here use. Glyphs are merged by Unicode
-codepoint (first file wins) into one table sorted for binary search, plus a
-few hand-drawn ones (ellipsis, playback icons, the missing-glyph box).
+DejaVu (Bitstream Vera license, free to embed) is rendered with Pillow at
+the sizes in FONTS, 4 bits of coverage per pixel, cropped to each glyph's
+ink. The codepoints cover ASCII, Latin-1, Latin Extended-A (Central
+European, Turkish, Baltic), Romanian, Cyrillic and the punctuation tags
+use, which is what music tags here use. Plus one hand-made glyph: the box
+drawn for anything else (FONT_MISSING).
 
-Needs Pillow (PcfFontFile), run once by hand; the output is checked in:
+Needs Pillow and fonts-dejavu-core, run once by hand; the output is checked
+in:
 
     python3 tools/gen_font.py
 """
 
-import codecs
-import gzip
-import io
 import os
 
-from PIL import PcfFontFile
+from PIL import Image, ImageDraw, ImageFont
 
-FONT_DIR = "/usr/share/fonts/X11/misc"
-CHARSETS = ["ISO8859-1", "ISO8859-2", "ISO8859-5", "ISO8859-9", "ISO8859-13", "ISO8859-15"]
-W, H, ASCENT = 6, 10, 8
+FONT_DIR = "/usr/share/fonts/truetype/dejavu"
+# C name -> (file, pixel size). Must match the externs in font.h.
+FONTS = {
+    "FONT_TITLE": ("DejaVuSans-Bold.ttf", 20),
+    "FONT_TEXT": ("DejaVuSans.ttf", 16),
+}
+RANGES = [
+    (0x0020, 0x007E),  # ASCII
+    (0x00A0, 0x017F),  # Latin-1 Supplement, Latin Extended-A
+    (0x0218, 0x021B),  # Romanian comma-below letters
+    (0x0400, 0x045F),  # Cyrillic
+    (0x0490, 0x0491),  # Ukrainian Ghe with upturn
+    (0x2010, 0x2027),  # dashes, quotes, bullet, ellipsis
+    (0x2030, 0x2030),  # per mille
+    (0x2032, 0x2033),  # primes
+    (0x2039, 0x203A),  # single guillemets
+    (0x20AC, 0x20AC),  # euro
+    (0x2116, 0x2116),  # numero
+    (0x2122, 0x2122),  # trade mark
+    (0x2212, 0x2212),  # minus
+]
+MISSING = 0xFFFD  # must match FONT_MISSING in font.h
+SKIP = {0x00AD}  # soft hyphen: never drawn
 OUT = os.path.join(os.path.dirname(__file__), "..", "main", "font_data.c")
 
-# Hand-drawn glyphs, 10 rows of 6 px ('#' = lit). Must match the codepoints
-# in font.h.
-EXTRA = {
-    0x2026: [  # horizontal ellipsis
-        "......", "......", "......", "......", "......",
-        "......", "......", "#.#.#.", "......", "......",
-    ],
-    0xE000: [  # FONT_ICON_PLAY
-        "......", "#.....", "##....", "###...", "####..",
-        "###...", "##....", "#.....", "......", "......",
-    ],
-    0xE001: [  # FONT_ICON_PAUSE
-        "......", "##.##.", "##.##.", "##.##.", "##.##.",
-        "##.##.", "##.##.", "##.##.", "......", "......",
-    ],
-    0xE002: [  # FONT_ICON_STOP
-        "......", "......", "#####.", "#####.", "#####.",
-        "#####.", "#####.", "......", "......", "......",
-    ],
-    0xFFFD: [  # FONT_MISSING: anything the font doesn't have
-        "......", "#####.", "#...#.", "#...#.", "#...#.",
-        "#...#.", "#...#.", "#####.", "......", "......",
-    ],
-}
+
+def render(font, ch, line_h):
+    """Returns (x, y, w, h, advance, 4-bit rows) of one glyph."""
+    advance = round(font.getlength(ch))
+    pad = line_h  # room for overhangs on either side
+    im = Image.new("L", (advance + 2 * pad, line_h + pad), 0)
+    ImageDraw.Draw(im).text((pad, 0), ch, font=font, fill=255, anchor="la")
+    bbox = im.getbbox()
+    if not bbox:  # space
+        return 0, 0, 0, 0, advance, []
+    x0, y0, x1, y1 = bbox
+    rows = [[(im.getpixel((x, y)) * 15 + 127) // 255 for x in range(x0, x1)] for y in range(y0, y1)]
+    return x0 - pad, y0, x1 - x0, y1 - y0, advance, rows
 
 
-def load(charset):
-    data = gzip.open(os.path.join(FONT_DIR, f"6x10-{charset}.pcf.gz")).read()
-    # PIL maps bytes to glyphs through the charset codec, which breaks for
-    # non-Latin-1 files; latin-1 keeps it a plain byte index.
-    return PcfFontFile.PcfFontFile(io.BytesIO(data), charset_encoding="iso8859-1")
+def missing_box(ascent):
+    """An outlined box, the height of a capital, for FONT_MISSING."""
+    w, h = ascent * 5 // 8, ascent * 3 // 4
+    rows = [[15 if y in (0, h - 1) or x in (0, w - 1) else 0 for x in range(w)] for y in range(h)]
+    return 1, ascent - h, w, h, w + 2, rows
 
 
-def rows_of(glyph):
-    (_, _), (x0, y0, _, _), _, im = glyph
-    rows = [0] * H
-    for y in range(im.size[1]):
-        for x in range(im.size[0]):
-            if im.getpixel((x, y)):
-                rows[ASCENT + y0 + y] |= 0x80 >> (x0 + x)
-    return rows
+def pack(rows):
+    """4 bits per pixel, row-major, two pixels per byte (high nibble first),
+    each row starting on a fresh byte."""
+    out = []
+    for row in rows:
+        row = row + [0] * (len(row) % 2)
+        out += [(row[i] << 4) | row[i + 1] for i in range(0, len(row), 2)]
+    return out
+
+
+def gen(name, file, size):
+    font = ImageFont.truetype(os.path.join(FONT_DIR, file), size)
+    ascent, descent = font.getmetrics()
+    line_h = ascent + descent
+    glyphs, bitmap = [], []
+    cps = [cp for lo, hi in RANGES for cp in range(lo, hi + 1) if cp not in SKIP]
+    for cp in sorted(cps + [MISSING]):
+        x, y, w, h, adv, rows = missing_box(ascent) if cp == MISSING else render(font, chr(cp), line_h)
+        glyphs.append((cp, w, h, x, y, adv, len(bitmap)))
+        bitmap += pack(rows)
+
+    lower = name.lower()
+    lines = [f"// {file} at {size} px: {len(glyphs)} glyphs, {len(bitmap)} bytes of bitmap", ""]
+    lines.append(f"static const uint8_t {lower}_bitmap[] = {{")
+    for i in range(0, len(bitmap), 16):
+        lines.append("    " + ", ".join(f"0x{b:02X}" for b in bitmap[i:i + 16]) + ",")
+    lines += ["};", "", f"static const font_glyph_t {lower}_glyphs[] = {{"]
+    for cp, w, h, x, y, adv, off in glyphs:
+        label = "missing" if cp == MISSING else "space" if cp in (0x20, 0xA0) else "backslash" if cp == 0x5C else chr(cp)
+        lines.append(f"    {{0x{cp:04X}, {w}, {h}, {x}, {y}, {adv}, {off}}}, // {label}")
+    lines += [
+        "};",
+        "",
+        f"const font_t {name} = {{",
+        f"    .glyphs = {lower}_glyphs,",
+        f"    .count = sizeof({lower}_glyphs) / sizeof({lower}_glyphs[0]),",
+        f"    .bitmap = {lower}_bitmap,",
+        f"    .line_h = {line_h},",
+        f"    .ascent = {ascent},",
+        "};",
+        "",
+    ]
+    return lines, len(glyphs), len(bitmap)
 
 
 def main():
-    glyphs = {}
-    for charset in CHARSETS:
-        font = load(charset)
-        decode = codecs.getdecoder(charset.replace("ISO", "iso-"))
-        for byte in list(range(0x20, 0x7F)) + list(range(0xA0, 0x100)):
-            g = font.glyph[byte]
-            if not g or byte == 0xAD:  # soft hyphen: never drawn
-                continue
-            try:
-                cp = ord(decode(bytes([byte]))[0])
-            except UnicodeDecodeError:
-                continue
-            glyphs.setdefault(cp, rows_of(g))
-    for cp, art in EXTRA.items():
-        glyphs[cp] = [sum(0x80 >> x for x, c in enumerate(row) if c == "#") for row in art]
-
     lines = [
-        "// Generated by tools/gen_font.py from the X11 misc-fixed 6x10 font",
-        "// (public domain). Don't edit by hand: change the script and rerun it.",
+        "// Generated by tools/gen_font.py from DejaVu Sans (Bitstream Vera",
+        "// license). Don't edit by hand: change the script and rerun it.",
         "",
         '#include "font.h"',
         "",
-        "const font_glyph_t FONT_GLYPHS[] = {",
     ]
-    for cp in sorted(glyphs):
-        rows = ", ".join(f"0x{r:02X}" for r in glyphs[cp])
-        name = "icon" if cp >= 0xE000 else "backslash" if cp == 0x5C else "space" if cp == 0x20 else "nbsp" if cp == 0xA0 else chr(cp)
-        lines.append(f"    {{0x{cp:04X}, {{{rows}}}}}, // {name}")
-    lines += ["};", "", "const int FONT_GLYPH_COUNT = sizeof(FONT_GLYPHS) / sizeof(FONT_GLYPHS[0]);", ""]
+    for name, (file, size) in FONTS.items():
+        more, n, nbytes = gen(name, file, size)
+        lines += more
+        print(f"{name}: {file} {size} px, {n} glyphs, {nbytes} bytes")
     with open(OUT, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
-    print(f"{len(glyphs)} glyphs -> {os.path.normpath(OUT)}")
+    print(f"-> {os.path.normpath(OUT)}")
 
 
 if __name__ == "__main__":
