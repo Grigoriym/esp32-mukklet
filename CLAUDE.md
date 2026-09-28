@@ -139,7 +139,8 @@ Checks that need hands (turning the knob): run the capture with
 Checks (same as CI, `.github/workflows/ci.yml`; IDF env sourced):
 `tools/test.sh` (host unit tests; `SHOW_ART=1` prints the rendered screens
 as ASCII art), `tools/format.sh --check`, `tools/lint.sh`,
-`tools/size_check.sh`. WiFi credentials: `main/wifi_secrets.h` (gitignored,
+`tools/size_check.sh`. Format and lint only see **git-tracked** files:
+`git add` new ones first, or CI catches what the local run missed. WiFi credentials: `main/wifi_secrets.h` (gitignored,
 template `.example`).
 
 Playing Mukk's role: `python3 tools/fake_mukk.py [--host IP] [--seconds N]`
