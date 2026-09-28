@@ -130,7 +130,12 @@ is loaded, send `"track": null`.
 | `next` | The track `next` would play, or `null` when it isn't known (shuffle on, end of folder with repeat off). |
 
 ### `cover`
-Sent right after every `track` (unless `hello` said `"format": "none"`).
+Sent right after a `track` whose `id` or art changed, and always after the
+first `track` of a connection (unless `hello` said `"format": "none"`). A
+`track` that repeats the same track (for example, only `next` changed) comes
+without a `cover`: the display keeps the art it has for that `id`. This
+avoids a needless redraw, since the display blanks its cover while a new one
+arrives.
 
 With art:
 ```json
