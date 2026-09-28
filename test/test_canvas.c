@@ -96,6 +96,28 @@ static void test_image_big_endian_and_clipped(void)
     TEST_ASSERT_EQUAL_HEX16(0, canvas_get(&band, 2, 21));
 }
 
+static void test_ellipse_antialiased_and_clipped(void)
+{
+    canvas_ellipse(&full, 100, 100, 20, 9.5f, WHITE, 0, CANVAS_H);
+    TEST_ASSERT_EQUAL_HEX16(WHITE, canvas_get(&full, 100, 100));
+    TEST_ASSERT_EQUAL_HEX16(WHITE, canvas_get(&full, 118, 100)); // inside, near the end of the long axis
+    TEST_ASSERT_EQUAL_HEX16(0, canvas_get(&full, 121, 100));     // outside
+    TEST_ASSERT_EQUAL_HEX16(0, canvas_get(&full, 100, 111));
+    uint16_t rim = canvas_get(&full, 100, 90); // the edge runs through this pixel's middle: half
+    TEST_ASSERT_TRUE(rim != 0 && rim != WHITE);
+    TEST_ASSERT_EQUAL_HEX16(0, canvas_get(&full, 81, 91)); // corner of the box: outside
+
+    // Only the clip rows, and never past the screen (ASan).
+    memset(full_px, 0, sizeof(full_px));
+    canvas_ellipse(&full, 5, 5, 30, 30, WHITE, 3, 8);
+    TEST_ASSERT_EQUAL_HEX16(0, canvas_get(&full, 5, 2));
+    TEST_ASSERT_EQUAL_HEX16(WHITE, canvas_get(&full, 5, 3));
+    TEST_ASSERT_EQUAL_HEX16(WHITE, canvas_get(&full, 5, 7));
+    TEST_ASSERT_EQUAL_HEX16(0, canvas_get(&full, 5, 8));
+    canvas_ellipse(&full, CANVAS_W, CANVAS_H, 30, 30, WHITE, 0, CANVAS_H + 50);
+    TEST_ASSERT_EQUAL_HEX16(WHITE, canvas_get(&full, CANVAS_W - 1, CANVAS_H - 1));
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -105,5 +127,6 @@ int main(void)
     RUN_TEST(test_text_blends_and_reports_width);
     RUN_TEST(test_text_clip);
     RUN_TEST(test_image_big_endian_and_clipped);
+    RUN_TEST(test_ellipse_antialiased_and_clipped);
     return UNITY_END();
 }

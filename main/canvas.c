@@ -1,3 +1,4 @@
+#include <math.h>
 #include "canvas.h"
 
 uint16_t canvas_get(const canvas_t *c, int x, int y)
@@ -38,6 +39,35 @@ static uint16_t blend(uint16_t bg, uint16_t fg, int a)
     int g = ((bg >> 5) & 0x3F) + ((((fg >> 5) & 0x3F) - ((bg >> 5) & 0x3F)) * a + 7) / 15;
     int b = (bg & 0x1F) + (((fg & 0x1F) - (bg & 0x1F)) * a + 7) / 15;
     return (uint16_t)((r << 11) | (g << 5) | b);
+}
+
+void canvas_ellipse(canvas_t *c, float cx, float cy, float rx, float ry, uint16_t color, int clip_y0,
+                    int clip_y1)
+{
+    int y0 = (int)floorf(cy - ry);
+    int y1 = (int)ceilf(cy + ry);
+    int x0 = (int)floorf(cx - rx);
+    int x1 = (int)ceilf(cx + rx);
+    if (y0 < clip_y0) y0 = clip_y0;
+    if (y0 < c->y0) y0 = c->y0;
+    if (y1 > clip_y1) y1 = clip_y1;
+    if (y1 > c->y0 + c->h) y1 = c->y0 + c->h;
+    if (x0 < 0) x0 = 0;
+    if (x1 > CANVAS_W) x1 = CANVAS_W;
+    for (int y = y0; y < y1; y++) {
+        uint16_t *row = &c->px[(y - c->y0) * CANVAS_W];
+        float v = ((float)y + 0.5f - cy) / ry;
+        for (int x = x0; x < x1; x++) {
+            float u = ((float)x + 0.5f - cx) / rx;
+            // Distance to the edge in px, roughly: f / |grad f| for f = u^2 + v^2 - 1.
+            float f = u * u + v * v - 1;
+            float g = 2 * sqrtf(u * u / (rx * rx) + v * v / (ry * ry));
+            float cover = g > 0 ? 0.5f - f / g : 1;
+            if (cover <= 0) continue;
+            int a = cover >= 1 ? 15 : (int)(cover * 15 + 0.5f);
+            if (a) row[x] = a == 15 ? color : blend(row[x], color, a);
+        }
+    }
 }
 
 static void draw_glyph(canvas_t *c, const font_t *font, const font_glyph_t *g, int pen_x, int y,

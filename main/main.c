@@ -15,6 +15,7 @@ static const char *TAG = "main";
 
 static player_t s_player;
 static bool s_display_ok;
+static int64_t s_waiting_since; // last frame that wasn't "Waiting for Mukk"
 
 static int64_t now_ms(void)
 {
@@ -37,12 +38,16 @@ static void render(void)
     link_snapshot(&s_player);
     char ip[16] = "";
     struct frame f = {
-        .in = {.wifi = wifi_ip(ip, sizeof(ip)), .ip = ip, .player = &s_player},
+        .in = {.wifi = wifi_ip(ip, sizeof(ip)),
+               .ip = ip,
+               .player = &s_player,
+               .waiting_since_ms = s_waiting_since},
         .now_ms = now_ms(), // one moment for all strips of the frame
     };
     f.in.cover = link_cover_acquire(s_player.has_track ? s_player.track.id : "");
     if (s_display_ok) display_frame(draw_strip, &f);
     link_cover_release();
+    if (!f.in.wifi || s_player.session) s_waiting_since = f.now_ms;
 }
 
 // Knob mapping: turn = volume, press = play/pause, double = next, long =

@@ -17,6 +17,14 @@
 #define MARGIN   12
 #define C_ACCENT RGB(255, 150, 40)
 #define C_TRACK  RGB(60, 60, 60)
+// The waiting screen's eyes.
+#define EYE_Y    62
+#define EYE_L    78 // centre x of the left one
+#define EYE_R    162
+#define C_SCLERA RGB(235, 235, 235)
+#define C_LID    RGB(70, 70, 80)
+#define T_ASLEEP (20000 + 60000 + 6000 + 1000) // bored, droopy, three nods, then 1 s into sleep
+#define T_JOLT   (T_ASLEEP - 1000 + 25000)     // woken with a start
 
 static uint16_t screen_px[CANVAS_W * CANVAS_H];
 static canvas_t screen = {.px = screen_px, .y0 = 0, .h = CANVAS_H};
@@ -144,6 +152,70 @@ static void test_waiting_shows_address(void)
     TEST_ASSERT_TRUE(has_centered(&FONT_TEXT, 170, "192.168.1.50"));
 }
 
+// Pixels of colour in the box around an eye.
+static int count_in_eye(int cx, uint16_t color)
+{
+    int n = 0;
+    for (int y = EYE_Y - 40; y <= EYE_Y + 40; y++) {
+        for (int x = cx - 32; x <= cx + 32; x++) n += canvas_get(&screen, x, y) == color;
+    }
+    return n;
+}
+
+static void test_waiting_eyes_awake_then_asleep(void)
+{
+    in.waiting_since_ms = 5000;
+    render(5000);
+    show("waiting: eyes open");
+    TEST_ASSERT_TRUE(count_in_eye(EYE_L, C_SCLERA) > 1500);
+    TEST_ASSERT_TRUE(count_in_eye(EYE_R, C_SCLERA) > 1500);
+    TEST_ASSERT_TRUE(count_in_eye(EYE_L, C_ACCENT) > 100); // the iris
+    // Bored: the lids hang a little from the start.
+    TEST_ASSERT_EQUAL_HEX16(C_LID, canvas_get(&screen, EYE_L, EYE_Y - 30));
+
+    render(5000 + 20000 + 59000);
+    show("waiting: droopy");
+    TEST_ASSERT_EQUAL_HEX16(C_LID, canvas_get(&screen, EYE_L, EYE_Y - 10));
+
+    render(5000 + T_ASLEEP);
+    show("waiting: asleep");
+    TEST_ASSERT_EQUAL(0, count_in_eye(EYE_L, C_SCLERA));
+    TEST_ASSERT_EQUAL(0, count_in_eye(EYE_R, C_SCLERA));
+    TEST_ASSERT_EQUAL(0, count_in_eye(EYE_L, C_ACCENT));
+    TEST_ASSERT_TRUE(has_centered(&FONT_TEXT, 124, "Waiting for Mukk")); // the z's stay clear of it
+
+    render(5000 + T_JOLT + 100);
+    show("waiting: jolted awake");
+    TEST_ASSERT_EQUAL(0, count_in_eye(EYE_L, C_LID)); // wide open
+    TEST_ASSERT_TRUE(count_in_eye(EYE_L, C_SCLERA) > 1800);
+}
+
+// Where the left iris is (centre of its pixels, x * 1000 + y), or -1.
+static int iris_at(void)
+{
+    long sx = 0, sy = 0, n = 0;
+    for (int y = EYE_Y - 40; y <= EYE_Y + 40; y++) {
+        for (int x = EYE_L - 32; x <= EYE_L + 32; x++) {
+            if (canvas_get(&screen, x, y) == C_ACCENT) sx += x, sy += y, n++;
+        }
+    }
+    return n ? (int)(sx / n) * 1000 + (int)(sy / n) : -1;
+}
+
+// Bored, not frozen: the eyes look somewhere else every beat or so.
+static void test_waiting_eyes_look_around(void)
+{
+    int seen[64], n_seen = 0;
+    for (int64_t t = 0; t < 30000; t += 900) {
+        render(t);
+        int at = iris_at();
+        bool known = false;
+        for (int i = 0; i < n_seen; i++) known |= seen[i] == at;
+        if (!known && n_seen < 64) seen[n_seen++] = at;
+    }
+    TEST_ASSERT_TRUE(n_seen >= 5);
+}
+
 static void test_offline_after_silence(void)
 {
     playing();
@@ -234,6 +306,19 @@ static void test_strips_match_full_render(void)
     }
 }
 
+static void test_waiting_strips_match_full_render(void)
+{
+    for (int64_t t = 0; t < 150000; t += 7777) {
+        render(t);
+        static uint16_t band_px[CANVAS_W * 20];
+        for (int y0 = 0; y0 < CANVAS_H; y0 += 20) {
+            canvas_t band = {.px = band_px, .y0 = y0, .h = 20};
+            ui_render(&band, &in, t);
+            TEST_ASSERT_EQUAL_MEMORY(&screen_px[y0 * CANVAS_W], band_px, sizeof(band_px));
+        }
+    }
+}
+
 static void test_nothing_playing(void)
 {
     player_session_start(&p, 0);
@@ -263,6 +348,9 @@ int main(void)
     RUN_TEST(test_scroll_offset);
     RUN_TEST(test_no_wifi);
     RUN_TEST(test_waiting_shows_address);
+    RUN_TEST(test_waiting_eyes_awake_then_asleep);
+    RUN_TEST(test_waiting_eyes_look_around);
+    RUN_TEST(test_waiting_strips_match_full_render);
     RUN_TEST(test_offline_after_silence);
     RUN_TEST(test_now_playing);
     RUN_TEST(test_cover_art_drawn);
