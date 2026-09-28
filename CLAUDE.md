@@ -49,6 +49,14 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
   the fallback if 1.69" turns out too small) and a 2.8" ILI9341 (TN).
   Rejected: 1.8" 128×160 ST7735 (low-res, often TN), 1.3" 240×240 (tiny,
   many have no CS pin), 2.8" ILI9341 (TN, resistive touch).
+- **Both ST7789V2 screens arrived and checked (2026-09-28)** with
+  `../esp32-hw-checks` (ST7789 test via `esp_lcd`, 40 MHz SPI on the
+  breadboard, wiring as planned below, one test per knob press): colours
+  right with RGB order + inversion on, 20 px row offset right (border
+  visible on all 4 edges), smooth grey ramp, BLK PWM fade smooth. Both
+  show the picture **rotated 180° with the pin header at the bottom**
+  (not mirrored): fix in software for however it gets mounted. Screen #1
+  has one small dark dot (fine by the user); #2 is clean.
 - **Planned TFT wiring**: SCL D18, SDA D23, RES GPIO17 (TX2), DC GPIO16
   (RX2), CS D5, BLK D4. Keeps I2C D21/D22 and the knob D25/D26/D27 free,
   avoids D2 (onboard LED).
