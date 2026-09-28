@@ -105,7 +105,13 @@ anti-aliased), `gesture` (single/double/long press), `encoder_decode`
   Generated into `main/font_data.c` by `tools/gen_font.py` (needs Pillow
   + fonts-dejavu-core; rerun, don't hand-edit), ~69 KB. Unknown characters
   draw as a box. Size readable on the panel, per the user.
-- **Layout** (240x280): grey 160x160 cover placeholder at the top, title /
+- **Cover art** (milestone 3, 2026-09-28): `hello` asks for 160x160
+  `rgb565` (`PROTO_COVER_*` in `proto.h`); pure `cover.c` assembles the
+  binary frames straight into a static 51 KB buffer in `link.c` (own
+  mutex, held by `main.c` for a whole frame via
+  `link_cover_acquire/release`); `canvas_image_be()` + `ui.c` draw it in
+  place of the grey placeholder. DRAM 87 KB free with it.
+- **Layout** (240x280): 160x160 cover (grey placeholder until one arrives) at the top, title /
   artist / album (year), each centred or scrolling within 12 px margins,
   progress bar, then status icon, position, volume %, duration (18 px
   margins for the rounded corners).
@@ -117,7 +123,8 @@ anti-aliased), `gesture` (single/double/long press), `encoder_decode`
   (`CONFIG_HTTPD_WS_POST_HANDSHAKE_CB_SUPPORT`).
 - Verified on the board 2026-09-28 with the **real Mukk**: connects,
   shows tracks, right way up (pins at the bottom), text readable, per the
-  user.
+  user. Cover art verified the same way (same day): arrives about 1 s after
+  connect, looks right per the user.
 
 ## Open questions
 - Which fields to show: the colour layout is a first guess.
@@ -128,6 +135,11 @@ ESP-IDF, same setup as the desk display:
 `. ~/esp/esp-idf/export.sh && idf.py -p /dev/ttyUSB0 build flash`.
 If the weather station is plugged in too, the ports shift (`ttyUSB1`):
 check `ls /dev/ttyUSB*` and the MAC above before flashing.
+If flashing fails with "Serial data stream stopped: Possible serial noise"
+(happened 2026-09-28 at the default and 460800 baud), add `-b 115200`.
+Mukk connects to the real board (`mukklet.local`) by default: to test
+against `tools/fake_display.py`, point Mukk's display host at
+`localhost:8765` first, or the fake never sees a connection.
 Boot logs (`idf.py monitor` needs a TTY the harness doesn't have):
 `tools/serial_log.py` resets the board and captures, run with the IDF
 python env,
@@ -148,14 +160,5 @@ connects to the display, sends a small playlist (Cyrillic, long title, no
 tags, unknown duration) and obeys the knob, printing each `cmd`.
 
 ## Next step
-Cover art (milestone 3): code written, host tests + format + lint + build +
-size check pass (2026-09-28; DRAM 87 KB free with the 51 KB cover buffer),
-**not yet run on the board**. `hello` asks for 160x160 `rgb565`
-(`PROTO_COVER_*` in `proto.h`); pure `cover.c` assembles the binary frames
-straight into a static 51 KB buffer in `link.c` (own mutex, held by
-`main.c` for a whole frame via `link_cover_acquire/release`);
-`canvas_image_be()` + `ui.c` draw it in place of the placeholder;
-`fake_mukk.py` sends made-up covers as `hello` asks. To do:
-1. Mukk's cover code against `tools/fake_display.py --format rgb565
-   --size 160` (user plays a track in Mukk, host `localhost:8765`).
-2. Flash, check with `tools/fake_mukk.py`, then the real Mukk.
+Milestone 3 (cover art) done. Open: which fields to show, mounting
+orientation (see Open questions).
