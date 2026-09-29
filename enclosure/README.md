@@ -63,7 +63,8 @@ Material: PETG preferred (PLA softens ~55 °C). Fit clearance 0.3 mm (`clr`).
 
 ## Test print checklist (`test_front`)
 
-1. TFT: the glass sits flat on the panel, the picture fills the window with
-   no dark edge and no cut-off pixels, the screws pull the board flat.
+1. TFT: the glass sits flat on the panel, no pixels cut off at the window's
+   edges (the window is the glass minus a 0.5 mm lip; the pixel area's
+   position wasn't measured), the screws pull the board flat.
 2. KY-040: it snaps in, the shaft is centred in the 16 mm hole, and the cap
    turns and presses without rubbing the top.

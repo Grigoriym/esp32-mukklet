@@ -21,9 +21,8 @@ marked `ASSUMED` in `enclosure.scad`.
 - Notch between the ears: 18.91 wide, 5.13 deep from the ear tops (so the glass top, 4.73, overhangs it by 0.4)
 - Glass position: ear tops to glass top 4.73, to glass bottom 43.13; bottom gap 4.94 (47.96 - 43.13 = 4.83,
   close enough); left = right by eye
-- Picture (lit area) 27.97 x 32.63 (seller); position from the cover art on screen
-  (cover = 160 px at x 40, y 8): board top edge to cover top _, board left edge to
-  cover left _, cover width _ (expect ~18.6)
+- Picture (pixel area) 27.97 x 32.63 (seller). Its position under the glass is not measured
+  (skipped 2026-09-29): the window is the glass minus a 0.5 lip, checked on the test print
 - Mounting holes: diameter _ (model 2.2, M2), centres 26 left-right x 43 top-bottom (seller)
 - Front around the holes clear of the glass's cable and parts: _ (the case puts screw posts there)
 - Pin header: pins come out of the back (photos), _ long from the back surface incl. the plastic

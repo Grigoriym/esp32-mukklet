@@ -45,9 +45,9 @@ tft_glass_top = 4.73; // ear tops to the glass's top edge (measured; bottom gap 
 tft_glass_h = 43.13 - tft_glass_top; // ear tops to the glass bottom 43.13 (measured). The
                                      // glass alone measured 37.43: that missed ~1 mm, likely the step
                                      // at the top; this keeps the whole glass stack out
-tft_lit_w = 27.97; // seller
-tft_lit_h = 32.63; // seller
-tft_lit_dz = 0; // lit centre above the glass centre (ASSUMED: centred)
+tft_lit_w = 27.97; // pixel area, seller; its position under the glass isn't measured:
+tft_lit_h = 32.63; // the window is sized from the glass instead (tft_lip)
+tft_lip = 0.5; // the panel covers this much of the glass's edge all round
 tft_hole_x = 26; // hole centres, seller
 tft_hole_z = 43;
 tft_hole_d = 2.2; // ASSUMED, M2
@@ -120,9 +120,12 @@ tft_v = panel_len / 2; // board centre, up the slope from the skirt's edge
 tft_post_d = 4.0; // the glass reaches to ~4.73 below the ear tops: the top posts clear it by ~0.2
 tft_pilot = 1.6;
 tft_glass_z0 = tft_h / 2 - tft_glass_top - tft_glass_h; // glass bottom edge, from the board centre
-lit_z = tft_glass_z0 + tft_glass_h / 2 + tft_lit_dz; // lit centre above the board centre
-win_w = tft_lit_w + 1;
-win_h = tft_lit_h + 1;
+// window: the glass minus the lip, centred on the glass. Leaves 0.5 spare
+// round the pixel area left/right, ~2.4 top/bottom, if it's centred: the
+// test print shows whether pixels get cut off
+lit_z = tft_glass_z0 + tft_glass_h / 2; // window centre above the board centre
+win_w = tft_glass_w - 2 * tft_lip;
+win_h = tft_glass_h - 2 * tft_lip;
 
 // knob on top, centred: KY-040 board flat under the top, shaft end to the
 // front, pins to the back; held by two snap hooks on its long edges,
@@ -164,6 +167,7 @@ assert(norm([W - boss_in - esp_x1, D - boss_in - esp_y1]) > boss_d / 2 + 0.5 || 
 assert(esp_x1 < W - wall && esp_y1 < D - wall, "ESP32 hits a wall");
 assert(tft_h / 2 - tft_hole_z / 2 + tft_post_d / 2 < tft_glass_top, "TFT posts hit the glass");
 assert(tft_hole_x / 2 - tft_post_d / 2 > tft_notch_w / 2, "TFT top posts off the ears");
+assert(win_w > tft_lit_w && win_h > tft_lit_h, "window smaller than the pixel area");
 
 // JST-XH sockets (vertical, 2.5 pitch) on the carrier: [name, pins, col,
 // row of the first pin, pin line along X?], in the free column left of the
