@@ -55,10 +55,11 @@ tft_hdr_edge = 2.0; // pin row's centre above the bottom edge (ASSUMED)
 tft_pins = 8.25; // pins + plastic behind the PCB, header on the back (photos); length ASSUMED, like the OLED's
 tft_dupont = 14; // a plugged-in 8-pin Dupont housing adds this
 tft_back = 2; // parts on the PCB's back (ASSUMED)
-tft_notch_w = 19; // notch between the ears at the top (ASSUMED, from the photos)
-tft_notch_d = 4.7; // ear tops to the notch's bottom edge (ASSUMED, from the photos)
+tft_notch_w = 18.91; // notch between the ears at the top
+tft_notch_d = 5.13; // ear tops to the notch's bottom edge: the glass's top step
+                    // (4.73) overhangs it by 0.4
 tft_flex_w = 14; // flat cable, wraps round the notch's edge to the back (ASSUMED, photos)
-tft_flex_bulge = 0.8; // its bend past the notch's edge (ASSUMED)
+tft_flex_bulge = 0.8; // its bend above the glass's top edge (ASSUMED)
 tft_flex_conn = 1.2; // its connector on the back: height (ASSUMED)
 tft_flex_conn_l = 7; // and length down from the notch (ASSUMED, photos)
 
@@ -323,11 +324,12 @@ module tft_standin(plug = true) tft_frame() {
   }
   // flat cable: out of the glass's top step, round the notch's edge, to its connector on the back
   nz = tft_h / 2 - tft_notch_d;
+  fz = tft_h / 2 - tft_glass_top + tft_flex_bulge; // top of the bend
   back = tft_front + tft_pcb_t;
   color("orange") {
-    box([-tft_flex_w / 2, 0.6, tft_glass_z0 + tft_glass_h - 0.5], [tft_flex_w / 2, tft_front, nz + tft_flex_bulge]);
-    box([-tft_flex_w / 2, 0.6, nz + eps], [tft_flex_w / 2, back + 0.3, nz + tft_flex_bulge]);
-    box([-tft_flex_w / 2 - 0.5, back + eps, nz - tft_flex_conn_l], [tft_flex_w / 2 + 0.5, back + tft_flex_conn, nz + tft_flex_bulge]);
+    box([-tft_flex_w / 2, 0.6, tft_glass_z0 + tft_glass_h - 0.5], [tft_flex_w / 2, tft_front, fz]);
+    box([-tft_flex_w / 2, 0.6, nz + eps], [tft_flex_w / 2, back + 0.3, fz]);
+    box([-tft_flex_w / 2 - 0.5, back + eps, nz - tft_flex_conn_l], [tft_flex_w / 2 + 0.5, back + tft_flex_conn, nz + 1]);
   }
   color("steelblue") box([-11, tft_front + tft_pcb_t, -tft_h / 2 + tft_hdr_edge + 3], [11, tft_front + tft_pcb_t + tft_back, 15]);
   hz = -tft_h / 2 + tft_hdr_edge;
