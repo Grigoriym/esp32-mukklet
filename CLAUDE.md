@@ -183,12 +183,19 @@ out"): first draft is a 50 x 82 x 62 wedge, TFT portrait on a panel tilted
 20°, pins at the bottom (so `FLIP_180` stays 1), knob on top centred, USB
 out the back, ESP32 on a 40 x 44 perfboard carrier with JST-XH sockets.
 `enclosure/export.sh` = clash check (printed parts vs stand-ins, and
-stand-ins incl. plugs vs each other) + STLs + renders. The TFT isn't
-measured yet: `enclosure/MEASUREMENTS.md` + the "Mukklet Caliper Guide"
-artifact (https://claude.ai/artifact/QTPxyAx3xMNtYf33rQmrr3), same
-format as the desk display's; update its step statuses as numbers arrive.
+stand-ins incl. plugs vs each other, and fails on undefined-variable
+warnings) + STLs + renders. TFT measured 2026-09-29 (`MEASUREMENTS.md`,
+"Mukklet Caliper Guide" artifact
+https://claude.ai/artifact/QTPxyAx3xMNtYf33rQmrr3): ears + a notch at the
+top with the glass's flat cable wrapping round it. The user skips
+measurements that feel pointless (pixel-area position, hole-to-glass gap,
+standard pin lengths): design around the unknown instead (window = glass
+minus a 0.5 lip; posts flattened 0.3 clear of the glass) and let the test
+print check it. Ask for a measurement from edge to edge, never from a
+hole's centre. Resoldering the TFT header (right-angle / wires) is on the
+table if the case depth matters (~10 mm shallower).
 
 ## Next step
-Milestone 3 (cover art) done. Enclosure: the user measures the TFT with
-the caliper guide; then update the model, cardboard mock-up (port the desk
-display's `cardboard.py`), test print of `test_front`.
+Milestone 3 (cover art) done. Enclosure: measurements done; next the
+cardboard mock-up (port the desk display's `cardboard.py`), then the test
+print of `test_front`.

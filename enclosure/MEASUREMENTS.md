@@ -3,10 +3,9 @@
 The case model (`enclosure.scad`) is built from these numbers, in mm. The
 ESP32 and KY-040 are the same parts as the desk display's and were measured
 there (`../esp32-desk-display/enclosure/MEASUREMENTS.md`, 2026-09-28). The
-TFT is still to measure: the "Mukklet Caliper Guide" artifact
-(https://claude.ai/artifact/QTPxyAx3xMNtYf33rQmrr3) walks through it one
-step at a time. Until then the model uses the seller's drawing and guesses,
-marked `ASSUMED` in `enclosure.scad`.
+TFT was measured 2026-09-29 with the "Mukklet Caliper Guide" artifact
+(https://claude.ai/artifact/QTPxyAx3xMNtYf33rQmrr3); what was skipped comes
+from the photos or standard parts, marked in `enclosure.scad`.
 
 ## TFT (1.69" ST7789V2, GERUI), held pins at the bottom, glass towards you
 - Board width x height: 31.22 x 47.96 (2026-09-29; 48.01 the first time), widest points: the top
@@ -26,8 +25,8 @@ marked `ASSUMED` in `enclosure.scad`.
 - Mounting holes: diameter 1.79 measured (inside jaws read low, likely 2.0 for M2; try an M2 screw), centres 26.19 left-right x 42.91 top-bottom (measured)
 - Front around the holes: not measured; the posts are flattened 0.3 mm clear of the glass instead
 - Pin header: standard straight header on the back (photos), taken as 8.5 from the back surface
-  incl. the plastic (not measured; resoldering to right-angle pins is an option if the depth matters); pin row centre _ above the bottom edge (model 2.0)
-- Tallest part on the back, header not counted: _ (model 2)
+  incl. the plastic (not measured; resoldering to right-angle pins is an option if the depth matters); pin row centre ~2.0 above the bottom edge (photo)
+- Tallest part on the back, header not counted: tiny SMDs and the flat cable soldered flat (photo); model keeps 2 clear
 
 ## ESP32 DevKit (ELEGOO ESP-32S, 30-pin), from the desk display
 - Board 51.49 x 28.36, pin rows 25.4 apart, 15 pins each
@@ -38,4 +37,4 @@ marked `ASSUMED` in `enclosure.scad`.
 - Board 26.18 x 19.29, holes 2.85 (16.48 apart)
 - Board bottom to the cap's top 31.79, to the cap's lower edge 15.58
 - Cap diameter 14.78; shaft centre ~8.6 from the short edge away from the pins
-- Pins past the board's end: _ (model 6)
+- Pins past the board's end: ~6, standard right-angle header (not measured)
