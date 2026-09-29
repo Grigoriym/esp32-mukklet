@@ -41,10 +41,10 @@ tft_h = 47.96; // ear tops to the bottom edge (48.01 the first time). The top ed
 tft_pcb_t = 1.21; // measured on an ear
 tft_front = 2.92 - tft_pcb_t; // PCB front face to the glass front (2.92 glass front to board back)
 tft_glass_w = 30.06; // measured, incl. the step at the top; centred left-right (by eye)
+tft_glass_top = 4.73; // ear tops to the glass's top edge (measured; bottom gap 4.94 ~ 47.96 - 43.13)
 tft_glass_h = 43.13 - tft_glass_top; // ear tops to the glass bottom 43.13 (measured). The
                                      // glass alone measured 37.43: that missed ~1 mm, likely the step
                                      // at the top; this keeps the whole glass stack out
-tft_glass_top = 4.73; // ear tops to the glass's top edge (measured; bottom gap 4.94 ~ 47.96 - 43.13)
 tft_lit_w = 27.97; // seller
 tft_lit_h = 32.63; // seller
 tft_lit_dz = 0; // lit centre above the glass centre (ASSUMED: centred)

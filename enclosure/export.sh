@@ -19,6 +19,11 @@ done
 echo "clash check"
 # an empty result makes openscad exit non-zero: that is the pass case
 log=$(openscad "${defs[@]}" -D 'part="clash"' -o /tmp/enclosure_clash.stl "$scad" 2>&1 || true)
+if grep -qE "WARNING: (Ignoring unknown|undefined operation|Unable to convert)" <<<"$log"; then
+    echo "$log" | grep WARNING >&2
+    echo "FAIL: model warnings (a variable used before it's defined?)" >&2
+    exit 1
+fi
 if ! grep -q "Current top level object is empty" <<<"$log"; then
     echo "FAIL: parts overlap a module stand-in (open /tmp/enclosure_clash.stl)" >&2
     exit 1
