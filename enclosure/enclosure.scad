@@ -48,8 +48,8 @@ tft_glass_h = 43.13 - tft_glass_top; // ear tops to the glass bottom 43.13 (meas
 tft_lit_w = 27.97; // pixel area, seller; its position under the glass isn't measured:
 tft_lit_h = 32.63; // the window is sized from the glass instead (tft_lip)
 tft_lip = 0.5; // the panel covers this much of the glass's edge all round
-tft_hole_x = 26; // hole centres, seller
-tft_hole_z = 43;
+tft_hole_x = 26.19; // hole centres, measured; centred on the board (ASSUMED)
+tft_hole_z = 42.91;
 tft_hole_d = 1.79; // measured with the inside jaws, which read low (the OLED's 1.70 was
                    // likely 2.0): likely 2.0, for M2; if an M2 screw won't pass, M1.7
 tft_hdr_edge = 2.0; // pin row's centre above the bottom edge (ASSUMED)
