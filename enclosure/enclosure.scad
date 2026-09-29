@@ -38,8 +38,8 @@ tft_w = 31.22; // across the two ears at the top (the widest part)
 tft_h = 48.01; // ear tops to the bottom edge. The top edge has a notch
               // between the ears (holes on the ears); the glass's flex cable
               // wraps through it to a connector on the back (photos 2026-09-29)
-tft_pcb_t = 1.6; // ASSUMED
-tft_front = 1.8; // PCB front face to the glass front (ASSUMED: 1.56 panel + tape)
+tft_pcb_t = 1.21; // measured on an ear
+tft_front = 2.92 - tft_pcb_t; // PCB front face to the glass front (2.92 glass front to board back)
 tft_glass_w = 30.07; // ASSUMED (usual 1.69" panel outline), centred left-right
 tft_glass_h = 37.43; // ASSUMED
 tft_glass_top = 5.3; // glass edge below the ear tops (ASSUMED: centred)

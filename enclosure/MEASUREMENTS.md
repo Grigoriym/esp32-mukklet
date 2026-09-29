@@ -15,7 +15,7 @@ marked `ASSUMED` in `enclosure.scad`.
   connector on the back (photos 2026-09-29). "Top" = the ear tops.
 - Back (photo): flex connector near the top, a few small SMD parts
   (C1 C2 R1-R3 U2) in the middle, rest flat; bottom holes beside the pin row
-- Thickness, glass front to board back: _ ; board alone: _ (model guesses 1.6 + 1.8)
+- Thickness, glass front to board back: 2.92; board alone (on an ear): 1.21; so the glass front is 1.71 above the board
 - Glass size: _ (model guesses 30.07 x 37.43, the usual 1.69" panel)
 - Glass position: top gap _, bottom gap _, left gap _ (model: centred left-right, top gap 5.3)
 - Picture (lit area) 27.97 x 32.63 (seller); position from the cover art on screen
