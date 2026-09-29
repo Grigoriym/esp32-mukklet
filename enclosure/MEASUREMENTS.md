@@ -18,7 +18,8 @@ marked `ASSUMED` in `enclosure.scad`.
 - Thickness, glass front to board back: 2.92; board alone (on an ear): 1.21; so the glass front is 1.71 above the board
 - Glass size: 30.06 x 37.43 (w x h, incl. the step with the metal strip at the top); matches the usual 1.69" panel outline
 - Notch between the ears: width _, depth from the ear tops _ (model 19 x 4.7, from the photos)
-- Glass position: top gap _, bottom gap _, left gap _ (model: centred left-right, top gap 5.3)
+- Glass position: top gap (ear tops to glass) 4.73, bottom gap 4.94, left = right by eye.
+  4.73 + 37.43 + 4.94 = 47.10, not 48.01: one is off by 0.91, rechecking (model uses the top gap)
 - Picture (lit area) 27.97 x 32.63 (seller); position from the cover art on screen
   (cover = 160 px at x 40, y 8): board top edge to cover top _, board left edge to
   cover left _, cover width _ (expect ~18.6)

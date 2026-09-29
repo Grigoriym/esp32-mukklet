@@ -40,9 +40,10 @@ tft_h = 48.01; // ear tops to the bottom edge. The top edge has a notch
               // wraps through it to a connector on the back (photos 2026-09-29)
 tft_pcb_t = 1.21; // measured on an ear
 tft_front = 2.92 - tft_pcb_t; // PCB front face to the glass front (2.92 glass front to board back)
-tft_glass_w = 30.06; // measured, incl. the step at the top; centred left-right (ASSUMED)
+tft_glass_w = 30.06; // measured, incl. the step at the top; centred left-right (by eye)
 tft_glass_h = 37.43; // measured
-tft_glass_top = 5.3; // glass edge below the ear tops (ASSUMED: centred)
+tft_glass_top = 4.73; // glass edge below the ear tops (measured; the bottom gap, 4.94,
+                      // doesn't add up to 48.01 by 0.91: being rechecked)
 tft_lit_w = 27.97; // seller
 tft_lit_h = 32.63; // seller
 tft_lit_dz = 0; // lit centre above the glass centre (ASSUMED: centred)
@@ -114,7 +115,7 @@ boss_xy = [[boss_in, boss_in], [W - boss_in, boss_in], [boss_in, D - boss_in], [
 // behind onto 4 posts at its corner holes (4 x M2 x 6 self-tapping). The
 // holes sit outside the glass (seller's drawing), so posts fit there
 tft_v = panel_len / 2; // board centre, up the slope from the skirt's edge
-tft_post_d = 4.5;
+tft_post_d = 4.0; // the glass reaches to ~4.73 below the ear tops: the top posts clear it by ~0.2
 tft_pilot = 1.6;
 tft_glass_z0 = tft_h / 2 - tft_glass_top - tft_glass_h; // glass bottom edge, from the board centre
 lit_z = tft_glass_z0 + tft_glass_h / 2 + tft_lit_dz; // lit centre above the board centre
