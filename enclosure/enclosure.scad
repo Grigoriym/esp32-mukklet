@@ -34,13 +34,15 @@ clr = 0.3; // fit clearance between printed parts / around boards
 // ------------------------------------------------------------ modules
 // TFT, portrait, pin header on the bottom edge (upright with FLIP_180 = 1
 // in main/display.c, as it is now)
-tft_w = 31; // ASSUMED (seller)
-tft_h = 48; // ASSUMED (seller)
+tft_w = 31.22; // across the two ears at the top (the widest part)
+tft_h = 48.01; // ear tops to the bottom edge. The top edge has a notch
+              // between the ears (holes on the ears); the glass's flex cable
+              // wraps through it to a connector on the back (photos 2026-09-29)
 tft_pcb_t = 1.6; // ASSUMED
 tft_front = 1.8; // PCB front face to the glass front (ASSUMED: 1.56 panel + tape)
 tft_glass_w = 30.07; // ASSUMED (usual 1.69" panel outline), centred left-right
 tft_glass_h = 37.43; // ASSUMED
-tft_glass_top = 5.3; // glass edge below the top (no-pin) edge (ASSUMED: centred)
+tft_glass_top = 5.3; // glass edge below the ear tops (ASSUMED: centred)
 tft_lit_w = 27.97; // seller
 tft_lit_h = 32.63; // seller
 tft_lit_dz = 0; // lit centre above the glass centre (ASSUMED: centred)
@@ -48,7 +50,7 @@ tft_hole_x = 26; // hole centres, seller
 tft_hole_z = 43;
 tft_hole_d = 2.2; // ASSUMED, M2
 tft_hdr_edge = 2.0; // pin row's centre above the bottom edge (ASSUMED)
-tft_pins = 8.25; // pins + plastic behind the PCB (ASSUMED, like the OLED's)
+tft_pins = 8.25; // pins + plastic behind the PCB, header on the back (photos); length ASSUMED, like the OLED's
 tft_dupont = 14; // a plugged-in 8-pin Dupont housing adds this
 tft_back = 2; // parts on the PCB's back (ASSUMED)
 

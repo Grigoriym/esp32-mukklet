@@ -9,7 +9,12 @@ step at a time. Until then the model uses the seller's drawing and guesses,
 marked `ASSUMED` in `enclosure.scad`.
 
 ## TFT (1.69" ST7789V2, GERUI), held pins at the bottom, glass towards you
-- Board width x height: 31 x 48 (seller, not measured)
+- Board width x height: 31.22 x 48.01 (2026-09-29), widest points: the top
+  edge has two ears with the top holes and a notch between them; the glass's
+  flex cable (FP-169HSC01) wraps round the top edge through the notch to a
+  connector on the back (photos 2026-09-29). "Top" = the ear tops.
+- Back (photo): flex connector near the top, a few small SMD parts
+  (C1 C2 R1-R3 U2) in the middle, rest flat; bottom holes beside the pin row
 - Thickness, glass front to board back: _ ; board alone: _ (model guesses 1.6 + 1.8)
 - Glass size: _ (model guesses 30.07 x 37.43, the usual 1.69" panel)
 - Glass position: top gap _, bottom gap _, left gap _ (model: centred left-right, top gap 5.3)
@@ -18,7 +23,7 @@ marked `ASSUMED` in `enclosure.scad`.
   cover left _, cover width _ (expect ~18.6)
 - Mounting holes: diameter _ (model 2.2, M2), centres 26 left-right x 43 top-bottom (seller)
 - Front around the holes clear of the glass's cable and parts: _ (the case puts screw posts there)
-- Pin header: pins come out of the _ side, _ long from the back surface incl. the plastic
+- Pin header: pins come out of the back (photos), _ long from the back surface incl. the plastic
   (model 8.25); pin row centre _ above the bottom edge (model 2.0)
 - Tallest part on the back, header not counted: _ (model 2)
 
