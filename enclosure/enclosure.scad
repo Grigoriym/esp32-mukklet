@@ -53,6 +53,12 @@ tft_hdr_edge = 2.0; // pin row's centre above the bottom edge (ASSUMED)
 tft_pins = 8.25; // pins + plastic behind the PCB, header on the back (photos); length ASSUMED, like the OLED's
 tft_dupont = 14; // a plugged-in 8-pin Dupont housing adds this
 tft_back = 2; // parts on the PCB's back (ASSUMED)
+tft_notch_w = 19; // notch between the ears at the top (ASSUMED, from the photos)
+tft_notch_d = 4.7; // ear tops to the notch's bottom edge (ASSUMED, from the photos)
+tft_flex_w = 14; // flat cable, wraps round the notch's edge to the back (ASSUMED, photos)
+tft_flex_bulge = 0.8; // its bend past the notch's edge (ASSUMED)
+tft_flex_conn = 1.2; // its connector on the back: height (ASSUMED)
+tft_flex_conn_l = 7; // and length down from the notch (ASSUMED, photos)
 
 esp_l = 51.49;
 esp_w = 28.36;
@@ -154,6 +160,7 @@ assert(perf_x1 < W - wall && perf_y1 < D - boss_in - boss_d / 2, "carrier hits a
 assert(norm([W - boss_in - esp_x1, D - boss_in - esp_y1]) > boss_d / 2 + 0.5 || esp_x1 < W - boss_in - boss_d / 2 - 0.5, "ESP32 hits the back-right boss");
 assert(esp_x1 < W - wall && esp_y1 < D - wall, "ESP32 hits a wall");
 assert(tft_h / 2 - tft_hole_z / 2 + tft_post_d / 2 < tft_glass_top, "TFT posts hit the glass");
+assert(tft_hole_x / 2 - tft_post_d / 2 > tft_notch_w / 2, "TFT top posts off the ears");
 
 // JST-XH sockets (vertical, 2.5 pitch) on the carrier: [name, pins, col,
 // row of the first pin, pin line along X?], in the free column left of the
@@ -309,7 +316,16 @@ module tft_standin(plug = true) tft_frame() {
   color("black") box([-tft_glass_w / 2, eps, tft_glass_z0], [tft_glass_w / 2, tft_front, tft_glass_z0 + tft_glass_h]);
   color("steelblue") difference() {
     box([-tft_w / 2, tft_front + eps, -tft_h / 2], [tft_w / 2, tft_front + tft_pcb_t, tft_h / 2]);
+    box([-tft_notch_w / 2, 0, tft_h / 2 - tft_notch_d], [tft_notch_w / 2, 10, tft_h / 2 + 1]);
     for (h = tft_holes) translate([h.x, 0, h.y]) rotate([-90, 0, 0]) cylinder(d = tft_hole_d, h = 10);
+  }
+  // flat cable: out of the glass's top step, round the notch's edge, to its connector on the back
+  nz = tft_h / 2 - tft_notch_d;
+  back = tft_front + tft_pcb_t;
+  color("orange") {
+    box([-tft_flex_w / 2, 0.6, tft_glass_z0 + tft_glass_h - 0.5], [tft_flex_w / 2, tft_front, nz + tft_flex_bulge]);
+    box([-tft_flex_w / 2, 0.6, nz + eps], [tft_flex_w / 2, back + 0.3, nz + tft_flex_bulge]);
+    box([-tft_flex_w / 2 - 0.5, back + eps, nz - tft_flex_conn_l], [tft_flex_w / 2 + 0.5, back + tft_flex_conn, nz + tft_flex_bulge]);
   }
   color("steelblue") box([-11, tft_front + tft_pcb_t, -tft_h / 2 + tft_hdr_edge + 3], [11, tft_front + tft_pcb_t + tft_back, 15]);
   hz = -tft_h / 2 + tft_hdr_edge;
