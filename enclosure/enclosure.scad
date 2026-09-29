@@ -40,8 +40,8 @@ tft_h = 48.01; // ear tops to the bottom edge. The top edge has a notch
               // wraps through it to a connector on the back (photos 2026-09-29)
 tft_pcb_t = 1.21; // measured on an ear
 tft_front = 2.92 - tft_pcb_t; // PCB front face to the glass front (2.92 glass front to board back)
-tft_glass_w = 30.07; // ASSUMED (usual 1.69" panel outline), centred left-right
-tft_glass_h = 37.43; // ASSUMED
+tft_glass_w = 30.06; // measured, incl. the step at the top; centred left-right (ASSUMED)
+tft_glass_h = 37.43; // measured
 tft_glass_top = 5.3; // glass edge below the ear tops (ASSUMED: centred)
 tft_lit_w = 27.97; // seller
 tft_lit_h = 32.63; // seller
