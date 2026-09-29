@@ -53,7 +53,7 @@ tft_hole_z = 42.91;
 tft_hole_d = 1.79; // measured with the inside jaws, which read low (the OLED's 1.70 was
                    // likely 2.0): likely 2.0, for M2; if an M2 screw won't pass, M1.7
 tft_hdr_edge = 2.0; // pin row's centre above the bottom edge (ASSUMED)
-tft_pins = 8.25; // pins + plastic behind the PCB, header on the back (photos); length ASSUMED, like the OLED's
+tft_pins = 8.5; // standard straight header on the back: 2.5 plastic + ~6 pin (not measured)
 tft_dupont = 14; // a plugged-in 8-pin Dupont housing adds this
 tft_back = 2; // parts on the PCB's back (ASSUMED)
 tft_notch_w = 18.91; // notch between the ears at the top

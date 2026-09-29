@@ -25,8 +25,8 @@ marked `ASSUMED` in `enclosure.scad`.
   (skipped 2026-09-29): the window is the glass minus a 0.5 lip, checked on the test print
 - Mounting holes: diameter 1.79 measured (inside jaws read low, likely 2.0 for M2; try an M2 screw), centres 26.19 left-right x 42.91 top-bottom (measured)
 - Front around the holes: not measured; the posts are flattened 0.3 mm clear of the glass instead
-- Pin header: pins come out of the back (photos), _ long from the back surface incl. the plastic
-  (model 8.25); pin row centre _ above the bottom edge (model 2.0)
+- Pin header: standard straight header on the back (photos), taken as 8.5 from the back surface
+  incl. the plastic (not measured; resoldering to right-angle pins is an option if the depth matters); pin row centre _ above the bottom edge (model 2.0)
 - Tallest part on the back, header not counted: _ (model 2)
 
 ## ESP32 DevKit (ELEGOO ESP-32S, 30-pin), from the desk display
