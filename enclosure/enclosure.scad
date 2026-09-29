@@ -35,15 +35,16 @@ clr = 0.3; // fit clearance between printed parts / around boards
 // TFT, portrait, pin header on the bottom edge (upright with FLIP_180 = 1
 // in main/display.c, as it is now)
 tft_w = 31.22; // across the two ears at the top (the widest part)
-tft_h = 48.01; // ear tops to the bottom edge. The top edge has a notch
+tft_h = 47.96; // ear tops to the bottom edge (48.01 the first time). The top edge has a notch
               // between the ears (holes on the ears); the glass's flex cable
               // wraps through it to a connector on the back (photos 2026-09-29)
 tft_pcb_t = 1.21; // measured on an ear
 tft_front = 2.92 - tft_pcb_t; // PCB front face to the glass front (2.92 glass front to board back)
 tft_glass_w = 30.06; // measured, incl. the step at the top; centred left-right (by eye)
-tft_glass_h = 37.43; // measured
-tft_glass_top = 4.73; // glass edge below the ear tops (measured; the bottom gap, 4.94,
-                      // doesn't add up to 48.01 by 0.91: being rechecked)
+tft_glass_h = 43.13 - tft_glass_top; // ear tops to the glass bottom 43.13 (measured). The
+                                     // glass alone measured 37.43: that missed ~1 mm, likely the step
+                                     // at the top; this keeps the whole glass stack out
+tft_glass_top = 4.73; // ear tops to the glass's top edge (measured; bottom gap 4.94 ~ 47.96 - 43.13)
 tft_lit_w = 27.97; // seller
 tft_lit_h = 32.63; // seller
 tft_lit_dz = 0; // lit centre above the glass centre (ASSUMED: centred)

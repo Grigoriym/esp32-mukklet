@@ -9,17 +9,18 @@ step at a time. Until then the model uses the seller's drawing and guesses,
 marked `ASSUMED` in `enclosure.scad`.
 
 ## TFT (1.69" ST7789V2, GERUI), held pins at the bottom, glass towards you
-- Board width x height: 31.22 x 48.01 (2026-09-29), widest points: the top
+- Board width x height: 31.22 x 47.96 (2026-09-29; 48.01 the first time), widest points: the top
   edge has two ears with the top holes and a notch between them; the glass's
   flex cable (FP-169HSC01) wraps round the top edge through the notch to a
   connector on the back (photos 2026-09-29). "Top" = the ear tops.
 - Back (photo): flex connector near the top, a few small SMD parts
   (C1 C2 R1-R3 U2) in the middle, rest flat; bottom holes beside the pin row
 - Thickness, glass front to board back: 2.92; board alone (on an ear): 1.21; so the glass front is 1.71 above the board
-- Glass size: 30.06 x 37.43 (w x h, incl. the step with the metal strip at the top); matches the usual 1.69" panel outline
+- Glass size: 30.06 wide; 37.43 tall measured alone, but ear tops to glass top 4.73 and to glass bottom
+  43.13 give 38.40: the 37.43 likely missed the ~1 mm step at the top. Model keeps 4.73..43.13 clear
 - Notch between the ears: width _, depth from the ear tops _ (model 19 x 4.7, from the photos)
-- Glass position: top gap (ear tops to glass) 4.73, bottom gap 4.94, left = right by eye.
-  4.73 + 37.43 + 4.94 = 47.10, not 48.01: one is off by 0.91, rechecking (model uses the top gap)
+- Glass position: ear tops to glass top 4.73, to glass bottom 43.13; bottom gap 4.94 (47.96 - 43.13 = 4.83,
+  close enough); left = right by eye
 - Picture (lit area) 27.97 x 32.63 (seller); position from the cover art on screen
   (cover = 160 px at x 40, y 8): board top edge to cover top _, board left edge to
   cover left _, cover width _ (expect ~18.6)
