@@ -139,7 +139,7 @@ anti-aliased), `gesture` (single/double/long press), `encoder_decode`
 
 ## Open questions
 - Which fields to show: the colour layout is a first guess.
-- Mounting orientation (see `FLIP_180`).
+- Mounting orientation (see `FLIP_180`): the enclosure draft assumes pins at the bottom.
 
 ## Build / flash
 ESP-IDF, same setup as the desk display:
@@ -174,6 +174,21 @@ Playing Mukk's role: `python3 tools/fake_mukk.py [--host IP] [--seconds N]`
 connects to the display, sends a small playlist (Cyrillic, long title, no
 tags, unknown duration) and obeys the knob, printing each `cmd`.
 
+## Enclosure (since 2026-09-29)
+OpenSCAD in `enclosure/` (see its README), lifted from the desk
+display's `enclosure_v2.scad` ("cut" carrier) and its lessons (check fits
+on the perfboard's hole grid; sink solids into walls, not tangent). The
+user left the design to me ("just create something, we will work it
+out"): first draft is a 50 x 82 x 62 wedge, TFT portrait on a panel tilted
+20°, pins at the bottom (so `FLIP_180` stays 1), knob on top centred, USB
+out the back, ESP32 on a 40 x 44 perfboard carrier with JST-XH sockets.
+`enclosure/export.sh` = clash check (printed parts vs stand-ins, and
+stand-ins incl. plugs vs each other) + STLs + renders. The TFT isn't
+measured yet: `enclosure/MEASUREMENTS.md` + the "Mukklet Caliper Guide"
+artifact (https://claude.ai/artifact/QTPxyAx3xMNtYf33rQmrr3), same
+format as the desk display's; update its step statuses as numbers arrive.
+
 ## Next step
-Milestone 3 (cover art) done. Open: which fields to show, mounting
-orientation (see Open questions).
+Milestone 3 (cover art) done. Enclosure: the user measures the TFT with
+the caliper guide; then update the model, cardboard mock-up (port the desk
+display's `cardboard.py`), test print of `test_front`.
