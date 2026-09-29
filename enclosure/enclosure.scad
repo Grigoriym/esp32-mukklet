@@ -118,7 +118,8 @@ boss_xy = [[boss_in, boss_in], [W - boss_in, boss_in], [boss_in, D - boss_in], [
 // behind onto 4 posts at its corner holes (4 x M2 x 6 self-tapping). The
 // holes sit outside the glass (seller's drawing), so posts fit there
 tft_v = panel_len / 2; // board centre, up the slope from the skirt's edge
-tft_post_d = 4.0; // the glass reaches to ~4.73 below the ear tops: the top posts clear it by ~0.2
+tft_post_d = 4.5;
+tft_glass_gap = 0.3; // posts to the glass
 tft_pilot = 1.6;
 tft_glass_z0 = tft_h / 2 - tft_glass_top - tft_glass_h; // glass bottom edge, from the board centre
 // window: the glass minus the lip, centred on the glass. Leaves 0.5 spare
@@ -166,7 +167,7 @@ echo(str("usb centre z ", usb_z, ", knob board face z ", ky_face_z));
 assert(perf_x1 < W - wall && perf_y1 < D - boss_in - boss_d / 2, "carrier hits a wall or a back boss");
 assert(norm([W - boss_in - esp_x1, D - boss_in - esp_y1]) > boss_d / 2 + 0.5 || esp_x1 < W - boss_in - boss_d / 2 - 0.5, "ESP32 hits the back-right boss");
 assert(esp_x1 < W - wall && esp_y1 < D - wall, "ESP32 hits a wall");
-assert(tft_h / 2 - tft_hole_z / 2 + tft_post_d / 2 < tft_glass_top, "TFT posts hit the glass");
+assert(tft_hole_z / 2 - tft_pilot / 2 - 0.6 > tft_glass_z0 + tft_glass_h + tft_glass_gap, "TFT post flats cut into the screw holes");
 assert(tft_hole_x / 2 - tft_post_d / 2 > tft_notch_w / 2, "TFT top posts off the ears");
 assert(win_w > tft_lit_w && win_h > tft_lit_h, "window smaller than the pixel area");
 
@@ -214,8 +215,13 @@ module stadium(w, h, len) // along y, centred in x/z
 tft_holes = [for (sx = [-1, 1], sz = [-1, 1]) [sx * tft_hole_x / 2, sz * tft_hole_z / 2]];
 
 // ------------------------------------------------------------ shell
-module tft_mount() tft_frame() for (h = tft_holes)
-  translate([h.x, -0.5, h.y]) rotate([-90, 0, 0]) cylinder(d = tft_post_d, h = tft_front + 0.5);
+// posts flattened on the glass side, tft_glass_gap clear of it, so they fit
+// whatever the holes' exact position
+module tft_mount() tft_frame() difference() {
+  for (h = tft_holes) translate([h.x, -0.5, h.y]) rotate([-90, 0, 0]) cylinder(d = tft_post_d, h = tft_front + 0.5);
+  g = tft_glass_gap;
+  box([-tft_glass_w / 2 - g, -1, tft_glass_z0 - g], [tft_glass_w / 2 + g, tft_front + 1, tft_glass_z0 + tft_glass_h + g]);
+}
 
 module tft_pilots() tft_frame() for (h = tft_holes)
   translate([h.x, tft_front + eps, h.y]) rotate([90, 0, 0]) cylinder(d = tft_pilot, h = tft_front + wall - 0.8);

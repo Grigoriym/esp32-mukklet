@@ -24,7 +24,7 @@ marked `ASSUMED` in `enclosure.scad`.
 - Picture (pixel area) 27.97 x 32.63 (seller). Its position under the glass is not measured
   (skipped 2026-09-29): the window is the glass minus a 0.5 lip, checked on the test print
 - Mounting holes: diameter 1.79 measured (inside jaws read low, likely 2.0 for M2; try an M2 screw), centres 26.19 left-right x 42.91 top-bottom (measured)
-- Front around the holes clear of the glass's cable and parts: _ (the case puts screw posts there)
+- Front around the holes: not measured; the posts are flattened 0.3 mm clear of the glass instead
 - Pin header: pins come out of the back (photos), _ long from the back surface incl. the plastic
   (model 8.25); pin row centre _ above the bottom edge (model 2.0)
 - Tallest part on the back, header not counted: _ (model 2)

@@ -23,8 +23,8 @@ panel tilted 20° back over a 12 mm strip; the knob on top, centred behind
 the screen; USB-C out the back.
 
 - **TFT**: glass flat against the panel's inner face, the board screwed from
-  behind onto 4 posts at its corner holes (the holes sit outside the glass
-  on the seller's drawing). Pin header at the bottom, so the picture is
+  behind onto 4 posts at its corner holes, flattened on the glass side
+  (0.3 mm clear of it). Pin header at the bottom, so the picture is
   upright with `FLIP_180 = 1` in `main/display.c`, as now. Its plug hangs
   down and back, in front of the carrier: that's what sets the case's depth.
 - **Knob**: KY-040 flat under the top, shaft end to the front, pins to the
