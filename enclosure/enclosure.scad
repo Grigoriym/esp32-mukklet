@@ -95,9 +95,12 @@ p = 2.54;
 perf_w = 38.1;
 perf_d = 50.8;
 perf_t = 1.6; // ASSUMED
-perf_standoff = 5;
-perf_m2 = [31.8, 44.5]; // corner holes: plain rests under them, no screws
-perf_m3 = 40.6; // centre holes: M3 x 6 into standoffs
+perf_standoff = 9; // high enough that the carrier's front passes over the TFT's plug
+                   // (8 is the minimum at D = 82; 9 leaves 1 mm)
+perf_m2 = [31.8, 44.5]; // corner holes: the front two take M2 x 6 into standoffs,
+                        // the back two sit on plain rests
+perf_m3 = 40.6; // centre holes: only the back one takes an M3 x 6; the
+                // front one is over the TFT's plug
 hdr_h = 8.5; // female header the ESP32 plugs into (ASSUMED: standard)
 
 // ------------------------------------------------------------ case
@@ -106,7 +109,7 @@ tilt = 20; // screen panel, back from vertical
 skirt_h = 12; // strip under the screen: lifts it off the desk, room for the TFT's plug
 panel_margin = 3; // screen panel beyond the TFT board, top and bottom
 W = 50;
-D = 89; // the carrier has to stay behind the TFT's plug and in front of the back bosses
+D = 82; // kept for the cardboard mock-up already built (2026-09-30)
 base_t = 3;
 
 panel_len = tft_h + 2 * panel_margin; // along the slope
@@ -287,8 +290,9 @@ module shell() difference() {
 // ------------------------------------------------------------ base
 perf_cx = (perf_x0 + perf_x1) / 2;
 perf_cy = (perf_y0 + perf_y1) / 2;
-perf_holes = [for (sy = [-1, 1]) [perf_cx, perf_cy + sy * perf_m3 / 2]];
-perf_rests = [for (sx = [-1, 1], sy = [-1, 1]) [perf_cx + sx * perf_m2[0] / 2, perf_cy + sy * perf_m2[1] / 2]];
+perf_holes = [[perf_cx, perf_cy + perf_m3 / 2]];
+perf_m2_holes = [for (sx = [-1, 1]) [perf_cx + sx * perf_m2[0] / 2, perf_cy - perf_m2[1] / 2]];
+perf_rests = [for (sx = [-1, 1]) [perf_cx + sx * perf_m2[0] / 2, perf_cy + perf_m2[1] / 2]];
 
 module base() {
   x0 = wall + clr;
@@ -304,6 +308,10 @@ module base() {
   for (p = perf_holes) translate([p.x, p.y, base_t - eps]) difference() {
     cylinder(d = 6, h = perf_standoff);
     cylinder(d = 2.5, h = perf_standoff + 1); // M3 x 6 self-tapping, round head (the user's kit)
+  }
+  for (p = perf_m2_holes) translate([p.x, p.y, base_t - eps]) difference() {
+    cylinder(d = 5, h = perf_standoff);
+    cylinder(d = 1.6, h = perf_standoff + 1); // M2 x 6 self-tapping
   }
   for (p = perf_rests) translate([p.x, p.y, base_t - eps]) cylinder(d = 3.5, h = perf_standoff);
 }
@@ -392,7 +400,7 @@ else if (part == "dims") echo(W = W, D = D, H = H, wall = wall, tilt = tilt, ski
   panel_len = panel_len, tft_v = tft_v, tft_w = tft_w, tft_h = tft_h, lit_z = lit_z, win_w = win_w, win_h = win_h,
   knob_x = knob_x, knob_y = knob_y, knob_hole = knob_hole, ky_y0 = ky_y0, ky_l = ky_l, ky_w = ky_w,
   usb_x = usb_x, usb_z = usb_z, usb_w = usb_hole[0], usb_h = usb_hole[1], boss_in = boss_in, boss_d = boss_d,
-  perf_x0 = perf_x0, perf_y0 = perf_y0, perf_w = perf_w, perf_d = perf_d, perf_m3 = perf_m3, esp_x0 = esp_x0, esp_y0 = esp_y0,
+  perf_x0 = perf_x0, perf_y0 = perf_y0, perf_w = perf_w, perf_d = perf_d, perf_m3 = perf_m3, perf_m2_x = perf_m2[0], perf_m2_y = perf_m2[1], esp_x0 = esp_x0, esp_y0 = esp_y0,
   esp_w = esp_w, esp_l = esp_l, grid_x0 = grid_x0, grid_y0 = grid_y0, p = p); // for cardboard.py
 else if (part == "clash") {
   // printed parts against every stand-in

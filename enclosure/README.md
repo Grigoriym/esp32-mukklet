@@ -34,7 +34,7 @@ TFT taped behind it.
 
 ## Layout (first draft, 2026-09-29)
 
-50 x 89 x 62 mm (W x D x H). A small wedge: the TFT, portrait, on a front
+50 x 82 x 62 mm (W x D x H). A small wedge: the TFT, portrait, on a front
 panel tilted 20° back over a 12 mm strip; the knob on top, centred behind
 the screen; USB-C out the back.
 
@@ -47,16 +47,18 @@ the screen; USB-C out the back.
   back, pushed up into two snap hooks against 4 pads (as on the desk
   display). The cap goes on from outside afterwards.
 - **Carrier**: EPLZON 38.1 x 50.8 breadboard-style PCB (sizes from the
-  seller's drawing), on 2 standoffs (5 mm) at its middle M3 holes plus 4
-  rests under its M2 corner holes. ESP32 front-to-back in two 15-pin female
+  seller's drawing), 9 mm up: an M3 screw in its back middle hole, M2
+  screws in its two front corner holes, rests under the back corners. ESP32 front-to-back in two 15-pin female
   headers (8.5 mm) in columns A and I (10 pitches apart, as its pins), rows
   3-17, USB end at the back. Each row's A-E and F-J holes are joined
   underneath, so every ESP32 pin has 4 spare holes: the TFT and knob wires
   are soldered into those (under the ESP32, before it's plugged in), with
   Dupont housings on the module ends. No JST sockets: the joined rows
-  would short their pins. The carrier sets the depth: it has to stay behind
-  the TFT's plug and in front of the back screw bosses (88 is the minimum,
-  89 leaves 1 mm).
+  would short their pins. Its front edge passes over the TFT's plug, which is
+  why it sits so high (8 mm is the minimum, 9 leaves 1 mm) and why the
+  front middle hole isn't used (the plug is under it). Kept at 82 deep
+  for the cardboard mock-up already built; lower standoffs would need
+  ~89.
 - **Antenna**: the ESP32's antenna end is at the front, nothing above it;
   the carrier's rows 1-2 are under it (copper pads only).
 - **Vents**: top slots left and right of the knob, over the ESP32; low slots
@@ -86,7 +88,8 @@ self-tapping kit (M2 × 4/5/6, M2.3, M2.6, M3 × 4-6, pan head).
 - 4 × M2 × 4 self-tapping, pan head (TFT → posts; a 6 would poke out the
   front). The TFT's holes measured 1.79: try one screw first, else drill
   them to 2.0
-- 2 × M3 × 6 self-tapping, round head (carrier's middle holes → standoffs)
+- 1 × M3 × 6 self-tapping, round head (carrier's back middle hole)
+- 2 × M2 × 6 self-tapping, pan head (carrier's front corner holes)
 - 2 × 15-pin female headers; cables to the TFT (8 wires) and knob (5 wires),
   soldered on the carrier, Dupont housings on the module ends
 - 4 self-adhesive rubber feet
