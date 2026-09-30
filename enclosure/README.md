@@ -56,15 +56,14 @@ Material: PETG preferred (PLA softens ~55 °C). Fit clearance 0.3 mm (`clr`).
 ## Hardware
 
 The M3 screws come from the user's self-tapping kit (M3-M6, round and flat
-head; smallest M3 × 6). The screen's M2 screws come from a separate M2
-machine-screw kit.
+head; smallest M3 × 6). The screen's M2 screws come from a separate small
+self-tapping kit (M2 × 4/5/6, M2.3, M2.6, M3 × 4-6, pan head).
 
 
 - 4 × M3 × 10 self-tapping, round head (base → shell)
-- 4 × M2 × 4 (TFT → posts): machine screws (WZHUIDA M2 kit, button head, hex)
-  cut their own thread in the 1.6 pilot; drive gently, don't over-tighten. A 6
-  would poke out the front. The TFT's holes measured 1.79: try one screw first,
-  else drill them to 2.0
+- 4 × M2 × 4 self-tapping, pan head (TFT → posts; a 6 would poke out the
+  front). The TFT's holes measured 1.79: try one screw first, else drill
+  them to 2.0
 - 4 × M3 × 6 self-tapping, round head (carrier → standoffs; drill the board's corners 3 mm)
 - 2 × 15-pin female headers, JST-XH sockets + cables: 8-pin (TFT), 5-pin (knob)
 - 4 self-adhesive rubber feet
