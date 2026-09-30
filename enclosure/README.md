@@ -31,7 +31,7 @@ the screen; USB-C out the back.
   back, pushed up into two snap hooks against 4 pads (as on the desk
   display). The cap goes on from outside afterwards.
 - **Carrier**: the 4 x 6 cm Miuzei perfboard cut to 40 x 44 (17 hole rows),
-  on 4 standoffs (5 mm). ESP32 front-to-back in two 15-pin female headers
+  on 4 standoffs (5 mm), M3 screws. ESP32 front-to-back in two 15-pin female headers
   (8.5 mm), USB end at the back. Two JST-XH sockets in the free column left
   of the ESP32: TFT (8-pin) at the front, KNOB (5-pin) behind it. 8 pins
   at 2.5 mm on the 2.54 grid are 0.28 mm off at the ends: the pins take it.
@@ -55,9 +55,13 @@ Material: PETG preferred (PLA softens ~55 °C). Fit clearance 0.3 mm (`clr`).
 
 ## Hardware
 
-- 4 × M3 × 8 self-tapping (base → shell)
+The M3 screws come from the user's self-tapping kit (M3-M6, round and flat
+head; smallest M3 × 6). Only the screen's M2 screws aren't in it.
+
+
+- 4 × M3 × 10 self-tapping, round head (base → shell)
 - 4 × M2 × 4 self-tapping (TFT → posts: board 1.21 + 2.8 into the post; a 6 would poke out the front); its holes measured 1.79, so try one first (else M1.7)
-- 4 × M2 × 8 self-tapping (carrier → standoffs)
+- 4 × M3 × 6 self-tapping, round head (carrier → standoffs; drill the board's corners 3 mm)
 - 2 × 15-pin female headers, JST-XH sockets + cables: 8-pin (TFT), 5-pin (knob)
 - 4 self-adhesive rubber feet
 

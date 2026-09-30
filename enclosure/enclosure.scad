@@ -87,7 +87,7 @@ ky_dupont = 14; // a plugged-in 5-pin Dupont housing adds this
 
 // carrier: the Miuzei 4 x 6 cm perfboard (14 x 20 holes), cut to 17 rows
 // like the desk display's "cut" layout. Lay it on the printed base, mark
-// the standoff holes through, drill 2 mm
+// the standoff holes through, drill 3 mm
 p = 2.54;
 perf_w = 40;
 perf_d = 17 * p;
@@ -110,7 +110,7 @@ H = skirt_h + panel_len * cos(tilt);
 run = panel_len * sin(tilt); // how far back the panel's top edge is
 
 boss_d = 7;
-boss_pilot = 2.5; // M3 self-tapping, 10 deep
+boss_pilot = 2.5; // M3 x 10 self-tapping, round head (the user's kit), 10 deep
 boss_in = wall + boss_d / 2 - 1; // centre from the outside; sunk 1 mm into both walls
 boss_xy = [[boss_in, boss_in], [W - boss_in, boss_in], [boss_in, D - boss_in], [W - boss_in, D - boss_in]];
 
@@ -303,7 +303,7 @@ module base() {
   }
   for (p = perf_holes) translate([p.x, p.y, base_t - eps]) difference() {
     cylinder(d = 6, h = perf_standoff);
-    cylinder(d = 1.7, h = perf_standoff + 1); // M2 x 8 self-tapping
+    cylinder(d = 2.5, h = perf_standoff + 1); // M3 x 6 self-tapping, round head (the user's kit)
   }
 }
 
