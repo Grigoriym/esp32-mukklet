@@ -16,6 +16,22 @@ stand-ins (with their plugs) overlap each other.
 ![front](renders/enclosure-front.png) ![back](renders/enclosure-back.png)
 ![inside](renders/enclosure-inside.png) ![section](renders/enclosure-section.png)
 
+## Cardboard mock-up
+
+```
+enclosure/cardboard.py [cardboard mm, default 2]   # -> enclosure/cardboard.pdf (gitignored)
+```
+
+Two A4 pages of 1:1 templates, sized from the model (`part="dims"`): 2
+sides, front strip, screen panel (window + the TFT board's outline), top
+(knob hole + the KY-040's outline), back (USB hole), and a floor with the
+ESP32, carrier and JST sockets drawn on it (outlines, not holes). Print at
+100% ("Actual size") and check the 50 mm bar with a ruler. Panels other
+than the sides are narrower by 2 × the cardboard thickness, so they fit
+between the sides. Checks: overall size on the desk, the screen's tilt and
+readability, knob reach, and whether the window lines up with the real
+TFT taped behind it.
+
 ## Layout (first draft, 2026-09-29)
 
 50 x 82 x 62 mm (W x D x H). A small wedge: the TFT, portrait, on a front

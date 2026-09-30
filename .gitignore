@@ -20,3 +20,4 @@ __pycache__/
 
 # Enclosure STLs (enclosure/export.sh regenerates them)
 enclosure/stl/
+enclosure/cardboard*.pdf

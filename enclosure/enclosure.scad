@@ -19,7 +19,7 @@
 // print orientation, "assembly" shows everything in place with stand-in
 // blocks for the modules, "clash" is empty when nothing overlaps.
 
-part = "assembly"; // [assembly, shell, base, test_front, clash]
+part = "assembly"; // [assembly, shell, base, test_front, clash, dims]
 cut = -1; // assembly only: >= 0 cuts the printed parts away left of this x
 show_shell = true; // assembly only: untick to see inside
 show_base = true;
@@ -408,6 +408,12 @@ module test_front() intersection() {
 if (part == "shell") translate([0, D, H]) rotate([180, 0, 0]) shell();
 else if (part == "test_front") translate([0, D, H]) rotate([180, 0, 0]) test_front();
 else if (part == "base") base();
+else if (part == "dims") echo(W = W, D = D, H = H, wall = wall, tilt = tilt, skirt_h = skirt_h, run = run,
+  panel_len = panel_len, tft_v = tft_v, tft_w = tft_w, tft_h = tft_h, lit_z = lit_z, win_w = win_w, win_h = win_h,
+  knob_x = knob_x, knob_y = knob_y, knob_hole = knob_hole, ky_y0 = ky_y0, ky_l = ky_l, ky_w = ky_w,
+  usb_x = usb_x, usb_z = usb_z, usb_w = usb_hole[0], usb_h = usb_hole[1], boss_in = boss_in, boss_d = boss_d,
+  perf_x0 = perf_x0, perf_y0 = perf_y0, perf_w = perf_w, perf_d = perf_d, esp_x0 = esp_x0, esp_y0 = esp_y0,
+  esp_w = esp_w, esp_l = esp_l, grid_x0 = grid_x0, grid_y0 = grid_y0, p = p); // for cardboard.py
 else if (part == "clash") {
   // printed parts against every stand-in
   intersection() {
