@@ -56,7 +56,7 @@ Material: PETG preferred (PLA softens ~55 °C). Fit clearance 0.3 mm (`clr`).
 ## Hardware
 
 - 4 × M3 × 8 self-tapping (base → shell)
-- 4 × M2 × 6 self-tapping (TFT → posts); its holes measured 1.79, so try one first (else M1.7)
+- 4 × M2 × 4 self-tapping (TFT → posts: board 1.21 + 2.8 into the post; a 6 would poke out the front); its holes measured 1.79, so try one first (else M1.7)
 - 4 × M2 × 8 self-tapping (carrier → standoffs)
 - 2 × 15-pin female headers, JST-XH sockets + cables: 8-pin (TFT), 5-pin (knob)
 - 4 self-adhesive rubber feet

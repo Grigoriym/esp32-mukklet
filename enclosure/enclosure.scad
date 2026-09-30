@@ -115,7 +115,8 @@ boss_in = wall + boss_d / 2 - 1; // centre from the outside; sunk 1 mm into both
 boss_xy = [[boss_in, boss_in], [W - boss_in, boss_in], [boss_in, D - boss_in], [W - boss_in, D - boss_in]];
 
 // TFT: glass flat against the panel's inner face, the PCB screwed from
-// behind onto 4 posts at its corner holes (4 x M2 x 6 self-tapping). The
+// behind onto 4 posts at its corner holes (4 x M2 x 4 self-tapping: a 6
+// would poke out of the front). The
 // holes sit outside the glass (seller's drawing), so posts fit there
 tft_v = panel_len / 2; // board centre, up the slope from the skirt's edge
 tft_post_d = 4.5;
