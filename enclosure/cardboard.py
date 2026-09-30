@@ -187,17 +187,14 @@ def main():
     part(d["perf_x0"], d["perf_y0"], d["perf_w"], d["perf_d"], "carrier", dash, bottom=True, tx=d["perf_w"] - 11)
     part(d["esp_x0"], d["esp_y0"], d["esp_w"], d["esp_l"], "ESP32 (USB at the back)")
     p2.text(M + d["esp_x0"] + 1, fy(d["esp_y0"] + 2), "antenna", 2.5)
-    pp = d["p"]
-    for name, pins, row in (("TFT", 8, 1), ("KNOB", 5, 11)):  # JST-XH sockets, column 0 of the carrier
-        l = (pins - 1) * 2.5 + 4.9
-        cy = d["grid_y0"] + (row + (pins - 1) / 2) * pp
-        p2.rect(M + d["grid_x0"] - 2.9, fy(cy + l / 2), 5.8, l, **solid)
-        p2.text(M + d["grid_x0"] - 2.5, fy(cy - l / 2) - 1.2, name, 2)
+    cx, cy = d["perf_x0"] + d["perf_w"] / 2, d["perf_y0"] + d["perf_d"] / 2
+    for sy in (-1, 1):  # the carrier's M3 holes: standoffs under them
+        p2.circle(M + cx, fy(cy + sy * d["perf_m3"] / 2), 1.6, **solid)
     p2.text(M + 2, fy(-4) + 0.5, "FRONT", 3)
     notes(p2, M + W + 4, y, "FLOOR", ["cut the outer border only: the", "boxes inside are outlines, not holes",
                                        "top view, front at the bottom", "lay the real modules on it",
-                                       "solid: ESP32, JST sockets", "dashed: inside walls, screw posts,",
-                                       "carrier board", "the TFT's plug hangs down in", "front of the carrier"])
+                                       "solid: ESP32, the carrier's 2 M3", "holes; dashed: inside walls,",
+                                       "screw posts, carrier board", "the TFT's plug hangs down in", "front of the carrier"])
 
     out = HERE / ("cardboard.pdf" if NAME == "enclosure" else f"cardboard-{NAME}.pdf")
     write_pdf([p1, p2], out)

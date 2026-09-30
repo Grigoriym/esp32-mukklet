@@ -1,7 +1,7 @@
 # Enclosure
 
 OpenSCAD model of the case, lifted from the desk display's
-(`../esp32-desk-display/enclosure/`, the v2 "cut" carrier) and written from
+(`../esp32-desk-display/enclosure/`) and written from
 `MEASUREMENTS.md`. Open `enclosure.scad` in OpenSCAD for the assembled view
 (modules shown as coloured stand-in blocks, see-through gold = plugged-in
 connectors). `-D cut=25` cuts the printed parts away left of x = 25.
@@ -25,7 +25,7 @@ enclosure/cardboard.py [cardboard mm, default 2]   # -> enclosure/cardboard.pdf 
 Two A4 pages of 1:1 templates, sized from the model (`part="dims"`): 2
 sides, front strip, screen panel (window + the TFT board's outline), top
 (knob hole + the KY-040's outline), back (USB hole), and a floor with the
-ESP32, carrier and JST sockets drawn on it (outlines, not holes). Print at
+ESP32, carrier and its screw holes drawn on it (outlines, not holes). Print at
 100% ("Actual size") and check the 50 mm bar with a ruler. Panels other
 than the sides are narrower by 2 × the cardboard thickness, so they fit
 between the sides. Checks: overall size on the desk, the screen's tilt and
@@ -34,7 +34,7 @@ TFT taped behind it.
 
 ## Layout (first draft, 2026-09-29)
 
-50 x 82 x 62 mm (W x D x H). A small wedge: the TFT, portrait, on a front
+50 x 89 x 62 mm (W x D x H). A small wedge: the TFT, portrait, on a front
 panel tilted 20° back over a 12 mm strip; the knob on top, centred behind
 the screen; USB-C out the back.
 
@@ -46,13 +46,19 @@ the screen; USB-C out the back.
 - **Knob**: KY-040 flat under the top, shaft end to the front, pins to the
   back, pushed up into two snap hooks against 4 pads (as on the desk
   display). The cap goes on from outside afterwards.
-- **Carrier**: the 4 x 6 cm Miuzei perfboard cut to 40 x 44 (17 hole rows),
-  on 4 standoffs (5 mm), M3 screws. ESP32 front-to-back in two 15-pin female headers
-  (8.5 mm), USB end at the back. Two JST-XH sockets in the free column left
-  of the ESP32: TFT (8-pin) at the front, KNOB (5-pin) behind it. 8 pins
-  at 2.5 mm on the 2.54 grid are 0.28 mm off at the ends: the pins take it.
+- **Carrier**: EPLZON 38.1 x 50.8 breadboard-style PCB (sizes from the
+  seller's drawing), on 2 standoffs (5 mm) at its middle M3 holes plus 4
+  rests under its M2 corner holes. ESP32 front-to-back in two 15-pin female
+  headers (8.5 mm) in columns A and I (10 pitches apart, as its pins), rows
+  3-17, USB end at the back. Each row's A-E and F-J holes are joined
+  underneath, so every ESP32 pin has 4 spare holes: the TFT and knob wires
+  are soldered into those (under the ESP32, before it's plugged in), with
+  Dupont housings on the module ends. No JST sockets: the joined rows
+  would short their pins. The carrier sets the depth: it has to stay behind
+  the TFT's plug and in front of the back screw bosses (88 is the minimum,
+  89 leaves 1 mm).
 - **Antenna**: the ESP32's antenna end is at the front, nothing above it;
-  the TFT cable runs ~5 mm below it.
+  the carrier's rows 1-2 are under it (copper pads only).
 - **Vents**: top slots left and right of the knob, over the ESP32; low slots
   on the back beside the USB; slots in the floor under the ESP32. No
   sensors, so no sensor bay: only the ESP32's warmth to let out.
@@ -80,8 +86,9 @@ self-tapping kit (M2 × 4/5/6, M2.3, M2.6, M3 × 4-6, pan head).
 - 4 × M2 × 4 self-tapping, pan head (TFT → posts; a 6 would poke out the
   front). The TFT's holes measured 1.79: try one screw first, else drill
   them to 2.0
-- 4 × M3 × 6 self-tapping, round head (carrier → standoffs; drill the board's corners 3 mm)
-- 2 × 15-pin female headers, JST-XH sockets + cables: 8-pin (TFT), 5-pin (knob)
+- 2 × M3 × 6 self-tapping, round head (carrier's middle holes → standoffs)
+- 2 × 15-pin female headers; cables to the TFT (8 wires) and knob (5 wires),
+  soldered on the carrier, Dupont housings on the module ends
 - 4 self-adhesive rubber feet
 
 ## Test print checklist (`test_front`)

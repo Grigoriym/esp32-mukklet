@@ -1,8 +1,8 @@
 // Mukklet enclosure: a small wedge, the 1.69" ST7789V2 TFT (portrait) on
 // the front panel tilted back, the KY-040 knob on top, USB-C out the back.
-// Lifted from ../esp32-desk-display/enclosure/enclosure_v2.scad (carrier
-// "cut": the 4 x 6 cm Miuzei perfboard cut to 40 x 44, ESP32 front-to-back
-// in two female headers, JST-XH sockets for the modules). No sensors, so no
+// Lifted from ../esp32-desk-display/enclosure/enclosure_v2.scad. The ESP32
+// plugs front-to-back into two female headers on an EPLZON 38.1 x 50.8
+// breadboard-style carrier; module cables are soldered to it. No sensors, so no
 // sensor bay and no hood: only the ESP32's own warmth to vent.
 // Sizes in mm, from MEASUREMENTS.md; values marked ASSUMED were not
 // measured (the TFT's are the seller's, not ours, until measured).
@@ -85,15 +85,19 @@ ky_body_h = 7; // EC11 body height above the board (ASSUMED)
 ky_pins = 6; // right-angle pins past the board's end (ASSUMED)
 ky_dupont = 14; // a plugged-in 5-pin Dupont housing adds this
 
-// carrier: the Miuzei 4 x 6 cm perfboard (14 x 20 holes), cut to 17 rows
-// like the desk display's "cut" layout. Lay it on the printed base, mark
-// the standoff holes through, drill 3 mm
+// carrier: EPLZON 38.1 x 50.8 breadboard-style PCB (seller's drawing, not
+// measured). 17 rows; columns A-E and F-J, each row's A-E and F-J joined
+// underneath, a 3-pitch gap between E and F with two M3 holes (40.6 apart,
+// in rows 1 and 17) and four M2 corner holes (31.8 x 44.5). Column A to I
+// is 10 pitches = the ESP32's pin rows, so its headers go in A and I and
+// every pin gets 4 joined holes (B-E / F-H) to solder the module wires into
 p = 2.54;
-perf_w = 40;
-perf_d = 17 * p;
-perf_t = 1.6;
+perf_w = 38.1;
+perf_d = 50.8;
+perf_t = 1.6; // ASSUMED
 perf_standoff = 5;
-perf_hole_inset = 3.5;
+perf_m2 = [31.8, 44.5]; // corner holes: plain rests under them, no screws
+perf_m3 = 40.6; // centre holes: M3 x 6 into standoffs
 hdr_h = 8.5; // female header the ESP32 plugs into (ASSUMED: standard)
 
 // ------------------------------------------------------------ case
@@ -102,7 +106,7 @@ tilt = 20; // screen panel, back from vertical
 skirt_h = 12; // strip under the screen: lifts it off the desk, room for the TFT's plug
 panel_margin = 3; // screen panel beyond the TFT board, top and bottom
 W = 50;
-D = 82;
+D = 89; // the carrier has to stay behind the TFT's plug and in front of the back bosses
 base_t = 3;
 
 panel_len = tft_h + 2 * panel_margin; // along the slope
@@ -142,20 +146,21 @@ ky_face_z = H + knob_gap - ky_cap_above; // board front (component) face
 ky_back_z = ky_face_z - ky_t;
 
 // carrier and ESP32 on the carrier's 2.54 hole grid: hole (col, row) is at
-// [grid_x0 + col * p, grid_y0 + row * p]; 14 cols across X, rows along Y.
-// ESP32 pin rows in cols 3 and 13, pins in rows 1-15, USB end at the back
-usb_gap = 2.5; // ESP32's USB end to the back wall; keeps the carrier off the back bosses
+// [grid_x0 + col * p, grid_y0 + (row - 1) * p]; cols A-E = 0-4, F-J = 7-11
+// across X, rows 1-17 along Y. ESP32 pins in cols A (0) and I (10), rows
+// 3-17, USB end at the back; rows 1-2 are under its antenna end
+usb_gap = 3.6; // ESP32's USB end to the back wall; keeps the carrier off the back bosses
 esp_pin_edge = (esp_l - esp_pin_span) / 2 + p / 2; // board end to the first pin's centre
 esp_row_edge = (esp_w - 10 * p) / 2; // long edge to its pin row's centre
-perf_x0 = wall + 1; // left: the ESP32's USB corner clears the back-right boss
-grid_x0 = perf_x0 + 3.49; // hole grid ASSUMED centred (margins 3.49 across 14)
-grid_y0 = D - wall - usb_gap - esp_l + esp_pin_edge - p;
-perf_y0 = grid_y0 - p / 2;
+perf_x0 = (W - perf_w) / 2;
+grid_x0 = perf_x0 + (perf_w - 11 * p) / 2; // column A; grid ASSUMED centred on the board
+grid_y0 = D - wall - usb_gap - esp_l + esp_pin_edge - 2 * p; // row 1
+perf_y0 = grid_y0 - (perf_d - 16 * p) / 2;
 perf_x1 = perf_x0 + perf_w;
 perf_y1 = perf_y0 + perf_d;
 perf_z = base_t + perf_standoff;
-esp_x0 = grid_x0 + 3 * p - esp_row_edge;
-esp_y0 = grid_y0 + p - esp_pin_edge;
+esp_x0 = grid_x0 - esp_row_edge;
+esp_y0 = grid_y0 + 2 * p - esp_pin_edge;
 esp_x1 = esp_x0 + esp_w;
 esp_y1 = esp_y0 + esp_l;
 esp_z = perf_z + perf_t + hdr_h; // ESP32 board bottom
@@ -172,16 +177,9 @@ assert(tft_hole_z / 2 - tft_pilot / 2 - 0.6 > tft_glass_z0 + tft_glass_h + tft_g
 assert(tft_hole_x / 2 - tft_post_d / 2 > tft_notch_w / 2, "TFT top posts off the ears");
 assert(win_w > tft_lit_w && win_h > tft_lit_h, "window smaller than the pixel area");
 
-// JST-XH sockets (vertical, 2.5 pitch) on the carrier: [name, pins, col,
-// row of the first pin, pin line along X?], in the free column left of the
-// ESP32. 8 pins at 2.5 on a 2.54 grid are 0.28 mm off at the ends: the
-// pins take it
-xh = [["TFT", 8, 0, 1, false], ["KNOB", 5, 0, 11, false]];
-xh_h = 7; // socket height
-xh_plug = 12; // mated plug + cable bend above the board (ASSUMED)
-for (c = xh) let(at = hole(c[2], c[3]), e = [at.x - 2.9, at.y - 2.9,
-  at.x + (c[4] ? (c[1] - 1) * p : 0) + 2.9, at.y + (c[4] ? 0 : (c[1] - 1) * p) + 2.9])
-  assert(e[0] > perf_x0 && e[1] > perf_y0 && e[2] < perf_x1 && e[3] < perf_y1, str(c[0], " socket off the carrier"));
+// no JST sockets: each row's joined holes would short their pins. The
+// TFT and knob cables are soldered into the ESP32 pins' spare holes
+// (under the ESP32, before it's plugged in), Dupont housings on the module ends
 
 // ------------------------------------------------------------ helpers
 module profile() polygon([[0, 0], [0, skirt_h], [run, H], [D, H], [D, 0]]);
@@ -287,8 +285,10 @@ module shell() difference() {
 }
 
 // ------------------------------------------------------------ base
-perf_holes = [for (x = [perf_x0 + perf_hole_inset, perf_x1 - perf_hole_inset])
-    for (y = [perf_y0 + perf_hole_inset, perf_y1 - perf_hole_inset]) [x, y]];
+perf_cx = (perf_x0 + perf_x1) / 2;
+perf_cy = (perf_y0 + perf_y1) / 2;
+perf_holes = [for (sy = [-1, 1]) [perf_cx, perf_cy + sy * perf_m3 / 2]];
+perf_rests = [for (sx = [-1, 1], sy = [-1, 1]) [perf_cx + sx * perf_m2[0] / 2, perf_cy + sy * perf_m2[1] / 2]];
 
 module base() {
   x0 = wall + clr;
@@ -305,28 +305,10 @@ module base() {
     cylinder(d = 6, h = perf_standoff);
     cylinder(d = 2.5, h = perf_standoff + 1); // M3 x 6 self-tapping, round head (the user's kit)
   }
+  for (p = perf_rests) translate([p.x, p.y, base_t - eps]) cylinder(d = 3.5, h = perf_standoff);
 }
 
 // ------------------------------------------------------------ stand-ins
-function hole(col, row) = [grid_x0 + col * p, grid_y0 + row * p];
-
-// one JST-XH socket, with its mated plug + cable bend as a see-through block
-module xh_frame(c) {
-  mid = (c[1] - 1) * p / 2;
-  at = hole(c[2], c[3]);
-  translate([at.x, at.y, perf_z + perf_t]) if (c[4]) translate([mid, 0, 0]) children();
-  else translate([0, mid, 0]) rotate([0, 0, 90]) children();
-}
-
-module xh_socket(c, plug = true) xh_frame(c) {
-  l = (c[1] - 1) * 2.5 + 4.9;
-  color("white") box([-l / 2, -5.75 / 2, eps], [l / 2, 5.75 / 2, xh_h]);
-  if (plug) color("gold", 0.35) box([-l / 2 - 0.3, -3.2, xh_h + eps], [l / 2 + 0.3, 3.2, xh_plug]);
-}
-
-module xh_label(c) xh_frame(c) color("black") translate([0, 0, xh_plug + 0.3])
-  linear_extrude(0.3) text(c[0], size = 2, halign = "center", valign = "center");
-
 module tft_standin(plug = true) tft_frame() {
   color("black") box([-tft_glass_w / 2, eps, tft_glass_z0], [tft_glass_w / 2, tft_front, tft_glass_z0 + tft_glass_h]);
   color("steelblue") difference() {
@@ -374,7 +356,6 @@ module stand_ins() {
   tft_standin();
   carrier_standin();
   esp_standin();
-  for (c = xh) xh_socket(c);
   knob_standin();
 }
 
@@ -389,7 +370,6 @@ module label(txt, p, dz) color("black") translate(p) {
 function panel_pt(x, y, z) = [W / 2 + x, y * cos(tilt) + z * sin(tilt), skirt_h + z * cos(tilt) - y * sin(tilt)];
 
 module labels() {
-  for (c = xh) xh_label(c);
   label("TFT", panel_pt(0, wall + tft_front + tft_pcb_t + tft_back, tft_v + 12), 12);
   label("ESP32", [usb_x, esp_y0 + 30, esp_z + esp_top], 3);
   label("antenna", [usb_x, esp_y0 + 3, esp_z + esp_top], 16);
@@ -412,7 +392,7 @@ else if (part == "dims") echo(W = W, D = D, H = H, wall = wall, tilt = tilt, ski
   panel_len = panel_len, tft_v = tft_v, tft_w = tft_w, tft_h = tft_h, lit_z = lit_z, win_w = win_w, win_h = win_h,
   knob_x = knob_x, knob_y = knob_y, knob_hole = knob_hole, ky_y0 = ky_y0, ky_l = ky_l, ky_w = ky_w,
   usb_x = usb_x, usb_z = usb_z, usb_w = usb_hole[0], usb_h = usb_hole[1], boss_in = boss_in, boss_d = boss_d,
-  perf_x0 = perf_x0, perf_y0 = perf_y0, perf_w = perf_w, perf_d = perf_d, esp_x0 = esp_x0, esp_y0 = esp_y0,
+  perf_x0 = perf_x0, perf_y0 = perf_y0, perf_w = perf_w, perf_d = perf_d, perf_m3 = perf_m3, esp_x0 = esp_x0, esp_y0 = esp_y0,
   esp_w = esp_w, esp_l = esp_l, grid_x0 = grid_x0, grid_y0 = grid_y0, p = p); // for cardboard.py
 else if (part == "clash") {
   // printed parts against every stand-in
@@ -428,14 +408,6 @@ else if (part == "clash") {
     tft_standin();
     union() {
       carrier_standin();
-      esp_standin();
-      for (c = xh) xh_socket(c);
-      knob_standin();
-    }
-  }
-  intersection() {
-    for (c = xh) xh_socket(c);
-    union() {
       esp_standin();
       knob_standin();
     }

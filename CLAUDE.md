@@ -179,9 +179,11 @@ OpenSCAD in `enclosure/` (see its README), lifted from the desk
 display's `enclosure_v2.scad` ("cut" carrier) and its lessons (check fits
 on the perfboard's hole grid; sink solids into walls, not tangent). The
 user left the design to me ("just create something, we will work it
-out"): first draft is a 50 x 82 x 62 wedge, TFT portrait on a panel tilted
+out"): first draft is a 50 x 89 x 62 wedge, TFT portrait on a panel tilted
 20°, pins at the bottom (so `FLIP_180` stays 1), knob on top centred, USB
-out the back, ESP32 on a 40 x 44 perfboard carrier with JST-XH sockets.
+out the back, ESP32 on an EPLZON 38.1 x 50.8 breadboard-style carrier
+(chosen 2026-09-30 over cutting a Miuzei 4 x 6: headers in columns A and I,
+module wires soldered into the joined rows, no JST sockets).
 `enclosure/export.sh` = clash check (printed parts vs stand-ins, and
 stand-ins incl. plugs vs each other, and fails on undefined-variable
 warnings) + STLs + renders. TFT measured 2026-09-29 (`MEASUREMENTS.md`,
