@@ -198,10 +198,43 @@ minus a 0.5 lip; posts flattened 0.3 clear of the glass) and let the test
 print check it. Ask for a measurement from edge to edge, never from a
 hole's centre. Resoldering the TFT header (right-angle / wires) is on the
 table if the case depth matters (~10 mm shallower).
+Lessons from the TFT measuring and model (2026-09-29/30):
+- Add up the numbers as they arrive: top gap + glass + bottom gap came out
+  0.91 short of the board, and a direct "ear tops to glass bottom" showed
+  the glass height (37.43) had missed the ~1 mm step at its top. Give the
+  user the one direct measurement to recheck, not a list of suspects.
+- When photos show geometry (the ears, the notch, the flat cable wrapping
+  to the back), put it in the stand-in right away: the user caught that
+  the model still had a plain rectangle.
+- A clash where two solids only touch (posts ending exactly at the PCB)
+  fails the check: give stand-ins an `eps` gap. Find which pair overlaps
+  by intersecting pairs in a scratch copy with the output section cut off
+  (else the assembly renders too and nothing is ever empty), then
+  `bbox` the STL.
+- Chain `export.sh && git commit`: one commit went out with a failing
+  clash because the two ran side by side.
+- Screw lengths: check them against what's in front of the pilot (an
+  M2 x 6 through the 1.21 TFT board would have poked out of the front).
+- The TFT's plug hanging down behind the screen is what limits the
+  carrier: at 82 deep the EPLZON's front passes over it only at >= 8 mm
+  standoffs, and its front middle M3 hole sits right over the plug.
 
 ## Next step
-Milestone 3 (cover art) done. Enclosure: measurements done, cardboard
-templates made (`enclosure/cardboard.py`, 2026-09-30); the user builds the
-mock-up, then the test print of `test_front`. Screws: M3 from the user's
-self-tapping kit; M2 x 4 self-tapping pan head for the TFT ordered
-2026-09-30 (try one in its 1.79 holes first).
+Milestone 3 (cover art) done. Enclosure (paused 2026-09-30, the user will
+come back to it): the user built the cardboard mock-up at 50 x 82 x 62
+(from the Miuzei-carrier templates; its floor map is out of date since the
+EPLZON switch, reprint page 2 of `enclosure/cardboard.pdf` if needed).
+Open, in order:
+1. The mock-up's findings (size on the desk, screen tilt, knob reach,
+   window vs the real TFT): not reported yet.
+2. EPLZON hole positions are the seller's drawing (M3 40.6 apart on the
+   centre line, M2 corners 31.8 x 44.5, board 38.1 x 50.8, assumed
+   centred): the user was given 4 edge-to-edge measurements to check;
+   move the floor posts if any is off by > 0.3.
+3. Screws: M3 from the user's self-tapping kit (M3-M6, smallest M3 x 6,
+   round + flat head; use round); a small self-tapping pan-head kit
+   (M2 x 4/5/6, M2.3, M2.6, M3 x 4-6) ordered 2026-09-30 for the TFT
+   (M2 x 4) and the carrier's front corners (M2 x 6). Try an M2 in the
+   TFT's 1.79 holes first, else drill to 2.0.
+4. Test print of `test_front` (see `enclosure/README.md` checklist), then
+   the full print.
