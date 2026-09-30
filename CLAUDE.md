@@ -60,7 +60,7 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
 - **OLED no longer used** (2026-09-28): the firmware has no I2C code, and
   the user was told the OLED can be unplugged from D21/D22 (not confirmed
   whether they did).
-- **Planned TFT wiring**: SCL D18, SDA D23, RES GPIO17 (TX2), DC GPIO16
+- **TFT wiring** (all pins: `docs/WIRING.md`): SCL D18, SDA D23, RES GPIO17 (TX2), DC GPIO16
   (RX2), CS D5, BLK D4. Keeps I2C D21/D22 and the knob D25/D26/D27 free,
   avoids D2 (onboard LED).
 - **Knob**: KY-040 on D25 (CLK) / D26 (DT) / D27 (SW), as on the desk
@@ -74,6 +74,18 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
   button clean (5 presses, 5 releases). First clockwise turn logged `CW`;
   that it matches the physical direction is **not yet confirmed** by the
   user. The board still runs hw-checks.
+- **Final board: ESP32 "D1 mini" style (ordered 2026-09-30, not here
+  yet)**, pack of 3, CH9102F USB-C (MH-ET LIVE MiniKit layout, ~39 x 31
+  mm, 2 x 10 pads per side). Why: on the EPLZON carrier the 30-pin DevKit
+  left only one free hole per pin row, no room to wire the modules. Same
+  WROOM-32 module (same RAM, no PSRAM), so the firmware and every pin stay
+  as they are (table in `docs/WIRING.md`); the plan is to solder the
+  module wires straight to its pads, no carrier. Seller photos show no
+  mounting holes: hold it in a pocket/clips, designed once it can be
+  measured. Expect `/dev/ttyACM0` (CH9102F is CDC-ACM), not `ttyUSB0`:
+  check `ls /dev/tty{USB,ACM}*` and `chip-id` when it arrives, and fix the
+  port in `tools/serial_log.py`. Flash size (4 MB assumed) also from
+  `chip-id` / `esptool flash-id`. The DevKit stays the breadboard board.
 - **This board: MAC `70:4b:ca:4d:f0:1c`** (ESP32-D0WD-V3 rev 3.1, 40 MHz
   crystal). Read-only identity check before flashing:
   `esptool -p /dev/ttyUSB0 chip-id`. The weather station's board is a
@@ -227,14 +239,15 @@ EPLZON switch, reprint page 2 of `enclosure/cardboard.pdf` if needed).
 Open, in order:
 1. The mock-up's findings (size on the desk, screen tilt, knob reach,
    window vs the real TFT): not reported yet.
-2. EPLZON hole positions are the seller's drawing (M3 40.6 apart on the
-   centre line, M2 corners 31.8 x 44.5, board 38.1 x 50.8, assumed
-   centred): the user was given 4 edge-to-edge measurements to check;
-   move the floor posts if any is off by > 0.3.
+2. Switch the enclosure from the EPLZON carrier to the ESP32 mini
+   (see Hardware) once it arrives: measure it edge to edge (board,
+   USB-C position and height, reset button, thickness with wires), then
+   a floor pocket/clips instead of the carrier posts, keeping the
+   50 x 82 x 62 outside of the mock-up. The EPLZON hole check is moot.
 3. Screws: M3 from the user's self-tapping kit (M3-M6, smallest M3 x 6,
    round + flat head; use round); a small self-tapping pan-head kit
    (M2 x 4/5/6, M2.3, M2.6, M3 x 4-6) ordered 2026-09-30 for the TFT
-   (M2 x 4) and the carrier's front corners (M2 x 6). Try an M2 in the
+   (M2 x 4); the carrier's M2 x 6 are moot with the mini. Try an M2 in the
    TFT's 1.79 holes first, else drill to 2.0.
 4. Test print of `test_front` (see `enclosure/README.md` checklist), then
    the full print.
