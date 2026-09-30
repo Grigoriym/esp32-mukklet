@@ -196,6 +196,8 @@ hole's centre. Resoldering the TFT header (right-angle / wires) is on the
 table if the case depth matters (~10 mm shallower).
 
 ## Next step
-Milestone 3 (cover art) done. Enclosure: measurements done; next the
-cardboard mock-up (port the desk display's `cardboard.py`), then the test
-print of `test_front`.
+Milestone 3 (cover art) done. Enclosure: measurements done, cardboard
+templates made (`enclosure/cardboard.py`, 2026-09-30); the user builds the
+mock-up, then the test print of `test_front`. Screws: M3 from the user's
+self-tapping kit; M2 x 4 self-tapping pan head for the TFT ordered
+2026-09-30 (try one in its 1.79 holes first).
