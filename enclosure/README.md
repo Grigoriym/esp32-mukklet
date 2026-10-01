@@ -64,7 +64,8 @@ the screen; USB-C out the back.
   on the back beside the USB; slots in the floor under the ESP32. No
   sensors, so no sensor bay: only the ESP32's warmth to let out.
 - **Base**: floor plate held by 4 × M3 screws from below into the shell's
-  corner bosses; opens without touching the wiring.
+  corner bosses. The ESP32 is on the base and the TFT and knob are in the
+  shell, so the cables need enough slack to lay the base beside the shell.
 
 ## Parts to print
 
@@ -108,3 +109,21 @@ self-tapping kit (M2 × 4/5/6, M2.3, M2.6, M3 × 4-6, pan head).
 2. The soldered pins' stubs underneath don't touch the floor (3 mm room).
 3. With the base screwed into the shell: the USB socket is centred in the
    hole, a cable plugs in fully, and the board's back end can't lift.
+
+## Pictures and artifacts
+
+`-D explode=55` lifts the shell (with the TFT and knob) off the base;
+`-D mini_tilt=8 -D mini_back=6` shows the mini on its way into the cradle.
+`artifacts/` holds the sources of the two claude.ai pages, since the pages
+themselves are the only other copy:
+
+- `artifacts/caliper.html`: "Mukklet Caliper Guide",
+  https://claude.ai/artifact/QTPxyAx3xMNtYf33rQmrr3
+- `artifacts/assembly/`: "Mukklet Assembly" (5 renders with labels drawn
+  over them), https://claude.ai/artifact/TWDPQ22zmgzkANerb1wxgc. Renders:
+  `openscad -D show_labels=false --colorscheme=Tomorrow --imgsize=1000,750`
+  plus `-D explode=55 --camera=25,41,55,65,0,150,330` (a1),
+  `-D show_shell=false -D explode=200 -D mini_tilt=8 -D mini_back=6
+  --camera=25,58,8,60,0,140,150` (a2; a3 without the tilt),
+  `--camera=25,41,34,65,0,150,290` (a5),
+  `-D cut=25 --projection=o --camera=25,41,34,90,0,270,230` (a6).

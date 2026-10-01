@@ -6,16 +6,19 @@ Run with the IDF python env (has pyserial):
   ~/.espressif/python_env/idf6.2_py3.14_env/bin/python tools/serial_log.py \
       [seconds] [grep-regex]
 
+PORT=/dev/ttyACM0 in the environment picks another port.
+
 Retries once if nothing matching comes back -- the first read after a flash
 or USB re-enumeration is sometimes empty.
 """
+import os
 import re
 import sys
 import time
 
 import serial
 
-PORT = "/dev/ttyUSB0"
+PORT = os.environ.get("PORT", "/dev/ttyUSB0")  # the ESP32 mini is likely /dev/ttyACM0
 MAX_BYTES = 200_000  # 115200 baud can't legitimately produce more in ~20s
 
 

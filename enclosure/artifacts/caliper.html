@@ -1,0 +1,272 @@
+<title>Mukklet Caliper Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Same look as the desk display's caliper guide: one card per measurement, the next one outlined. */
+:root{
+  --bg:#EEF2F0; --card:#FFFFFF; --ink:#1B2422; --muted:#5B6964; --line:#D3DCD8;
+  --pcb:#2F5FA8; --pcb2:#244C88; --scr:#101418; --metal:#B9C0C4; --metal-d:#8A949A;
+  --steel:#C9D0D3; --dim:#D0431B; --now:#D0431B; --done:#2E7D55; --skip:#8A6D1F;
+  --hole:#EEF2F0; --cover:#6A7FA0; --gold:#C9A227; --plas:#2A2A2A; --flex:#D99A2B;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121716; --card:#1B2220; --ink:#E4EBE8; --muted:#95A39E; --line:#2E3936;
+    --pcb:#3A6CB8; --pcb2:#2C5796; --scr:#05070A; --metal:#8E989D; --metal-d:#6C767B;
+    --steel:#6E787C; --dim:#FF7A52; --now:#FF7A52; --done:#5CC08C; --skip:#D9B04C; --hole:#121716; --cover:#7F93B5;
+    --gold:#C9A227; --plas:#2A2A2A; --flex:#D99A2B;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121716; --card:#1B2220; --ink:#E4EBE8; --muted:#95A39E; --line:#2E3936;
+  --pcb:#3A6CB8; --pcb2:#2C5796; --scr:#05070A; --metal:#8E989D; --metal-d:#6C767B;
+  --steel:#6E787C; --dim:#FF7A52; --now:#FF7A52; --done:#5CC08C; --skip:#D9B04C; --hole:#121716; --cover:#7F93B5;
+  --gold:#C9A227; --plas:#2A2A2A; --flex:#D99A2B;
+}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.5 "Barlow",system-ui,sans-serif;padding:0 16px;padding-block:28px 48px}
+.wrap{max-width:1040px;margin:0 auto;display:grid;gap:28px}
+h1,h2,h3{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:2.4rem;letter-spacing:.01em}
+h2{font-size:1.5rem;margin-bottom:12px}
+.lede{color:var(--muted);max-width:62ch;margin:6px 0 0}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+.panel p{margin:0;max-width:70ch}
+.panel p+p{margin-top:10px}
+.panel ul{margin:8px 0 0;padding-left:1.2em;display:grid;gap:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:10px;align-content:start;min-width:0}
+.step.now{border:2px solid var(--now)}
+.head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.num{font:500 .85rem "JetBrains Mono",ui-monospace,monospace;color:var(--muted)}
+.part{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+h3{font-size:1.25rem;width:100%}
+.chip{margin-left:auto;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;padding:2px 8px;border-radius:99px;border:1px solid currentColor}
+.chip.done{color:var(--done)} .chip.now{color:var(--now)} .chip.skip{color:var(--skip)} .chip.todo{color:var(--muted)}
+ol.how{margin:0;padding-left:1.2em;display:grid;gap:4px}
+.val{font:500 .95rem "JetBrains Mono",ui-monospace,monospace;color:var(--done)}
+.note{font-size:.9rem;color:var(--muted);margin:0}
+.send{font-size:.9rem;margin:0}
+.send b{font-family:"JetBrains Mono",ui-monospace,monospace;font-weight:500}
+svg.fig{width:100%;height:auto;display:block;background:var(--bg);border-radius:8px}
+/* svg paint */
+.pcb{fill:var(--pcb)} .pcb2{fill:var(--pcb2)} .scr{fill:var(--scr)} .cov{fill:var(--cover)}
+.metal{fill:var(--metal)} .metald{fill:var(--metal-d)} .steel{fill:var(--steel);stroke:var(--ink);stroke-width:1}
+.hole{fill:var(--hole)} .pin{fill:var(--gold)} .plas{fill:var(--plas)} .flex{fill:var(--flex)}
+.d{stroke:var(--dim);stroke-width:2;fill:none}
+.ext{stroke:var(--dim);stroke-width:1;stroke-dasharray:3 3;fill:none}
+.t{fill:var(--dim);font:600 13px "Barlow",sans-serif}
+.lab{fill:var(--ink);font:500 13px "Barlow",sans-serif}
+.cap{fill:var(--muted);font:500 12px "Barlow",sans-serif}
+.lead{stroke:var(--muted);stroke-width:1;fill:none}
+.arr{fill:var(--dim)}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arr" d="M0 0L10 5L0 10z"/>
+    </marker>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header>
+    <h1>Mukklet caliper guide</h1>
+    <p class="lede">The sizes the Mukklet case needs. The ESP32 mini was measured on 2026-10-01 and the TFT on 2026-09-29. Nothing is left to measure. All values in millimetres.</p>
+  </header>
+
+  <section class="panel">
+    <h2>How to hold the ESP32 mini</h2>
+    <p>Every top-view step shows the board <b>metal can towards you, USB socket at the bottom, antenna at the top</b>, as in your first photo. "Left" is the side with the RST button.</p>
+    <ul>
+      <li>Measure it bare, before soldering the pins.</li>
+      <li>Always edge to edge. Nothing is measured from the centre of a hole.</li>
+      <li>The numbers in grey are what I'd assume without you (the seller's size, or a guess). Yours replace them.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>ESP32 mini</h2>
+    <div class="grid" id="mini"></div>
+  </section>
+
+  <section class="panel">
+    <h2>How to hold the screen</h2>
+    <p>Every TFT step shows the board <b>from the front (glass towards you), pin header at the bottom</b>, the way it's mounted in the case. "Top" is the edge without pins: measure from the <b>tops of the two ears</b> (the corners with the holes), not the notch between them where the flat cable wraps round. "Left" is your left with the glass facing you.</p>
+    <ul>
+      <li>Already measured, nothing to do: the <b>KY-040</b> board, knob cap and shaft position (same part as the desk display).</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>TFT and knob (done)</h2>
+    <div class="grid" id="steps"></div>
+  </section>
+</div>
+
+<script>
+// ---- drawing helpers -------------------------------------------------
+const dh=(x1,x2,y,t,dy=-7)=>`<line class="d" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" marker-start="url(#a)" marker-end="url(#a)"/><text class="t" x="${(x1+x2)/2}" y="${y+dy+(dy>0?6:0)}" text-anchor="middle">${t}</text>`;
+const dv=(x,y1,y2,t,anchor="start")=>`<line class="d" x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" marker-start="url(#a)" marker-end="url(#a)"/><text class="t" x="${anchor==="start"?x+7:x-7}" y="${(y1+y2)/2+4}" text-anchor="${anchor}">${t}</text>`;
+// for gaps too small for a double arrow: two arrows pointing in from outside
+const outH=(x1,x2,y,t)=>`<line class="d" x1="${x1-20}" y1="${y}" x2="${x1}" y2="${y}" marker-end="url(#a)"/><line class="d" x1="${x2+20}" y1="${y}" x2="${x2}" y2="${y}" marker-end="url(#a)"/><text class="t" x="${x1-26}" y="${y+4}" text-anchor="end">${t}</text>`;
+const outV=(x,y1,y2,t)=>`<line class="d" x1="${x}" y1="${y1-20}" x2="${x}" y2="${y1}" marker-end="url(#a)"/><line class="d" x1="${x}" y1="${y2+20}" x2="${x}" y2="${y2}" marker-end="url(#a)"/><text class="t" x="${x+8}" y="${y1-8}">${t}</text>`;
+const ext=(x1,y1,x2,y2)=>`<line class="ext" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+const cap=(t,x=150,y=182)=>`<text class="cap" x="${x}" y="${y}" text-anchor="middle">${t}</text>`;
+const svg=(inner,label)=>`<svg class="fig" viewBox="0 0 300 190" role="img" aria-label="${label}">${inner}</svg>`;
+
+// ESP32 mini top view: can towards you, USB at the bottom. ~31 x 39 mm at 3.3 px/mm: x 99..201, y 18..147.
+// The left edge steps in near the USB end, with the RST button in the step.
+const M={x0:99,x1:201,y0:18,y1:147};
+const PINX=[104,112,188,196], PINY0=46, PITCH=8.4;
+const mini=()=>{
+  let s=`<polygon class="pcb" points="105,18 195,18 201,24 201,147 105,147 105,127 99,127 99,24"/>`;
+  s+=`<rect class="plas" x="120.5" y="18" width="59" height="21"/><rect class="metal" x="122" y="39" width="56" height="62"/>`;
+  for(const x of PINX) for(let i=0;i<10;i++) s+=`<circle class="hole" cx="${x}" cy="${PINY0+i*PITCH}" r="2"/>`;
+  s+=`<rect class="plas" x="121" y="107" width="12" height="12"/>`;
+  s+=`<rect class="metald" x="101" y="131" width="6" height="11"/>`;
+  s+=`<rect class="metal" x="135" y="126" width="30" height="25" rx="2"/>`;
+  return s;
+};
+// ESP32 mini side view: antenna end on the left, USB end on the right
+const miniSide=()=>{
+  let s=`<rect class="pcb" x="40" y="110" width="210" height="8"/>`;
+  s+=`<rect class="plas" x="42" y="107" width="110" height="3"/><rect class="metal" x="66" y="96" width="84" height="11"/>`;
+  s+=`<rect class="metal" x="224" y="99" width="32" height="11" rx="2"/>`;
+  s+=`<text class="lab" x="108" y="88" text-anchor="middle">metal can</text><text class="lab" x="240" y="88" text-anchor="middle">USB</text>`;
+  s+=`<text class="cap" x="42" y="140">antenna end</text>`;
+  return s;
+};
+
+// TFT front view, portrait, pins at the bottom (ears + notch at the top). Board 31 x 48 mm drawn at
+// 2.58 px/mm: x 110..190, y 22..146
+const B={x0:110,x1:190,y0:22,y1:146};
+const G={x0:111.2,x1:188.8,y0:35.7,y1:132.4};       // glass
+const L={x0:113.9,x1:186.1,y0:41.9,y1:126.2};       // lit area
+const C={x0:125.9,x1:174.1,y0:44.3,y1:92.4};        // 160 px cover at x 40, y 8
+const HOLES=[[116.5,28.5],[183.5,28.5],[116.5,139.5],[183.5,139.5]];
+const tft=({glass=true,lit=false,cover=false}={})=>{
+  // notch between the ears: ~19 wide, ~4.7 deep; the flat cable wraps through it
+  let s=`<polygon class="pcb" points="110,22 125.5,22 125.5,34 174.5,34 174.5,22 190,22 190,146 110,146"/>`;
+  s+=`<rect class="flex" x="132" y="31" width="36" height="6" rx="1.5"/>`;
+  for(const [x,y] of HOLES) s+=`<circle class="hole" cx="${x}" cy="${y}" r="3"/>`;
+  for(let i=0;i<8;i++) s+=`<circle class="pin" cx="${127+i*6.56}" cy="141" r="1.8"/>`;
+  if(glass) s+=`<rect class="scr" x="${G.x0}" y="${G.y0}" width="${G.x1-G.x0}" height="${G.y1-G.y0}" rx="5"/>`;
+  if(lit) s+=`<rect x="${L.x0}" y="${L.y0}" width="${L.x1-L.x0}" height="${L.y1-L.y0}" rx="4" fill="none" stroke="var(--metal-d)" stroke-dasharray="2 2"/>`;
+  if(cover) s+=`<rect class="cov" x="${C.x0}" y="${C.y0}" width="${C.x1-C.x0}" height="${C.y1-C.y0}"/>`+
+    [0,1,2].map(i=>`<rect class="metald" x="${132+i*4}" y="${99+i*9}" width="${36-i*8}" height="4"/>`).join("");
+  return s;
+};
+// TFT side view: glass on the board, header on the back at the bottom (left here)
+const tftSide=({plug=false}={})=>{
+  let s=`<rect class="pcb" x="40" y="96" width="220" height="10"/><rect class="scr" x="72" y="84" width="180" height="12" rx="2"/>`;
+  s+=`<rect class="plas" x="44" y="106" width="16" height="10"/>`;
+  for(let i=0;i<2;i++) s+=`<rect class="pin" x="${48+i*6}" y="116" width="3" height="${plug?30:36}"/>`;
+  s+=`<rect class="metald" x="140" y="106" width="30" height="7"/><rect class="metald" x="190" y="106" width="16" height="5"/>`;
+  s+=`<text class="lab" x="200" y="78">glass (front)</text><text class="lab" x="70" y="170">bottom edge, pins</text>`;
+  return s;
+};
+const ky=()=>{
+  let s=`<rect class="pcb2" x="90" y="80" width="170" height="12"/><rect class="metal" x="170" y="56" width="60" height="24"/><rect class="metald" x="190" y="40" width="20" height="16"/>`;
+  s+=`<rect class="plas" x="78" y="92" width="12" height="6"/>`;
+  for(let i=0;i<1;i++) s+=`<rect class="pin" x="36" y="${86+i*6}" width="54" height="3"/>`;
+  return s;
+};
+
+// ---- steps -----------------------------------------------------------
+// status: done | skip | now | todo ; the first "todo" of a list becomes "now"
+const miniSteps=[
+ {part:"ESP32 mini",title:"Board width and length",status:"done",val:"31.51 × 39.02",cur:"31 × 39 (seller)",
+  how:["Width: big lower jaws on the left and right board edges, across the pin rows (the widest place).","Length: from the antenna edge at the top to the board edge at the bottom. Put the jaw beside the USB socket, on the board edge itself: the socket sticks out past it."],
+  send:"width × length",
+  fig:svg(mini()+dh(M.x0,M.x1,170,"width",14)+ext(M.x0,127,M.x0,174)+ext(M.x1,147,M.x1,174)+ext(M.x1,M.y0,236,M.y0)+ext(M.x1,M.y1,236,M.y1)+dv(232,M.y0,M.y1,"length"),"ESP32 mini width and length")},
+ {part:"ESP32 mini",title:"Thickness and heights",status:"done",val:"A = 1.49, B = 4.66, C = 4.61 (can 3.17 and USB 3.12 above the board)",cur:"board 1.6, can top 4.8, USB top 4.9 (guesses)",
+  how:["A: the bare board, on a corner at the antenna end where nothing is mounted.","B: from the board's underside to the top of the metal can.","C: from the board's underside to the top of the USB socket. If the socket's tabs poke through underneath, clamp beside them."],
+  send:"A, B, C",
+  fig:svg(miniSide()+outV(190,110,118,"A")+dv(28,96,118,"B","end")+ext(28,96,66,96)+ext(28,118,40,118)+dv(274,99,118,"C")+ext(256,99,278,99)+ext(250,118,278,118)+cap("side view",150,176),"ESP32 mini thickness and heights")},
+ {part:"ESP32 mini",title:"Where the USB socket sits",status:"done",val:"A = 11.06, B = 8.89, C = 1.22 (socket centre 15.5 from the right edge, 0.25 right of the board's middle)",cur:"9 wide, centred, sticking out ~1.5 (guess)",
+  how:["A: from the board's right edge to the socket's right side. The right edge is straight all the way down, the left one has the step.","B: the socket's width, across its metal shell.","C: how far the socket sticks out past the board's bottom edge. The depth rod works well."],
+  send:"A, B, C",
+  fig:svg(mini()+ext(165,151,165,170)+ext(135,151,135,170)+ext(M.x1,147,M.x1,170)+dh(165,M.x1,164,"A",14)+dh(135,165,164,"B",14)+ext(165,151,90,151)+ext(105,147,90,147)+`<line class="d" x1="84" y1="127" x2="84" y2="147" marker-end="url(#a)"/><line class="d" x1="84" y1="171" x2="84" y2="151" marker-end="url(#a)"/><text class="t" x="76" y="153" text-anchor="end">C</text>`,"USB socket position")},
+ {part:"ESP32 mini",title:"Does the RST button stick out?",status:"done",val:"inside the board's outline",cur:"inside the outline (from your photo)",
+  how:["The button sits in the step on the left edge, near the USB end.","Lay a ruler or the caliper's jaw flat along the board's left edge. If the button's tip touches it or pushes it away, send how far it sticks out. If there's a gap, send \"inside\"."],
+  send:"\"inside\", or how far it sticks out",
+  fig:svg(mini()+`<rect class="steel" x="84" y="14" width="15" height="150"/><circle cx="104" cy="136.5" r="11" fill="none" stroke="var(--dim)" stroke-width="2"/><path class="lead" d="M93 141 L62 158"/><text class="t" x="58" y="166" text-anchor="end">button</text><text class="cap" x="78" y="60" text-anchor="end">straight edge</text>`,"RST button and the board edge")},
+ {part:"ESP32 mini",title:"Where the pin holes are",status:"done",val:"A ≈ 4.63, B ≈ 6.83 (approximate; A agrees with the standard D1 mini grid, 4.8)",cur:"A = 4.4, B = 7.5 (guess from the photo)",
+  how:["A: from the board's left edge to the far side of a hole in the second (inner) column. This tells me how wide a strip must stay free under the board for the solder joints.","B: from the antenna edge at the top to the near side of the first hole in a column."],
+  send:"A, B",
+  fig:svg(mini()+ext(M.x0,24,M.x0,4)+ext(114,PINY0,114,4)+outH(M.x0,114,9,"A")+ext(198,PINY0-2,236,PINY0-2)+ext(195,M.y0,236,M.y0)+dv(232,M.y0,PINY0-2,"B"),"Pin hole positions")},
+];
+
+const steps=[
+ {part:"TFT",title:"Board width and height",status:"done",val:"31.22 × 47.96 (widest points, across the ears; 48.01 the first time)",cur:"",
+  how:["Big lower jaws on the left and right board edges: width.","Then the top and bottom edges: height. Board edges only, not the glass."],
+  send:"width × height",
+  fig:svg(tft()+dh(110,190,164,"width",14)+dv(206,22,146,"height"),"TFT width and height")},
+ {part:"TFT",title:"Thickness: glass and board",status:"done",val:"A = 2.92, B = 1.21 (glass front 1.71 above the board)",cur:"board 1.6, glass front 1.8 above it (guess)",
+  how:["Lay it glass up. A: clamp from the glass front to the back of the board, next to the glass, away from the pins and the parts on the back.","B: the board alone: one of the two ears at the top is easiest."],
+  send:"A, B",
+  fig:svg(tftSide()+dv(272,84,106,"A")+dv(30,96,106,"B","end")+ext(30,96,40,96),"TFT thickness")},
+ {part:"TFT",title:"Size of the glass",status:"done",val:"30.06 wide; height 38.40 from step 4 (the 37.43 likely missed the step at the top)",cur:"30.07 × 37.43 (guess from the usual 1.69\" panel)",
+  how:["The whole black glass piece, not only the part that lights up. At the top, include the narrow step with the metal strip where the flat cable comes out.","Width left to right, then height top to bottom."],
+  send:"width × height",
+  fig:svg(tft()+dh(G.x0,G.x1,88,"glass width",-6)+ext(G.x1,G.y0,224,G.y0)+ext(G.x1,G.y1,224,G.y1)+dv(220,G.y0,G.y1,"glass height"),"TFT glass size")},
+ {part:"TFT",title:"Where the glass sits",status:"done",val:"ear tops → glass top 4.73, → glass bottom 43.13; bottom gap 4.94; left = right",cur:"",how:["A: ear tops to the glass's top edge.","B: glass bottom edge to the board's bottom edge.","C: left gap vs right gap."],send:"",
+  fig:svg(tft()+dv(150,B.y0,G.y0,"A")+dv(150,G.y1,B.y1,"B")+`<path class="lead" d="${`M111 70 L70 60`}"/><text class="t" x="66" y="58" text-anchor="end">C</text>`,"TFT glass position")},
+ {part:"TFT",title:"The notch between the ears",status:"done",val:"18.91 wide, 5.13 deep",cur:"19 wide, 4.7 deep (read off your photos)",
+  how:["The gap at the top between the two ears, where the flat cable wraps round.","A: its width, from the inner side of one ear to the inner side of the other.","B: its depth, from the ear tops down to the notch's bottom edge (the board edge, not the cable). The depth rod works well."],
+  send:"A, B",
+  fig:svg(tft()+dh(125.5,174.5,14,"A",-3)+ext(125.5,22,125.5,12)+ext(174.5,22,174.5,12)+ext(174.5,34,212,34)+ext(190,22,212,22)+dv(208,22,34,"B"),"Notch between the ears")},
+ {part:"TFT",title:"Where the picture sits",status:"skip",val:"skipped: the window follows the glass instead, checked on the test print",cur:"lit area centred on the glass (guess)",
+  how:["Plug the board in so Mukklet shows a track with its cover art (pins at the bottom, picture upright).","A: from the ear tops to the cover's top edge.","B: from the board's left edge to the cover's left edge.","C: the cover's width (it should come out near 18.6: that checks the others).","I work the lit area out from these: the cover starts 8 px from the top and 40 px from the left."],
+  send:"A, B, C",
+  fig:svg(tft({cover:true})+dv(C.x1+6,B.y0,C.y0,"A")+ext(C.x1,C.y0,C.x1+10,C.y0)+dh(B.x0,C.x0,68,"B",-5)+dh(C.x0,C.x1,C.y1+10,"C",12),"Cover position on the TFT")},
+ {part:"TFT",title:"Mounting holes: size",status:"done",val:"1.79 (likely 2.0: inside jaws read low)",cur:"2.2 (guess, M2)",
+  how:["Thin upper jaws into one corner hole.","Open them until they touch both sides. Read the number."],
+  send:"diameter",
+  fig:svg(`<rect class="pcb" x="40" y="60" width="220" height="110"/><circle class="hole" cx="150" cy="115" r="42"/>
+   <polygon class="steel" points="112,10 124,10 124,112 112,118"/><polygon class="steel" points="176,10 188,10 188,118 176,112"/>
+   <line class="d" x1="100" y1="100" x2="80" y2="100" marker-end="url(#a)"/><line class="d" x1="200" y1="100" x2="220" y2="100" marker-end="url(#a)"/>
+   <text class="t" x="150" y="182" text-anchor="middle">open until they touch the sides</text>`,"Hole diameter with the inside jaws")},
+ {part:"TFT",title:"Distance between the holes",status:"done",val:"26.19 left-right, 42.91 top-bottom",cur:"26 left-right, 43 top-bottom (seller)",
+  how:["From the LEFT edge of a left hole to the LEFT edge of the right hole next to it (same edge to same edge = centre to centre).","Then the TOP edge of a top hole to the TOP edge of the hole below it."],
+  send:"left-right, top-bottom",
+  fig:svg(tft({glass:false})+ext(113.5,139.5,113.5,170)+ext(180.5,139.5,180.5,170)+dh(113.5,180.5,166,"left edge → left edge",14)+ext(183.5,25.5,232,25.5)+ext(183.5,136.5,232,136.5)+dv(228,25.5,136.5,"top → top"),"Hole spacing")},
+ {part:"TFT",title:"Anything between the glass and the holes?",status:"skip",val:"skipped: the posts are flattened on the glass side, 0.3 mm clear of it",cur:"a 4.5 mm screw post on each hole, on the front",
+  how:["Photos received: the top holes are on the ears, and the flat cable wraps round the notch between them.","Put the caliper's tip on the centre of a TOP hole and measure to the nearest point of the glass (or the flat cable, whichever is closer).","Same for a BOTTOM hole."],
+  send:"top, bottom",
+  fig:svg(tft()+HOLES.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="7" fill="none" stroke="var(--dim)" stroke-width="2"/>`).join("")+cap("the case's posts press here",150,172),"Area around the holes")},
+ {part:"TFT",title:"How far the pins stick out",status:"skip",val:"standard header: taken as 8.5",cur:"8.25 (guess, like the OLED)",
+  how:["The header is on the back (seen in your photo).","Big jaws from the back surface of the board to the pin tips, including the black plastic."],
+  send:"length",
+  fig:svg(tftSide()+dv(30,106,152,"pins","end")+ext(30,106,44,106),"Pin length")},
+ {part:"TFT",title:"Where the pin row sits",status:"skip",val:"standard header: ~2.0 (photo)",cur:"pin row centre 2.0 above the bottom edge (guess)",
+  how:["Board from the back, pins at the bottom.","From the board's bottom edge to the FAR side of the black plastic strip (the side towards the middle of the board). I subtract half the strip."],
+  send:"distance",
+  fig:svg(`<rect class="pcb" x="60" y="30" width="180" height="120" rx="2"/><rect class="plas" x="100" y="118" width="100" height="18"/>`+[0,1,2,3,4,5,6,7].map(i=>`<circle class="pin" cx="${106+i*12.5}" cy="127" r="3"/>`).join("")+ext(200,118,258,118)+dv(254,118,150,"distance")+cap("back of the board",150,22),"Pin row position")},
+ {part:"TFT",title:"Tallest part on the back",status:"skip",val:"from the photo: tiny parts only",cur:"2 (guess)",
+  how:["Board glass down. From the back surface to the top of the highest part, not counting the pin header."],
+  send:"height",
+  fig:svg(tftSide()+dv(155,106,113,"")+`<path class="lead" d="M162 118 L185 140"/><text class="t" x="188" y="146">height</text>`,"Tallest part on the back")},
+ {part:"Knob",title:"KY-040 pins past the board",status:"skip",val:"standard right-angle header: ~6",cur:"6 (guess)",
+  how:["Its pins stick out sideways past the board's short end.","Big jaws from that board edge to the pin tips."],
+  send:"length",
+  fig:svg(ky()+dh(36,90,120,"pins",14)+ext(90,92,90,124)+cap("side view",150,176),"KY-040 pin length")},
+];
+
+const chip={done:"Recorded",now:"Now",skip:"Skipped",todo:"To do"};
+const render=(list,id,prefix)=>{
+  const firstTodo=list.findIndex(s=>s.status==="todo"); if(firstTodo>=0) list[firstTodo].status="now";
+  document.getElementById(id).innerHTML=list.map((s,i)=>`
+ <article class="step ${s.status==="now"?"now":""}" id="${prefix}${i+1}">
+   <div class="head"><span class="num">${String(i+1).padStart(2,"0")}</span><span class="part">${s.part}</span><span class="chip ${s.status}">${chip[s.status]}</span><h3>${s.title}</h3></div>
+   ${s.fig}
+   <ol class="how">${s.how.map(h=>`<li>${h}</li>`).join("")}</ol>
+   ${s.status==="skip"?`<p class="note"><span class="val">${s.val}</span></p>`:s.status==="done"?`<p class="note">Recorded: <span class="val">${s.val}</span></p>`:`<p class="send">Send: <b>${s.send}</b></p><p class="note">Assumed until then: ${s.cur}</p>`}
+ </article>`).join("");
+};
+render(miniSteps,"mini","m");
+render(steps,"steps","s");
+</script>

@@ -88,8 +88,8 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
   4 + 4; needs 26 AWG stranded wire, their 22 AWG is solid); the single
   3V3 pin feeds both modules through a Y-wire. Seller photos show no
   mounting holes: held in a cradle (see Enclosure). Expect `/dev/ttyACM0` (CH9102F is CDC-ACM), not `ttyUSB0`:
-  check `ls /dev/tty{USB,ACM}*` and `chip-id` when it arrives, and fix the
-  port in `tools/serial_log.py`. Flash size (4 MB assumed) also from
+  check `ls /dev/tty{USB,ACM}*` and `chip-id` once it's plugged in (`PORT=`
+  for `tools/serial_log.py`). Flash size (4 MB assumed) also from
   `chip-id` / `esptool flash-id`. The DevKit stays the breadboard board.
 - **This board: MAC `70:4b:ca:4d:f0:1c`** (ESP32-D0WD-V3 rev 3.1, 40 MHz
   crystal). Read-only identity check before flashing:
@@ -172,7 +172,7 @@ Boot logs (`idf.py monitor` needs a TTY the harness doesn't have):
 `tools/serial_log.py` resets the board and captures, run with the IDF
 python env,
 `~/.espressif/python_env/idf6.2_py3.14_env/bin/python tools/serial_log.py <seconds> "<regex>"`
-(port hard-coded to `/dev/ttyUSB0`).
+(port `/dev/ttyUSB0`, or `PORT=/dev/ttyACM0` in the environment).
 Checks that need hands (turning the knob): run the capture with
 `run_in_background`, tell the user what to do, read the output when it ends.
 
@@ -239,6 +239,19 @@ Lessons from the TFT measuring and model (2026-09-29/30):
   clash because the two ran side by side.
 - Screw lengths: check them against what's in front of the pilot (an
   M2 x 6 through the 1.21 TFT board would have poked out of the front).
+- "How does it go together" questions: three rounds of prose and ASCII
+  drawings didn't land (2026-10-01); renders from the model with labels
+  drawn over them did ("Mukklet Assembly" artifact,
+  https://claude.ai/artifact/TWDPQ22zmgzkANerb1wxgc, source in
+  `enclosure/artifacts/`). Say first that the shell has no lid: the only
+  opening is the bottom.
+- Artifact pages have no local copy unless saved: both sources are in
+  `enclosure/artifacts/`; edit there and republish with the page's `url`.
+- OpenSCAD: a `module` can't be defined inside `if`/`else` (parser error
+  with only a line number); define it at the top level.
+- The mini's cradle is untested until printed (lip overhangs, the 0.2 gap
+  under the shell's ledge, the tilt-in move was only worked out on paper:
+  ~8 degrees fits under the lips, the back end clears the stops).
 - The TFT's plug hanging down behind the screen is what limits the
   carrier: at 82 deep the EPLZON's front passes over it only at >= 8 mm
   standoffs, and its front middle M3 hole sits right over the plug.
