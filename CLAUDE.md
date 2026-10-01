@@ -74,13 +74,19 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
   button clean (5 presses, 5 releases). First clockwise turn logged `CW`;
   that it matches the physical direction is **not yet confirmed** by the
   user. The board still runs hw-checks.
-- **Final board: ESP32 "D1 mini" style (ordered 2026-09-30, not here
-  yet)**, pack of 3, CH9102F USB-C (MH-ET LIVE MiniKit layout, ~39 x 31
+- **Final board: ESP32 "D1 mini" style (ordered 2026-09-30, arrived and
+  measured 2026-10-01: `enclosure/MEASUREMENTS.md`, 31.51 x 39.02, no
+  mounting holes, pins not soldered yet, not plugged in yet)**, pack of 3, CH9102F USB-C (MH-ET LIVE MiniKit layout, ~39 x 31
   mm, 2 x 10 pads per side). Why: on the EPLZON carrier the 30-pin DevKit
   left only one free hole per pin row, no room to wire the modules. Same
   WROOM-32 module (same RAM, no PSRAM), so the firmware and every pin stay
-  as they are (table in `docs/WIRING.md`); the plan is to solder the
-  module wires straight to its pads, no carrier. Seller photos show no
+  as they are (table in `docs/WIRING.md`); no carrier (the EPLZON's joined rows would short its inner and outer
+  pins). Proposed 2026-10-01, the user has not soldered yet: pin headers
+  pointing up (can side), joints underneath, on both inner rows and the
+  right outer row; TFT and knob wires plug on with female Dupont ends
+  (the user has a crimp tool and a Dupont kit with 1-6 pin housings: TFT =
+  4 + 4; needs 26 AWG stranded wire, their 22 AWG is solid); the single
+  3V3 pin feeds both modules through a Y-wire. Seller photos show no
   mounting holes: hold it in a pocket/clips, designed once it can be
   measured. Expect `/dev/ttyACM0` (CH9102F is CDC-ACM), not `ttyUSB0`:
   check `ls /dev/tty{USB,ACM}*` and `chip-id` when it arrives, and fix the
@@ -240,9 +246,8 @@ Open, in order:
 1. The mock-up's findings (size on the desk, screen tilt, knob reach,
    window vs the real TFT): not reported yet.
 2. Switch the enclosure from the EPLZON carrier to the ESP32 mini
-   (see Hardware) once it arrives: measure it edge to edge (board,
-   USB-C position and height, reset button, thickness with wires), then
-   a floor pocket/clips instead of the carrier posts, keeping the
+   (see Hardware; measured 2026-10-01, pin holes skipped): a floor
+   pocket/clips instead of the carrier posts, keeping the
    50 x 82 x 62 outside of the mock-up. The EPLZON hole check is moot.
 3. Screws: M3 from the user's self-tapping kit (M3-M6, smallest M3 x 6,
    round + flat head; use round); a small self-tapping pan-head kit

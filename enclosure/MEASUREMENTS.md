@@ -33,6 +33,29 @@ from the photos or standard parts, marked in `enclosure.scad`.
 - USB-C on the short edge opposite the antenna, port centre ~3.2 above the board bottom
 - Tallest part on top 4.78 above the board bottom
 
+## ESP32 mini (D1 mini layout, CH9102F, "MINI D1 ESP32" V1296), measured from 2026-10-01
+Held metal can towards you, USB socket at the bottom, antenna at the top;
+"left" is the RST button's side. Caliper guide: same artifact as the TFT.
+- Board width x length: 31.51 x 39.02 (width across the pin rows; length
+  antenna edge to the board edge beside the USB socket)
+- Thickness: board alone 1.49; underside to the top of the metal can 4.66;
+  underside to the top of the USB socket 4.61 (so can 3.17, socket 3.12
+  above the board's top face)
+- USB-C socket: right board edge to the socket's right side 11.06, shell
+  8.89 wide (standard, ~8.94), sticks out 1.22 past the bottom edge. Centre
+  15.5 from the right edge = 0.25 right of the board's middle (31.51 / 2)
+- RST button: stays inside the board's outline (straight-edge check along
+  the left edge)
+- Pin holes: not measured (skipped: awkward with a caliper). Taken as the
+  standard D1 mini grid: 2.54 pitch, inner columns 22.86 apart, outer 27.94,
+  centred, so the inner column's centre is ~4.3 from the side edge. Keep a
+  6 mm strip free under each long side for the solder joints; support the
+  board under the middle and the ends
+- Shape (photos): top corners chamfered; the left edge steps in near the USB
+  end, with the RST button in the step; USB-C centred on the bottom edge,
+  sticking out past it; 2 x 10 pin holes per side; no mounting holes (only
+  two ~1 mm tooling holes)
+
 ## KY-040, from the desk display
 - Board 26.18 x 19.29, holes 2.85 (16.48 apart)
 - Board bottom to the cap's top 31.79, to the cap's lower edge 15.58
