@@ -25,6 +25,9 @@ cut = -1; // assembly only: >= 0 cuts the printed parts away left of this x
 show_shell = true; // assembly only: untick to see inside
 show_base = true;
 show_labels = true; // names over the module stand-ins
+explode = 0; // assembly only: lifts the shell, with the TFT and knob in it, this far off the base
+mini_tilt = 0; // assembly only: the mini tilted this many degrees, as it goes into its cradle
+mini_back = 0; // ... and pulled back this far
 
 $fn = 48;
 eps = 0.01;
@@ -413,6 +416,13 @@ module test_front() intersection() {
   box([-1, -1, skirt_h - 3], [W + 1, ky_y0 + ky_l + 3, H + 1]);
 }
 
+// assembly only: the printed parts cut away left of x = cut
+module cutaway() intersection() {
+  children();
+  if (cut >= 0) box([cut, -10, -10], [W + 10, D + 10, H + 10]);
+  else box([-10, -10, -10], [W + 10, D + 10, H + 10]);
+}
+
 if (part == "shell") translate([0, D, H]) rotate([180, 0, 0]) shell();
 else if (part == "test_front") translate([0, D, H]) rotate([180, 0, 0]) test_front();
 else if (part == "base") base();
@@ -444,14 +454,12 @@ else if (part == "clash") {
   }
 }
 else {
-  intersection() {
-    union() {
-      if (show_shell) color("white") shell();
-      if (show_base) color("khaki") base();
-    }
-    if (cut >= 0) box([cut, -10, -10], [W + 10, D + 10, H + 10]);
-    else box([-10, -10, -10], [W + 10, D + 10, H + 10]);
+  translate([0, 0, explode]) {
+    if (show_shell) cutaway() color("white") shell();
+    tft_standin();
+    knob_standin();
+    if (show_labels) labels();
   }
-  stand_ins();
-  if (show_labels) labels();
+  if (show_base) cutaway() color("khaki") base();
+  translate([0, mini_y0 + mini_back, mini_z]) rotate([mini_tilt, 0, 0]) translate([0, -mini_y0, -mini_z]) mini_standin(plug = mini_tilt == 0);
 }
