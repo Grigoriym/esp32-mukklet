@@ -25,7 +25,7 @@ enclosure/cardboard.py [cardboard mm, default 2]   # -> enclosure/cardboard.pdf 
 Two A4 pages of 1:1 templates, sized from the model (`part="dims"`): 2
 sides, front strip, screen panel (window + the TFT board's outline), top
 (knob hole + the KY-040's outline), back (USB hole), and a floor with the
-ESP32, carrier and its screw holes drawn on it (outlines, not holes). Print at
+ESP32 mini drawn on it (an outline, not a hole). Print at
 100% ("Actual size") and check the 50 mm bar with a ruler. Panels other
 than the sides are narrower by 2 × the cardboard thickness, so they fit
 between the sides. Checks: overall size on the desk, the screen's tilt and
@@ -42,25 +42,24 @@ the screen; USB-C out the back.
   behind onto 4 posts at its corner holes, flattened on the glass side
   (0.3 mm clear of it). Pin header at the bottom, so the picture is
   upright with `FLIP_180 = 1` in `main/display.c`, as now. Its plug hangs
-  down and back, in front of the carrier: that's what sets the case's depth.
+  down and back, ending ~12 mm in front of the ESP32.
 - **Knob**: KY-040 flat under the top, shaft end to the front, pins to the
   back, pushed up into two snap hooks against 4 pads (as on the desk
   display). The cap goes on from outside afterwards.
-- **Carrier**: EPLZON 38.1 x 50.8 breadboard-style PCB (sizes from the
-  seller's drawing), 9 mm up: an M3 screw in its back middle hole, M2
-  screws in its two front corner holes, rests under the back corners. ESP32 front-to-back in two 15-pin female
-  headers (8.5 mm) in columns A and I (10 pitches apart, as its pins), rows
-  3-17, USB end at the back. Each row's A-E and F-J holes are joined
-  underneath, so every ESP32 pin has 4 spare holes: the TFT and knob wires
-  are soldered into those (under the ESP32, before it's plugged in), with
-  Dupont housings on the module ends. No JST sockets: the joined rows
-  would short their pins. Its front edge passes over the TFT's plug, which is
-  why it sits so high (8 mm is the minimum, 9 leaves 1 mm) and why the
-  front middle hole isn't used (the plug is under it). Kept at 82 deep
-  for the cardboard mock-up already built; lower standoffs would need
-  ~89.
-- **Antenna**: the ESP32's antenna end is at the front, nothing above it;
-  the carrier's rows 1-2 are under it (copper pads only).
+- **ESP32 mini** (D1 mini layout, 31.51 x 39.02, no mounting holes): flat
+  on the floor at the back, metal can up, USB end at the back wall, 3 mm
+  above the floor (room for the solder joints). Held in a cradle on the
+  base, no screws and nothing that flexes: the antenna end slides under
+  two lips at the front corners, the back drops onto two rests with a
+  stop behind them, side guides beside the pin rows, and a ledge on the
+  shell's back wall sits 0.2 above the USB socket once the base is
+  screwed on. Pin headers point up, on both inner rows and the outer row
+  on the side away from the RST button; the TFT and knob cables plug onto
+  them with female Dupont housings (tops ~24 mm above the floor, the
+  knob's board is at 48). Kept at 82 deep for the cardboard mock-up
+  already built; the USB hole is 16 mm lower than on that mock-up's back.
+- **Antenna**: the ESP32's antenna end faces the front, in the middle of
+  the case; nothing above it but the knob's board, 40 mm up.
 - **Vents**: top slots left and right of the knob, over the ESP32; low slots
   on the back beside the USB; slots in the floor under the ESP32. No
   sensors, so no sensor bay: only the ESP32's warmth to let out.
@@ -72,7 +71,7 @@ the screen; USB-C out the back.
 | STL | Qty | Orientation (as exported) | Notes |
 |---|---|---|---|
 | `shell` | 1 | upside down, top on the bed | check the USB hole's 13 mm bridge |
-| `base` | 1 | flat | |
+| `base` | 1 | flat | the two lips over the front corners are 2.5 mm overhangs |
 | `test_front` | 1 | like the shell | **print this first**: screen panel + top with the knob mount |
 
 Material: PETG preferred (PLA softens ~55 °C). Fit clearance 0.3 mm (`clr`).
@@ -88,10 +87,10 @@ self-tapping kit (M2 × 4/5/6, M2.3, M2.6, M3 × 4-6, pan head).
 - 4 × M2 × 4 self-tapping, pan head (TFT → posts; a 6 would poke out the
   front). The TFT's holes measured 1.79: try one screw first, else drill
   them to 2.0
-- 1 × M3 × 6 self-tapping, round head (carrier's back middle hole)
-- 2 × M2 × 6 self-tapping, pan head (carrier's front corner holes)
-- 2 × 15-pin female headers; cables to the TFT (8 wires) and knob (5 wires),
-  soldered on the carrier, Dupont housings on the module ends
+- 3 × 10-pin male headers on the ESP32 mini, pins up; cables to the TFT
+  (8 wires) and knob (5 wires) with female Dupont housings on both ends;
+  the TFT's VCC and the knob's + share the one 3V3 pin (two wires in one
+  terminal)
 - 4 self-adhesive rubber feet
 
 ## Test print checklist (`test_front`)
@@ -101,3 +100,11 @@ self-tapping kit (M2 × 4/5/6, M2.3, M2.6, M3 × 4-6, pan head).
    position wasn't measured), the screws pull the board flat.
 2. KY-040: it snaps in, the shaft is centred in the 16 mm hole, and the cap
    turns and presses without rubbing the top.
+
+## Base print checklist
+
+1. ESP32 mini: the antenna end slides under the two lips at a slight tilt
+   and the back drops in front of the stops; no play left-right.
+2. The soldered pins' stubs underneath don't touch the floor (3 mm room).
+3. With the base screwed into the shell: the USB socket is centred in the
+   hole, a cable plugs in fully, and the board's back end can't lift.

@@ -81,14 +81,13 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
   left only one free hole per pin row, no room to wire the modules. Same
   WROOM-32 module (same RAM, no PSRAM), so the firmware and every pin stay
   as they are (table in `docs/WIRING.md`); no carrier (the EPLZON's joined rows would short its inner and outer
-  pins). Proposed 2026-10-01, the user has not soldered yet: pin headers
+  pins). Agreed 2026-10-01 (the model is built on it), not soldered yet: pin headers
   pointing up (can side), joints underneath, on both inner rows and the
   right outer row; TFT and knob wires plug on with female Dupont ends
   (the user has a crimp tool and a Dupont kit with 1-6 pin housings: TFT =
   4 + 4; needs 26 AWG stranded wire, their 22 AWG is solid); the single
   3V3 pin feeds both modules through a Y-wire. Seller photos show no
-  mounting holes: hold it in a pocket/clips, designed once it can be
-  measured. Expect `/dev/ttyACM0` (CH9102F is CDC-ACM), not `ttyUSB0`:
+  mounting holes: held in a cradle (see Enclosure). Expect `/dev/ttyACM0` (CH9102F is CDC-ACM), not `ttyUSB0`:
   check `ls /dev/tty{USB,ACM}*` and `chip-id` when it arrives, and fix the
   port in `tools/serial_log.py`. Flash size (4 MB assumed) also from
   `chip-id` / `esptool flash-id`. The DevKit stays the breadboard board.
@@ -199,11 +198,18 @@ on the perfboard's hole grid; sink solids into walls, not tangent). The
 user left the design to me ("just create something, we will work it
 out"): first draft is a 50 x 82 x 62 wedge, TFT portrait on a panel tilted
 20°, pins at the bottom (so `FLIP_180` stays 1), knob on top centred, USB
-out the back, ESP32 on an EPLZON 38.1 x 50.8 breadboard-style carrier
-(chosen 2026-09-30 over cutting a Miuzei 4 x 6: headers in columns A and I,
-module wires soldered into the joined rows, no JST sockets; 9 mm standoffs
-so its front passes over the TFT plug, which keeps the 82 depth of the
-cardboard mock-up the user already built).
+out the back. **ESP32 mini cradle (2026-10-01)**: the mini lies flat on
+the base at the back, can up, 3 mm above the floor, no screws and nothing
+that flexes: antenna end under two lips at the front corners, back end on
+two rests with a stop behind, side guides, and a ledge on the shell's back
+wall 0.2 above the USB socket (holds the back down once the base is
+screwed on). Why the ledge sits on the socket: it's the one measured
+height at the back; the board's back corners have LEDs/parts close to the
+edge (photo only). Pin headers up, Dupont plugs on top (tops 24 mm above
+the floor, knob board at 48; TFT plug ends ~12 mm in front). Outside still
+50 x 82 x 62 for the cardboard mock-up, but its USB hole is now 16 mm
+lower (z 9, was 25) and 0.25 left of centre seen from the front. The
+EPLZON carrier and the DevKit are out of the model (git history).
 `enclosure/export.sh` = clash check (printed parts vs stand-ins, and
 stand-ins incl. plugs vs each other, and fails on undefined-variable
 warnings) + STLs + renders. TFT measured 2026-09-29 (`MEASUREMENTS.md`,
@@ -245,14 +251,13 @@ EPLZON switch, reprint page 2 of `enclosure/cardboard.pdf` if needed).
 Open, in order:
 1. The mock-up's findings (size on the desk, screen tilt, knob reach,
    window vs the real TFT): not reported yet.
-2. Switch the enclosure from the EPLZON carrier to the ESP32 mini
-   (see Hardware; measured 2026-10-01): a floor
-   pocket/clips instead of the carrier posts, keeping the
-   50 x 82 x 62 outside of the mock-up. The EPLZON hole check is moot.
+2. The user solders the mini's 3 pin rows (pins up: both inner rows + the
+   outer row away from the RST button), then plug it in: check the port
+   name, `chip-id`, flash size (see Hardware).
 3. Screws: M3 from the user's self-tapping kit (M3-M6, smallest M3 x 6,
    round + flat head; use round); a small self-tapping pan-head kit
    (M2 x 4/5/6, M2.3, M2.6, M3 x 4-6) ordered 2026-09-30 for the TFT
    (M2 x 4); the carrier's M2 x 6 are moot with the mini. Try an M2 in the
    TFT's 1.79 holes first, else drill to 2.0.
-4. Test print of `test_front` (see `enclosure/README.md` checklist), then
-   the full print.
+4. Test print of `test_front`, and of `base` for the mini's cradle (both
+   checklists in `enclosure/README.md`), then the full print.

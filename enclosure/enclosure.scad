@@ -1,8 +1,8 @@
 // Mukklet enclosure: a small wedge, the 1.69" ST7789V2 TFT (portrait) on
 // the front panel tilted back, the KY-040 knob on top, USB-C out the back.
 // Lifted from ../esp32-desk-display/enclosure/enclosure_v2.scad. The ESP32
-// plugs front-to-back into two female headers on an EPLZON 38.1 x 50.8
-// breadboard-style carrier; module cables are soldered to it. No sensors, so no
+// mini (D1 mini layout) lies flat on the floor at the back, pin headers
+// pointing up; the module cables plug onto them. No sensors, so no
 // sensor bay and no hood: only the ESP32's own warmth to vent.
 // Sizes in mm, from MEASUREMENTS.md; values marked ASSUMED were not
 // measured (the TFT's are the seller's, not ours, until measured).
@@ -12,8 +12,9 @@
 //
 // Printed parts:
 //   shell - walls, tilted screen panel with the TFT's 4 screw posts, top
-//           with the knob's snap hooks; open at the bottom
-//   base  - floor plate with the carrier's standoffs, 4 screws up into the
+//           with the knob's snap hooks, a ledge over the USB socket; open
+//           at the bottom
+//   base  - floor plate with the ESP32 mini's cradle, 4 screws up into the
 //           shell's corner bosses
 // Pick one with -D 'part="shell"' (see export.sh). Single parts come out in
 // print orientation, "assembly" shows everything in place with stand-in
@@ -64,13 +65,29 @@ tft_flex_bulge = 0.8; // its bend above the glass's top edge (ASSUMED)
 tft_flex_conn = 1.2; // its connector on the back: height (ASSUMED)
 tft_flex_conn_l = 7; // and length down from the notch (ASSUMED, photos)
 
-esp_l = 51.49;
-esp_w = 28.36;
-esp_t = 1.6; // ASSUMED
-esp_top = 4.78; // tallest part above the board bottom
-esp_usb_z = 3.2; // USB-C centre above the board bottom
-esp_pin_span = 15 * 2.54; // pin rows' length, centred on the board (ASSUMED)
-esp_antenna = 6; // antenna end, opposite the USB
+p = 2.54;
+// ESP32 mini (D1 mini layout), lying can up, USB at the back. MEASUREMENTS.md
+// holds it can towards you, USB at the bottom: its "right" is -X here, the
+// RST button's side is +X
+mini_w = 31.51;
+mini_l = 39.02;
+mini_t = 1.49;
+mini_can = 4.66; // underside to the top of the metal can
+mini_usb_top = 4.61; // underside to the top of the USB socket
+mini_usb_w = 8.89;
+mini_usb_out = 1.22; // the socket past the board's back edge
+mini_usb_off = mini_w / 2 - (11.06 + mini_usb_w / 2); // socket centre off the board's middle, towards -X
+mini_usb_l = 7.3; // socket length (ASSUMED: standard part)
+mini_antenna = 6; // antenna end, opposite the USB
+mini_pin_y0 = 6.83 + 0.5; // antenna edge to the first hole's centre (approximate)
+mini_pin_end = mini_pin_y0 + 9 * p + 1; // ... to the last pad's far side
+// header rows, from the board's middle: both inner rows and the outer one on
+// -X carry every pin in use (standard grid: inner 22.86 apart, outer 27.94;
+// measured ~4.63 from the edge to an inner hole's far side, which agrees)
+mini_rows = [-4.5 * p, 4.5 * p, -5.5 * p];
+mini_hdr = p + 6; // header on the top face: plastic + pin (ASSUMED: standard)
+mini_dupont = 14; // a plugged-in Dupont housing, on top of the plastic
+mini_joint = 2; // solder joints and pin stubs under the board (ASSUMED)
 
 ky_l = 26.18;
 ky_w = 19.29;
@@ -84,24 +101,6 @@ ky_body = 12.5; // EC11 body footprint (ASSUMED, standard part)
 ky_body_h = 7; // EC11 body height above the board (ASSUMED)
 ky_pins = 6; // right-angle pins past the board's end (ASSUMED)
 ky_dupont = 14; // a plugged-in 5-pin Dupont housing adds this
-
-// carrier: EPLZON 38.1 x 50.8 breadboard-style PCB (seller's drawing, not
-// measured). 17 rows; columns A-E and F-J, each row's A-E and F-J joined
-// underneath, a 3-pitch gap between E and F with two M3 holes (40.6 apart,
-// in rows 1 and 17) and four M2 corner holes (31.8 x 44.5). Column A to I
-// is 10 pitches = the ESP32's pin rows, so its headers go in A and I and
-// every pin gets 4 joined holes (B-E / F-H) to solder the module wires into
-p = 2.54;
-perf_w = 38.1;
-perf_d = 50.8;
-perf_t = 1.6; // ASSUMED
-perf_standoff = 9; // high enough that the carrier's front passes over the TFT's plug
-                   // (8 is the minimum at D = 82; 9 leaves 1 mm)
-perf_m2 = [31.8, 44.5]; // corner holes: the front two take M2 x 6 into standoffs,
-                        // the back two sit on plain rests
-perf_m3 = 40.6; // centre holes: only the back one takes an M3 x 6; the
-                // front one is over the TFT's plug
-hdr_h = 8.5; // female header the ESP32 plugs into (ASSUMED: standard)
 
 // ------------------------------------------------------------ case
 wall = 2.0;
@@ -148,41 +147,35 @@ knob_hole = 16;
 ky_face_z = H + knob_gap - ky_cap_above; // board front (component) face
 ky_back_z = ky_face_z - ky_t;
 
-// carrier and ESP32 on the carrier's 2.54 hole grid: hole (col, row) is at
-// [grid_x0 + col * p, grid_y0 + (row - 1) * p]; cols A-E = 0-4, F-J = 7-11
-// across X, rows 1-17 along Y. ESP32 pins in cols A (0) and I (10), rows
-// 3-17, USB end at the back; rows 1-2 are under its antenna end
-usb_gap = 3.6; // ESP32's USB end to the back wall; keeps the carrier off the back bosses
-esp_pin_edge = (esp_l - esp_pin_span) / 2 + p / 2; // board end to the first pin's centre
-esp_row_edge = (esp_w - 10 * p) / 2; // long edge to its pin row's centre
-perf_x0 = (W - perf_w) / 2;
-grid_x0 = perf_x0 + (perf_w - 11 * p) / 2; // column A; grid ASSUMED centred on the board
-grid_y0 = D - wall - usb_gap - esp_l + esp_pin_edge - 2 * p; // row 1
-perf_y0 = grid_y0 - (perf_d - 16 * p) / 2;
-perf_x1 = perf_x0 + perf_w;
-perf_y1 = perf_y0 + perf_d;
-perf_z = base_t + perf_standoff;
-esp_x0 = grid_x0 - esp_row_edge;
-esp_y0 = grid_y0 + 2 * p - esp_pin_edge;
-esp_x1 = esp_x0 + esp_w;
-esp_y1 = esp_y0 + esp_l;
-esp_z = perf_z + perf_t + hdr_h; // ESP32 board bottom
-usb_x = (esp_x0 + esp_x1) / 2;
-usb_z = esp_z + esp_usb_z;
+// ESP32 mini flat on the floor at the back, in a cradle on the base: the
+// antenna end slides under two lips at the front corners, the back drops
+// onto two rests with a stop behind them, and the shell's ledge over the
+// USB socket holds it down once the base is screwed on. No screws (the
+// board has no holes) and nothing that has to flex
+mini_lift = 3; // underside above the floor: room for the solder joints
+usb_gap = 1.6; // board's back edge to the back wall: the socket's mouth stops 0.4 short of it
+mini_gap = 0.2; // cradle walls to the board's edges
+mini_wall = 1.3;
+mini_lip = [4, 2.5, 1.5]; // lip over each front corner: across, deep, thick
+mini_lip_gap = 0.4; // lip to the board's top face: lets the board tilt in
+mini_x0 = (W - mini_w) / 2;
+mini_x1 = mini_x0 + mini_w;
+mini_y1 = D - wall - usb_gap;
+mini_y0 = mini_y1 - mini_l;
+mini_z = base_t + mini_lift; // board underside
+usb_x = W / 2 - mini_usb_off;
+usb_z = mini_z + (mini_t + mini_usb_top) / 2;
 usb_hole = [13, 8];
+usb_ledge_w = 17; // wider than the hole, so it joins the wall beside it
+usb_ledge_over = 2.5; // how much of the socket it covers
 
 echo(str("case ", W, " x ", D, " x ", H, " mm (W x D x H)"));
 echo(str("usb centre z ", usb_z, ", knob board face z ", ky_face_z));
-assert(perf_x1 < W - wall && perf_y1 < D - boss_in - boss_d / 2, "carrier hits a wall or a back boss");
-assert(norm([W - boss_in - esp_x1, D - boss_in - esp_y1]) > boss_d / 2 + 0.5 || esp_x1 < W - boss_in - boss_d / 2 - 0.5, "ESP32 hits the back-right boss");
-assert(esp_x1 < W - wall && esp_y1 < D - wall, "ESP32 hits a wall");
+assert(mini_x0 - mini_gap - mini_wall > wall + clr, "mini cradle hits a side wall");
+assert(mini_joint < mini_lift, "solder joints touch the floor");
 assert(tft_hole_z / 2 - tft_pilot / 2 - 0.6 > tft_glass_z0 + tft_glass_h + tft_glass_gap, "TFT post flats cut into the screw holes");
 assert(tft_hole_x / 2 - tft_post_d / 2 > tft_notch_w / 2, "TFT top posts off the ears");
 assert(win_w > tft_lit_w && win_h > tft_lit_h, "window smaller than the pixel area");
-
-// no JST sockets: each row's joined holes would short their pins. The
-// TFT and knob cables are soldered into the ESP32 pins' spare holes
-// (under the ESP32, before it's plugged in), Dupont housings on the module ends
 
 // ------------------------------------------------------------ helpers
 module profile() polygon([[0, 0], [0, skirt_h], [run, H], [D, H], [D, 0]]);
@@ -264,6 +257,19 @@ module vents() {
     for (x = [xs[0]:4:xs[1]]) box([x, D - wall - 1, base_t + 3], [x + 2, D + 1, base_t + 12]);
 }
 
+// over the USB socket, on the back wall: holds the mini's back end down.
+// Flat underneath, sloped 45 degrees on top (the shell prints upside down)
+module usb_ledge() {
+  z0 = mini_z + mini_usb_top + 0.2;
+  reach = usb_gap - mini_usb_out + usb_ledge_over;
+  x0 = usb_x - usb_ledge_w / 2;
+  x1 = usb_x + usb_ledge_w / 2;
+  hull() {
+    box([x0, D - wall - reach, z0], [x1, D - wall + 0.5, z0 + 1]);
+    box([x0, D - wall - 0.1, z0], [x1, D - wall + 0.5, z0 + 1 + reach]);
+  }
+}
+
 module shell() difference() {
   union() {
     difference() {
@@ -276,6 +282,7 @@ module shell() difference() {
         bosses();
         tft_mount();
         knob_mount();
+        usb_ledge();
       }
     }
   }
@@ -283,16 +290,34 @@ module shell() difference() {
   tft_window();
   tft_pilots();
   vents();
-  translate([usb_x, D - wall - 1, usb_z]) stadium(usb_hole[0], usb_hole[1], wall + 2);
+  translate([usb_x, D - wall - eps, usb_z]) stadium(usb_hole[0], usb_hole[1], wall + 2); // not into the ledge
   translate([knob_x, knob_y, H - wall - 1]) cylinder(d = knob_hole, h = wall + 2);
 }
 
 // ------------------------------------------------------------ base
-perf_cx = (perf_x0 + perf_x1) / 2;
-perf_cy = (perf_y0 + perf_y1) / 2;
-perf_holes = [[perf_cx, perf_cy + perf_m3 / 2]];
-perf_m2_holes = [for (sx = [-1, 1]) [perf_cx + sx * perf_m2[0] / 2, perf_cy - perf_m2[1] / 2]];
-perf_rests = [for (sx = [-1, 1]) [perf_cx + sx * perf_m2[0] / 2, perf_cy + perf_m2[1] / 2]];
+module mini_cradle() {
+  g = mini_gap;
+  top = mini_z + mini_t;
+  lip_z = top + mini_lip_gap;
+  z0 = base_t - eps;
+  for (sx = [-1, 1]) {
+    xe = sx < 0 ? mini_x0 : mini_x1; // the board's long edge
+    xo = xe + sx * (g + mini_wall); // cradle's outside
+    yo = mini_y0 - g - mini_wall;
+    // front corner: rest, front and side walls, lip
+    box([min(xo, xe - sx * 5), yo, z0], [max(xo, xe - sx * 5), mini_y0 + 5, mini_z]);
+    box([min(xo, xe - sx * 5), yo, z0], [max(xo, xe - sx * 5), mini_y0 - g, lip_z + mini_lip[2]]);
+    box([min(xo, xe + sx * g), yo, z0], [max(xo, xe + sx * g), mini_y0 + 5, lip_z + mini_lip[2]]);
+    box([min(xo, xe - sx * mini_lip[0]), yo, lip_z], [max(xo, xe - sx * mini_lip[0]), mini_y0 + mini_lip[1], lip_z + mini_lip[2]]);
+    // side guide, beside the pin rows, before the step in the +X edge
+    box([min(xo, xe + sx * g), mini_y0 + 24, z0], [max(xo, xe + sx * g), mini_y0 + 30, top]);
+    // back: a rest behind the pin rows, clear of the socket's tabs, and a stop behind the edge
+    xa = xe - sx * 5;
+    xb = xe - sx * 9;
+    box([min(xa, xb), mini_y0 + mini_pin_end + 1, z0], [max(xa, xb), mini_y1 + 0.15, mini_z]);
+    box([min(xa, xb), mini_y1 + 0.15, z0], [max(xa, xb), D - wall - clr, top]);
+  }
+}
 
 module base() {
   x0 = wall + clr;
@@ -303,17 +328,9 @@ module base() {
       cylinder(d = 3.4, h = base_t + 2);
       cylinder(d = 6.5, h = 1 + 2); // M3 head counterbore, 1 mm left
     }
-    slots(12, W - 12, perf_y0 + 8, perf_y1 - 8, -1, base_t + 1); // intake under the ESP32
+    slots(12, W - 12, mini_y0 + 8, mini_y0 + 30, -1, base_t + 1); // intake under the ESP32
   }
-  for (p = perf_holes) translate([p.x, p.y, base_t - eps]) difference() {
-    cylinder(d = 6, h = perf_standoff);
-    cylinder(d = 2.5, h = perf_standoff + 1); // M3 x 6 self-tapping, round head (the user's kit)
-  }
-  for (p = perf_m2_holes) translate([p.x, p.y, base_t - eps]) difference() {
-    cylinder(d = 5, h = perf_standoff);
-    cylinder(d = 1.6, h = perf_standoff + 1); // M2 x 6 self-tapping
-  }
-  for (p = perf_rests) translate([p.x, p.y, base_t - eps]) cylinder(d = 3.5, h = perf_standoff);
+  mini_cradle();
 }
 
 // ------------------------------------------------------------ stand-ins
@@ -339,13 +356,20 @@ module tft_standin(plug = true) tft_frame() {
   if (plug) color("gold", 0.35) box([-4 * p - 0.6, tft_front + tft_pcb_t + tft_pins, hz - 1.6], [4 * p + 0.6, tft_front + tft_pcb_t + tft_pins + tft_dupont, hz + 1.6]);
 }
 
-module esp_standin() translate([esp_x0, esp_y0, 0]) {
-  color("dimgray") for (dx = [0, 10 * p])
-    box([esp_row_edge + dx - p / 2, esp_pin_edge - p / 2, perf_z + perf_t], [esp_row_edge + dx + p / 2, esp_pin_edge + 14.5 * p, esp_z]);
-  color("black") box([0, 0, esp_z], [esp_w, esp_l, esp_z + esp_t]);
-  color("silver") box([5, esp_antenna + 1, esp_z + esp_t], [esp_w - 5, 25, esp_z + esp_top]);
-  color("silver") box([esp_w / 2 - 4.45, esp_l - 7, esp_z + esp_t], [esp_w / 2 + 4.45, esp_l + 0.5, esp_z + esp_top]);
-  color("orange", 0.5) box([0, 0, esp_z + esp_t], [esp_w, esp_antenna, esp_z + esp_top]); // antenna: keep clear
+module mini_standin(plug = true) translate([mini_x0, mini_y0, mini_z]) {
+  ux = mini_w / 2 - mini_usb_off;
+  color("royalblue") box([0, 0, eps], [mini_w, mini_l, mini_t]);
+  color("silver") box([mini_w / 2 - 9, mini_antenna, mini_t], [mini_w / 2 + 9, 25.5, mini_can]);
+  color("silver") box([ux - mini_usb_w / 2, mini_l + mini_usb_out - mini_usb_l, mini_t], [ux + mini_usb_w / 2, mini_l + mini_usb_out, mini_usb_top]);
+  color("orange", 0.5) box([mini_w / 2 - 9, 0, mini_t], [mini_w / 2 + 9, mini_antenna, mini_t + 1]); // antenna: keep clear
+  for (r = mini_rows) {
+    x = mini_w / 2 + r;
+    y0 = mini_pin_y0 - p / 2;
+    y1 = mini_pin_y0 + 9.5 * p;
+    color("dimgray") box([x - p / 2, y0, mini_t], [x + p / 2, y1, mini_t + mini_hdr]);
+    color("dimgray") box([x - 0.9, y0, -mini_joint], [x + 0.9, y1, 0]); // solder joints
+    if (plug) color("gold", 0.35) box([x - p / 2, y0, mini_t + p], [x + p / 2, y1, mini_t + p + mini_dupont]);
+  }
 }
 
 module knob_standin(plug = true) {
@@ -358,12 +382,9 @@ module knob_standin(plug = true) {
   color("gray") translate([knob_x, knob_y, H + knob_gap]) cylinder(d = ky_cap_d, h = ky_cap_h);
 }
 
-module carrier_standin() color("darkgreen") box([perf_x0, perf_y0, perf_z], [perf_x1, perf_y1, perf_z + perf_t]);
-
 module stand_ins() {
   tft_standin();
-  carrier_standin();
-  esp_standin();
+  mini_standin();
   knob_standin();
 }
 
@@ -379,10 +400,9 @@ function panel_pt(x, y, z) = [W / 2 + x, y * cos(tilt) + z * sin(tilt), skirt_h 
 
 module labels() {
   label("TFT", panel_pt(0, wall + tft_front + tft_pcb_t + tft_back, tft_v + 12), 12);
-  label("ESP32", [usb_x, esp_y0 + 30, esp_z + esp_top], 3);
-  label("antenna", [usb_x, esp_y0 + 3, esp_z + esp_top], 16);
-  label("USB-C", [usb_x, esp_y1, esp_z + esp_top], 20);
-  label("carrier", [perf_x1 - 4, perf_y0 + 2, perf_z + perf_t], 9);
+  label("ESP32 mini", [W / 2, mini_y0 + 16, mini_z + mini_can], 3);
+  label("antenna", [W / 2, mini_y0 + 3, mini_z + mini_t + 1], 16);
+  label("USB-C", [usb_x, mini_y1, mini_z + mini_usb_top], 20);
   label("KY-040", [knob_x, knob_y, H + knob_gap + ky_cap_h], 18);
 }
 
@@ -400,8 +420,7 @@ else if (part == "dims") echo(W = W, D = D, H = H, wall = wall, tilt = tilt, ski
   panel_len = panel_len, tft_v = tft_v, tft_w = tft_w, tft_h = tft_h, lit_z = lit_z, win_w = win_w, win_h = win_h,
   knob_x = knob_x, knob_y = knob_y, knob_hole = knob_hole, ky_y0 = ky_y0, ky_l = ky_l, ky_w = ky_w,
   usb_x = usb_x, usb_z = usb_z, usb_w = usb_hole[0], usb_h = usb_hole[1], boss_in = boss_in, boss_d = boss_d,
-  perf_x0 = perf_x0, perf_y0 = perf_y0, perf_w = perf_w, perf_d = perf_d, perf_m3 = perf_m3, perf_m2_x = perf_m2[0], perf_m2_y = perf_m2[1], esp_x0 = esp_x0, esp_y0 = esp_y0,
-  esp_w = esp_w, esp_l = esp_l, grid_x0 = grid_x0, grid_y0 = grid_y0, p = p); // for cardboard.py
+  mini_x0 = mini_x0, mini_y0 = mini_y0, mini_w = mini_w, mini_l = mini_l); // for cardboard.py
 else if (part == "clash") {
   // printed parts against every stand-in
   intersection() {
@@ -415,14 +434,13 @@ else if (part == "clash") {
   intersection() {
     tft_standin();
     union() {
-      carrier_standin();
-      esp_standin();
+      mini_standin();
       knob_standin();
     }
   }
   intersection() {
     knob_standin();
-    esp_standin();
+    mini_standin();
   }
 }
 else {
