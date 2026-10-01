@@ -246,7 +246,7 @@ Open, in order:
 1. The mock-up's findings (size on the desk, screen tilt, knob reach,
    window vs the real TFT): not reported yet.
 2. Switch the enclosure from the EPLZON carrier to the ESP32 mini
-   (see Hardware; measured 2026-10-01, pin holes skipped): a floor
+   (see Hardware; measured 2026-10-01): a floor
    pocket/clips instead of the carrier posts, keeping the
    50 x 82 x 62 outside of the mock-up. The EPLZON hole check is moot.
 3. Screws: M3 from the user's self-tapping kit (M3-M6, smallest M3 x 6,

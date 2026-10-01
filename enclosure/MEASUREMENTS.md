@@ -46,11 +46,13 @@ Held metal can towards you, USB socket at the bottom, antenna at the top;
   15.5 from the right edge = 0.25 right of the board's middle (31.51 / 2)
 - RST button: stays inside the board's outline (straight-edge check along
   the left edge)
-- Pin holes: not measured (skipped: awkward with a caliper). Taken as the
-  standard D1 mini grid: 2.54 pitch, inner columns 22.86 apart, outer 27.94,
-  centred, so the inner column's centre is ~4.3 from the side edge. Keep a
-  6 mm strip free under each long side for the solder joints; support the
-  board under the middle and the ends
+- Pin holes (approximate, per the user): left edge to the far side of an
+  inner-column hole ~4.63; antenna edge to the near side of the first hole
+  ~6.83. Agrees with the standard D1 mini grid (2.54 pitch, inner columns
+  22.86 apart, outer 27.94, centred: inner centre 4.3 from the edge, far
+  side ~4.8), which the model uses. Keep a 6 mm strip free under each long
+  side for the solder joints; the first ~6 mm at the antenna end and the
+  middle are free for supports
 - Shape (photos): top corners chamfered; the left edge steps in near the USB
   end, with the RST button in the step; USB-C centred on the bottom edge,
   sticking out past it; 2 x 10 pin holes per side; no mounting holes (only
