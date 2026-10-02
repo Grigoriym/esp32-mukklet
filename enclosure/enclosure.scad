@@ -244,10 +244,17 @@ module tft_mount() tft_frame() difference() {
 module tft_pilots() tft_frame() for (h = tft_holes)
   translate([h.x, tft_front + eps, h.y]) rotate([90, 0, 0]) cylinder(d = tft_pilot, h = tft_front + wall - 0.8);
 
-// lit area plus 0.5 all round, chamfered 45 degrees outwards
-module tft_window() tft_frame() translate([0, 0, lit_z]) hull() {
-  translate([0, 0.5, 0]) cube([win_w, 1, win_h], center = true);
-  translate([0, -wall - 0.5, 0]) cube([win_w + 2 * (wall + 1), 1, win_h + 2 * (wall + 1)], center = true);
+// the glass minus the lip; straight for win_edge next to the glass, then
+// chamfered 45 degrees outwards. The straight part keeps the window's
+// edge from ending in a knife edge (flagged as a thin wall, 2026-10-02)
+win_edge = 0.8;
+module tft_window() tft_frame() translate([0, 0, lit_z]) {
+  c = wall - win_edge + 1; // chamfer's spread at 1 mm in front of the face
+  translate([0, 1 - (win_edge + 1) / 2, 0]) cube([win_w, win_edge + 1 + eps, win_h], center = true);
+  hull() {
+    translate([0, -win_edge, 0]) cube([win_w, eps, win_h], center = true);
+    translate([0, -wall - 1, 0]) cube([win_w + 2 * c, eps, win_h + 2 * c], center = true);
+  }
 }
 
 module front_holes(d, depth, from = -1) panel_frame() for (sx = [-1, 1], v = front_screw_v)
