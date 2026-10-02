@@ -150,15 +150,13 @@ the front plate (with the TFT) forward;
 `show_mini` hide single things.
 
 `pages/` holds two local HTML pages (open the file in a browser; they
-were claude.ai artifacts until 2026-10-02, and those published copies are
-no longer kept up to date):
+were claude.ai artifacts until 2026-10-02; the published copies are
+deleted):
 
 - `pages/caliper.html`: "Mukklet Caliper Guide", what to measure on the
-  TFT and the ESP32 mini and how (was
-  https://claude.ai/artifact/QTPxyAx3xMNtYf33rQmrr3)
+  TFT and the ESP32 mini and how
 - `pages/assembly/assembly.html`: "Mukklet Assembly", 8 renders with
-  labels drawn over them, for the three-part case (was
-  https://claude.ai/artifact/TWDPQ22zmgzkANerb1wxgc). The renders, from
+  labels drawn over them, for the three-part case. The renders, from
   `pages/assembly/`, all with
   `openscad -D show_labels=false --colorscheme=Tomorrow --imgsize=1000,750`:
   - s1: `-D explode=45 -D explode_front=30 --camera=25,41,50,65,0,320,360`

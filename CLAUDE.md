@@ -275,7 +275,7 @@ Lessons from the TFT measuring and model (2026-09-29/30):
 - The user wants such pages as local HTML files in the repo
   (`enclosure/pages/`, 2026-10-02), not claude.ai artifacts: write a
   standalone file and give its path. The two old published copies
-  (links in `enclosure/README.md`) are stale and still online.
+  were deleted the same day.
 - No headless browser works here (Brave hangs): to check a page's SVG
   labels, draw them onto the renders with PIL.
 - OpenSCAD: a `module` can't be defined inside `if`/`else` (parser error
