@@ -7,7 +7,7 @@ OpenSCAD model of the case, lifted from the desk display's
 connectors). `-D cut=25` cuts the printed parts away left of x = 25.
 
 ```
-enclosure/export.sh   # clash check, then stl/enclosure/*.stl (gitignored) + renders/enclosure-*.png
+enclosure/export.sh   # clash check, then stl/enclosure/{body,front,base}.stl + optional/test_knob.stl (gitignored) + renders/enclosure-*.png
 ```
 
 The clash check fails if a printed part overlaps a module stand-in, two
@@ -95,7 +95,7 @@ ESP32 into the cradle, cables on; base on (4 screws from below).
 | `body` | 1 | upside down, top on the bed | check the USB hole's 13 mm bridge |
 | `front` | 1 | screen face on the bed | the window's edge is chamfered: no supports |
 | `base` | 1 | flat | the two lips over the front corners are 2.5 mm overhangs |
-| `test_knob` | 1 | like the body | optional: the top's front with the knob mount, to check it before the whole body |
+| `optional/test_knob` | 1 | like the body | optional: the top's front with the knob mount, to check it before the whole body |
 
 Material: PETG preferred (PLA softens ~55 °C). Fit clearance 0.3 mm (`clr`).
 

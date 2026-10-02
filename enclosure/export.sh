@@ -29,10 +29,13 @@ if ! grep -q "Current top level object is empty" <<<"$log"; then
     exit 1
 fi
 
-mkdir -p "stl/$name" renders
-for part in body front base test_knob; do
+# stl/<name>/ holds exactly the parts to print; optional test pieces go in
+# optional/. Wiped first, so parts the model no longer has don't linger
+rm -rf "stl/$name"
+mkdir -p "stl/$name/optional" renders
+for part in body front base optional/test_knob; do
     echo "stl/$name/$part.stl"
-    log=$(openscad "${defs[@]}" -D "part=\"$part\"" -o "stl/$name/$part.stl" "$scad" 2>&1)
+    log=$(openscad "${defs[@]}" -D "part=\"$(basename "$part")\"" -o "stl/$name/$part.stl" "$scad" 2>&1)
     if grep -qiE "warning|error" <<<"$log"; then
         echo "$log" >&2
         exit 1
