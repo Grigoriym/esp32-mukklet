@@ -267,6 +267,12 @@ Lessons from the TFT measuring and model (2026-09-29/30):
   screw's axis and intersect it with the printed parts (2026-10-02).
 - Printed parts that touch (plate on rails, bosses on the base) need the
   same `eps` gap as stand-ins, or the part-vs-part clash check fails.
+- hubs.com's printability check (the user uploads there; 95 EUR quote for
+  the three parts, which they found too expensive, 2026-10-02): a
+  chamfer running to a knife edge = "thin walls"; cuts built from
+  eps-thin slabs made it show a skin across the whole window. Passes with
+  a 1.2 mm straight edge before the chamfer and 5.5 mm posts. Where to
+  print is not decided.
 - "How does it go together" questions: three rounds of prose and ASCII
   drawings didn't land (2026-10-01); renders from the model with labels
   drawn over them did ("Mukklet Assembly",

@@ -249,7 +249,7 @@ module tft_pilots() tft_frame() for (h = tft_holes)
 // edge from ending in a knife edge (flagged as a thin wall, 2026-10-02).
 // A straight cut right through plus the chamfer's funnel, with no
 // eps-thin slabs: with those, hubs.com's checker showed a skin across the
-// whole window (cause not confirmed; the mesh itself had none)
+// whole window (the mesh itself had none); this version passes it
 win_edge = 1.2;
 module tft_window() tft_frame() translate([0, 0, lit_z]) {
   c = wall - win_edge + 1; // chamfer's spread at 1 mm in front of the face
