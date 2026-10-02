@@ -11,6 +11,31 @@ reference for patterns and code to lift: SSD1306 driver, encoder, WiFi,
 mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
 (bring-up tests for new modules; a new screen gets checked there first).
 
+## Shared ESP32 docs (since 2026-10-02)
+Facts about a *part*, and lessons that hold for any ESP32 project here,
+live in `../grappim-watcher/docs/esp32/` (that repo has no git), not in
+this file:
+- `parts/<part>.md`: `esp32-mini`, `esp32-devkit-30pin`, `tft-st7789v2`,
+  `ky-040`, `oled-ssd1315`: pinout, voltage, current, measured dimensions,
+  mounting, quirks, board MACs and ports, hw-checks status.
+  `parts/README.md`: what's owned / in use / free, tools and stock.
+- `WIRING_RULES.md`: which GPIOs are usable, power budget, cable
+  conventions (one housing per cable, wires in the module's own order;
+  when something already works, move the fewest pins).
+- `ENCLOSURE_PLAYBOOK.md`: measuring, modelling, OpenSCAD and clash-check
+  traps, hubs.com findings, explaining a case with labelled renders.
+- `FIRMWARE_PLAYBOOK.md`: flash and serial-capture traps, config, code
+  shape, the four checks.
+
+**Rule: a new fact about a part goes in its sheet there, not here.** This
+file keeps what is this project's own: pins, decisions, milestones, the
+case design. When the printed case arrives, lessons that aren't about
+this case go in `ENCLOSURE_PLAYBOOK.md`.
+
+`../esp32-hw-checks` is a git repo since 2026-10-02 (local only, own
+`CLAUDE.md`). Its knob and BLK pins are still the DevKit breadboard ones
+(25/26/27, D4), not the mini's.
+
 ## Decisions so far (2026-09-27)
 - **Link: direct WebSocket, ESP32 = server, Mukk = client.** No MPRIS, no
   bridge daemon, no cloud. Contract: `docs/PROTOCOL.md` (+ examples in
@@ -29,85 +54,49 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
   text, bad-field warnings).
 
 ## Hardware
-- **Board**: same ESP32-WROOM-32 DevKit as the desk display (ELEGOO, 30-pin,
-  CP2102, USB-C, 4 MB flash, **no PSRAM**, ~320 KB RAM). Spares from the
-  3-pack, so the weather station stays untouched.
-- **Prototype screen**: the 128×64 SSD1315 I2C OLED (spare from the desk
-  display's 3-pack) on D21/D22. Purpose: find out which info is actually
-  worth showing before buying the colour screen. Asks Mukk for 64×64 `mono1`.
-- **Target screen (not bought yet)**: 1.69" IPS 240×280 **ST7789V2** 4-wire SPI
-  (GERUI, pack of 2): 3.3 V only (VCC → 3V3, never VIN), 8 pins
-  GND/VCC/SCL/SDA/RES/DC/CS/BLK (SCL/SDA = SPI clock/data), BLK high = on
-  (PWM for dimming), rounded corners, needs a **20 px row offset**
-  (controller is 240×320), active area 27.97×32.63 mm, PCB 31×48 mm, 4× M2 holes 26×43 mm.
-  Full frame 134 KB: draw in strips, never hold a full framebuffer. Cover size: the
-  user prefers **more text over a big cover** (2026-09-27): ask Mukk for
-  ~160×160 `rgb565` (51 KB, fits in RAM, so it can be kept and redrawn),
-  text below it (title, artist, album (year), progress; no room for
-  "Next:" at 280 px). **Chosen by the user (2026-09-27)** over the
-  Waveshare 2.0" 240×320 ST7789V IPS (same wiring, labels DIN/CLK/RST/BL;
-  the fallback if 1.69" turns out too small) and a 2.8" ILI9341 (TN).
-  Rejected: 1.8" 128×160 ST7735 (low-res, often TN), 1.3" 240×240 (tiny,
-  many have no CS pin), 2.8" ILI9341 (TN, resistive touch).
-- **Both ST7789V2 screens arrived and checked (2026-09-28)** with
-  `../esp32-hw-checks` (ST7789 test via `esp_lcd`, 40 MHz SPI on the
-  breadboard, wiring as planned below, one test per knob press): colours
-  right with RGB order + inversion on, 20 px row offset right (border
-  visible on all 4 edges), smooth grey ramp, BLK PWM fade smooth. Both
-  show the picture **rotated 180° with the pin header at the bottom**
-  (not mirrored): fix in software for however it gets mounted. Screen #1
-  has one small dark dot (fine by the user); #2 is clean.
-- **OLED no longer used** (2026-09-28): the firmware has no I2C code, and
-  the user was told the OLED can be unplugged from D21/D22 (not confirmed
-  whether they did).
-- **TFT wiring** (all pins: `docs/WIRING.md`): SCL D18, SDA D23, RES GPIO17 (TX2), DC GPIO16
-  (RX2), CS D5, BLK D19 (was D4 until 2026-10-01; on the mini 18/19/23/5/3V3 are 5 pads in a row on the left inner row = one 5-pin housing, and 17/16/GND one 3-pin on the right inner row). Keeps I2C D21/D22 and the knob D27/D25/D32 free,
-  avoids D2 (onboard LED).
-- **Knob**: KY-040 on D27 (CLK) / D25 (DT) / D32 (SW) (was 25/26/27 until 2026-10-01: moved so GND/27/25/32 are 4 pads in a row on the mini's right outer row, one 4-pin housing, in the KY-040's own CLK, DT, SW order: the user's choice), as on the desk
-  display; lift `encoder.c` + `encoder_decode.c` from there.
-- **Prototype wired and checked (2026-09-27)** on a breadboard, every module
-  straight to the ESP32 (no daisy-chaining), both on 3V3: OLED VCC/GND/SDA
-  D21/SCL D22, KY-040 +/GND/CLK D25/DT D26/SW D27. Flashed
-  `../esp32-hw-checks`: I2C scan finds only **0x3C**, panel shows HELLO
-  (upright or not: not recorded; set orientation in software, as on the
-  desk display), knob 4 steps/detent both ways, rest state CLK=1 DT=1,
-  button clean (5 presses, 5 releases). First clockwise turn logged `CW`;
-  that it matches the physical direction is **not yet confirmed** by the
-  user. The board still runs hw-checks.
-- **Final board: ESP32 "D1 mini" style (ordered 2026-09-30, arrived and
-  measured 2026-10-01: `enclosure/MEASUREMENTS.md`, 31.51 x 39.02, no
-  mounting holes)**, pack of 3, CH9102F USB-C (MH-ET LIVE MiniKit layout, ~39 x 31
-  mm, 2 x 10 pads per side). Why: on the EPLZON carrier the 30-pin DevKit
-  left only one free hole per pin row, no room to wire the modules. Same
-  WROOM-32 module (same RAM, no PSRAM), so the firmware and every pin stay
-  as they are (table in `docs/WIRING.md`); no carrier (the EPLZON's joined rows would short its inner and outer
-  pins). Agreed 2026-10-01 (the model is built on it), wired by the user 2026-10-02: pin headers
-  pointing up (can side), joints underneath, on both inner rows and the
-  right outer row; TFT and knob wires plug on with female Dupont ends
-  (the user has a crimp tool and a Dupont kit with 1-6 pin housings;
-  needs 26 AWG stranded wire, their 22 AWG is solid); the single
-  3V3 pin feeds both modules through a Y-wire (two wires crimped into one
-  terminal). Housings at the mini: 5-pin + 3-pin for the TFT, 4-pin for
-  the knob, cables 12 / 15 cm (table and the rejected in-order layout:
-  `docs/WIRING.md`). The user wants pins chosen so a cable ends in one
-  housing with the wires in the module's own order; when something
-  already works, move the fewest pins (only BLK moved for the TFT). Seller photos show no
-  mounting holes: held in a cradle (see Enclosure). The DevKit is retired (user, 2026-10-01: "forget about the old board"); its breadboard wiring still has DT on D26.
-- **Mini #1 plugged in and flashed (2026-10-01)**, first bare (nothing wired to
-  it): `/dev/ttyACM0` (CH9102F is CDC-ACM; `PORT=/dev/ttyACM0` for
-  `tools/serial_log.py`), MAC `20:50:0d:2a:0a:7c`, ESP32-D0WD-V3 rev 3.1,
-  40 MHz crystal, 4 MB flash. Flashed at the default baud without trouble;
-  boots, joins WiFi, Mukk connected and sent a track + cover. It and the
-  DevKit both answer as `mukklet.local`: power only one at a time. Same day: TFT wired to it (BLK on IO19), picture fine per the user; knob on the new pins (27/25/32): everything connected 2026-10-02, "seems to work fine" per the user.
-- **DevKit: MAC `70:4b:ca:4d:f0:1c`** (ESP32-D0WD-V3 rev 3.1, 40 MHz
-  crystal), retired, was on `/dev/ttyUSB0`. Read-only identity check before flashing:
-  `esptool -p /dev/ttyACM0 chip-id`. The weather station's board is a
-  different one; if it's online, `desk.local` answers over WiFi.
-- When it arrived here it ran unknown firmware that printed unreadable
-  bytes at **every** baud rate (57600-921600, incl. 115200/74880), yet
-  esptool connected fine: the garbage was that firmware, not the wiring or
-  the USB link. Flashing replaced it. If a board's serial log looks like
-  noise, try `esptool chip-id` before suspecting the wiring.
+What each part is (pinout, voltage, dimensions, quirks, MAC, port): its
+sheet, see "Shared ESP32 docs". Here: what this build uses and why.
+- **Board: ESP32 mini #1** (`parts/esp32-mini.md`, `/dev/ttyACM0`) since
+  2026-10-01. Same WROOM-32 module as the DevKit (**no PSRAM**, ~320 KB
+  RAM), so the firmware didn't change. Why: on the EPLZON carrier the
+  30-pin DevKit left only one free hole per pin row, no room to wire the
+  modules. No carrier now (the EPLZON's joined rows would short the mini's
+  inner and outer pins) and no mounting holes: held in a cradle (see
+  Enclosure). Wired by the user 2026-10-02: pin headers pointing up (can
+  side), joints underneath, on both inner rows and the right outer row;
+  the TFT and knob cables plug on with female Dupont ends, the single 3V3
+  pin feeds both modules through a Y-wire.
+- **DevKit retired** (`parts/esp32-devkit-30pin.md`; user, 2026-10-01:
+  "forget about the old board"). Its breadboard wiring still has the knob
+  on 25/26/27 and BLK on D4. It and the mini both answer as
+  `mukklet.local`: power only one at a time.
+- **Screen: 1.69" 240×280 ST7789V2** (`parts/tft-st7789v2.md`), both
+  units checked 2026-09-28; which of the two is in the build was not
+  recorded. **Chosen by the user (2026-09-27)** over the Waveshare 2.0"
+  240×320 ST7789V IPS (same wiring, labels DIN/CLK/RST/BL; the fallback
+  if 1.69" turns out too small). Rejected: 1.8" 128×160 ST7735 (low-res,
+  often TN), 1.3" 240×240 (tiny, many have no CS pin), 2.8" ILI9341 (TN,
+  resistive touch).
+- **Cover size**: the user prefers **more text over a big cover**
+  (2026-09-27): ask Mukk for 160×160 `rgb565` (51 KB, fits in RAM, so it
+  can be kept and redrawn), text below it (title, artist, album (year),
+  progress; no room for "Next:" at 280 px).
+- **Pins** (tables, housings, cable lengths, the rejected in-order
+  layout: `docs/WIRING.md`): TFT SCL D18, SDA D23, RES GPIO17, DC GPIO16,
+  CS D5, BLK D19 (was D4 until 2026-10-01); knob CLK D27 / DT D25 / SW D32
+  (was 25/26/27 until 2026-10-01). Picked so the cables end in few
+  housings on the mini: 18/19/23/5/3V3 are one 5-pin on the left inner
+  row, 17/16/GND one 3-pin on the right inner row, GND/27/25/32 one 4-pin
+  on the right outer row in the KY-040's own CLK, DT, SW order (the
+  user's choice). Only BLK moved for the TFT. I2C D21/D22 stay free, D2
+  (onboard LED) is avoided.
+- **Status**: mini flashed 2026-10-01 (boots, joins WiFi, Mukk connected
+  and sent a track + cover); TFT wired to it the same day, picture fine
+  per the user; knob on the new pins and everything connected 2026-10-02,
+  "seems to work fine" per the user.
+- **OLED** (`parts/oled-ssd1315.md`): milestone 1's prototype screen
+  (asked Mukk for 64×64 `mono1`), to find out which info is worth
+  showing. No I2C code since 2026-09-28.
 
 ## Firmware (milestone 3: colour screen + cover art, 2026-09-28)
 WiFi + mDNS `mukklet.local` + WebSocket server (`link.c`) + TFT text,
@@ -169,36 +158,23 @@ anti-aliased), `gesture` (single/double/long press), `encoder_decode`
 ## Build / flash
 ESP-IDF, same setup as the desk display:
 `. ~/esp/esp-idf/export.sh && idf.py -p /dev/ttyACM0 build flash`
-(the mini; the weather station is a `ttyUSB` board). Check
-`ls /dev/tty{USB,ACM}*` and the MAC above before flashing. The user
-unplugs the mini to work on the wiring: if the port is gone, the flash
-fails with "port is busy or doesn't exist" after a good build; check the
-port first and ask for it to be plugged in.
-If flashing fails with "Serial data stream stopped: Possible serial noise"
-(happened 2026-09-28 at the default and 460800 baud), add `-b 115200`.
+(the mini; the weather station is a `ttyUSB` board). Flash and serial
+traps (missing port, identity check by MAC, serial noise, no TTY for
+`idf.py monitor`, checks that need hands, `pkill -f`):
+`FIRMWARE_PLAYBOOK.md` in the shared docs.
 Mukk connects to the real board (`mukklet.local`) by default: to test
 against `tools/fake_display.py`, point Mukk's display host at
 `localhost:8765` first, or the fake never sees a connection.
-Boot logs (`idf.py monitor` needs a TTY the harness doesn't have):
-`tools/serial_log.py` resets the board and captures, run with the IDF
-python env,
-`~/.espressif/python_env/idf6.2_py3.14_env/bin/python tools/serial_log.py <seconds> "<regex>"`
-(port `/dev/ttyACM0`, or `PORT=...` in the environment; it resets the
+Boot logs: `tools/serial_log.py <seconds> "<regex>"` with the IDF python
+env (port `/dev/ttyACM0`, or `PORT=...` in the environment; it resets the
 board, so the screen restarts; if the board is unplugged mid-capture it
 prints what arrived and exits non-zero).
-Checks that need hands (turning the knob): run the capture with
-`run_in_background`, tell the user what to do, read the output when it ends.
 
 Checks (same as CI, `.github/workflows/ci.yml`; IDF env sourced):
 `tools/test.sh` (host unit tests; `SHOW_ART=1` prints the rendered screens
 as ASCII art), `tools/format.sh --check`, `tools/lint.sh`,
-`tools/size_check.sh`. Format and lint only see **git-tracked** files:
-`git add` new ones first, or CI catches what the local run missed. WiFi credentials: `main/wifi_secrets.h` (gitignored,
+`tools/size_check.sh`. WiFi credentials: `main/wifi_secrets.h` (gitignored,
 template `.example`).
-
-To stop a background `fake_display.py`, kill its task (or use `pgrep` + `kill`
-on the PID): `pkill -f fake_display.py` matches the shell running that
-command too, and kills it (exit 144).
 
 Playing Mukk's role: `python3 tools/fake_mukk.py [--host IP] [--seconds N]`
 connects to the display, sends a small playlist (Cyrillic, long title, no
@@ -237,61 +213,23 @@ display's case neither, so every fit is untested.
 `enclosure/export.sh` = clash check (printed parts vs stand-ins, printed
 parts vs each other, and
 stand-ins incl. plugs vs each other, and fails on undefined-variable
-warnings) + STLs + renders. TFT measured 2026-09-29 (`MEASUREMENTS.md`,
-"Mukklet Caliper Guide", `enclosure/pages/caliper.html`): ears + a notch at the
-top with the glass's flat cable wrapping round it. The user skips
-measurements that feel pointless (pixel-area position, hole-to-glass gap,
-standard pin lengths): design around the unknown instead (window = glass
-minus a 0.5 lip; posts flattened 0.3 clear of the glass) and let the test
-print check it. Ask for a measurement from edge to edge, never from a
-hole's centre. Resoldering the TFT header (right-angle / wires) is on the
-table if the case depth matters (~10 mm shallower).
-Lessons from the TFT measuring and model (2026-09-29/30):
-- Add up the numbers as they arrive: top gap + glass + bottom gap came out
-  0.91 short of the board, and a direct "ear tops to glass bottom" showed
-  the glass height (37.43) had missed the ~1 mm step at its top. Give the
-  user the one direct measurement to recheck, not a list of suspects.
-- When photos show geometry (the ears, the notch, the flat cable wrapping
-  to the back), put it in the stand-in right away: the user caught that
-  the model still had a plain rectangle.
-- A clash where two solids only touch (posts ending exactly at the PCB)
-  fails the check: give stand-ins an `eps` gap. Find which pair overlaps
-  by intersecting pairs in a scratch copy with the output section cut off
-  (else the assembly renders too and nothing is ever empty), then
-  `bbox` the STL.
-- Chain `export.sh && git commit`: one commit went out with a failing
-  clash because the two ran side by side.
-- Screw lengths: check them against what's in front of the pilot (an
-  M2 x 6 through the 1.21 TFT board would have poked out of the front).
-- Check tool access, not only clashes: draw the screwdriver along every
-  screw's axis and intersect it with the printed parts (2026-10-02).
-- Printed parts that touch (plate on rails, bosses on the base) need the
-  same `eps` gap as stand-ins, or the part-vs-part clash check fails.
-- hubs.com's printability check (the user uploads there; 95 EUR quote for
-  the three parts, which they found too expensive, 2026-10-02): a
-  chamfer running to a knife edge = "thin walls"; cuts built from
-  eps-thin slabs made it show a skin across the whole window. Passes with
-  a 1.2 mm straight edge before the chamfer and 5.5 mm posts. Where to
-  print is not decided.
-- "How does it go together" questions: three rounds of prose and ASCII
-  drawings didn't land (2026-10-01); renders from the model with labels
-  drawn over them did ("Mukklet Assembly",
-  `enclosure/pages/assembly/assembly.html`, redone for three parts
-  2026-10-02). Say first which parts there are and where each opens.
-- The user wants such pages as local HTML files in the repo
-  (`enclosure/pages/`, 2026-10-02), not claude.ai artifacts: write a
-  standalone file and give its path. The two old published copies
-  were deleted the same day.
-- No headless browser works here (Brave hangs): to check a page's SVG
-  labels, draw them onto the renders with PIL.
-- OpenSCAD: a `module` can't be defined inside `if`/`else` (parser error
-  with only a line number); define it at the top level.
+warnings) + STLs + renders.
+Part dimensions: the part sheets (`enclosure/MEASUREMENTS.md` lists
+which). Generic lessons from this case (measuring, clash check, tool
+access, screw lengths, hubs.com, OpenSCAD traps): `ENCLOSURE_PLAYBOOK.md`
+in the shared docs. This case's own notes:
+- hubs.com (the user uploads there): the three parts pass with a 1.2 mm
+  straight edge before the window's chamfer and 5.5 mm posts; its 95 EUR
+  quote was too expensive for the user (2026-10-02).
+- "Mukklet Assembly", `enclosure/pages/assembly/assembly.html`: labelled
+  renders, redone for three parts 2026-10-02. Pages like it are local
+  HTML files in `enclosure/pages/`, not claude.ai artifacts.
 - The mini's cradle is untested until printed (lip overhangs, the 0.2 gap
   under the body's ledge, the tilt-in move was only worked out on paper:
   ~8 degrees fits under the lips, the back end clears the stops).
-- The TFT's plug hanging down behind the screen is what limits the
-  carrier: at 82 deep the EPLZON's front passes over it only at >= 8 mm
-  standoffs, and its front middle M3 hole sits right over the plug.
+- The TFT's plug hanging down behind the screen is what limits a
+  carrier: at 82 deep the EPLZON's front passed over it only at >= 8 mm
+  standoffs, and its front middle M3 hole sat right over the plug.
 
 ## Next step
 Milestone 3 (cover art) done. Enclosure: **print requested 2026-10-02**,

@@ -61,7 +61,7 @@ plate, not the whole case, and the plate prints face down.
 - **Knob**: KY-040 flat under the top, shaft end to the front, pins to the
   back, pushed up into two snap hooks against 4 pads (as on the desk
   display). The cap goes on from outside afterwards.
-- **ESP32 mini** (D1 mini layout, 31.51 x 39.02, no mounting holes): flat
+- **ESP32 mini** (no mounting holes): flat
   on the floor at the back, metal can up, USB end at the back wall, 3 mm
   above the floor (room for the solder joints). Held in a cradle on the
   base, no screws and nothing that flexes: the antenna end slides under
@@ -101,9 +101,9 @@ Material: PETG preferred (PLA softens ~55 °C). Fit clearance 0.3 mm (`clr`).
 
 ## Hardware
 
-Two self-tapping kits, both the user's: silver stainless (M3 × 6/10/14/18,
-M4, M5, M6; flat and round head) and small black pan head (2 × 4/5/6,
-2.3 × 5/8/10, 2.6 × 6, 3 × 4/5/6).
+Screws from the user's two self-tapping kits, silver stainless and small
+black pan head (what's in them:
+`../grappim-watcher/docs/esp32/parts/README.md`, Stock and tools).
 
 - 4 × M3 × 10, round head, silver kit (base → body; pilot 2.5)
 - 4 × 2.3 × 8, black kit (front plate → rails; 2.7 hole in the plate,
