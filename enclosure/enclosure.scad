@@ -148,7 +148,7 @@ front_screw_v = [4.5, panel_len - 4.5]; // up the slope: outside the window's ch
 // would poke out of the front). The
 // holes sit outside the glass (seller's drawing), so posts fit there
 tft_v = panel_len / 2; // board centre, up the slope from the skirt's edge
-tft_post_d = 4.5;
+tft_post_d = 5.5; // 1.95 of wall round the pilot
 tft_glass_gap = 0.3; // posts to the glass
 tft_pilot = 1.6;
 tft_glass_z0 = tft_h / 2 - tft_glass_top - tft_glass_h; // glass bottom edge, from the board centre
@@ -246,14 +246,17 @@ module tft_pilots() tft_frame() for (h = tft_holes)
 
 // the glass minus the lip; straight for win_edge next to the glass, then
 // chamfered 45 degrees outwards. The straight part keeps the window's
-// edge from ending in a knife edge (flagged as a thin wall, 2026-10-02)
-win_edge = 0.8;
+// edge from ending in a knife edge (flagged as a thin wall, 2026-10-02).
+// A straight cut right through plus the chamfer's funnel, with no
+// eps-thin slabs: with those, hubs.com's checker showed a skin across the
+// whole window (cause not confirmed; the mesh itself had none)
+win_edge = 1.2;
 module tft_window() tft_frame() translate([0, 0, lit_z]) {
   c = wall - win_edge + 1; // chamfer's spread at 1 mm in front of the face
-  translate([0, 1 - (win_edge + 1) / 2, 0]) cube([win_w, win_edge + 1 + eps, win_h], center = true);
+  translate([-win_w / 2, -wall - 1, -win_h / 2]) cube([win_w, wall + 2, win_h]);
   hull() {
-    translate([0, -win_edge, 0]) cube([win_w, eps, win_h], center = true);
-    translate([0, -wall - 1, 0]) cube([win_w + 2 * c, eps, win_h + 2 * c], center = true);
+    translate([-win_w / 2, -win_edge, -win_h / 2]) cube([win_w, 0.5, win_h]);
+    translate([-win_w / 2 - c, -wall - 1.5, -win_h / 2 - c]) cube([win_w + 2 * c, 0.5, win_h + 2 * c]);
   }
 }
 
