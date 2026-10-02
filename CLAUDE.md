@@ -71,8 +71,8 @@ sheet, see "Shared ESP32 docs". Here: what this build uses and why.
   on 25/26/27 and BLK on D4. It and the mini both answer as
   `mukklet.local`: power only one at a time.
 - **Screen: 1.69" 240×280 ST7789V2** (`parts/tft-st7789v2.md`), both
-  units checked 2026-09-28; which of the two is in the build was not
-  recorded. **Chosen by the user (2026-09-27)** over the Waveshare 2.0"
+  units checked 2026-09-28; which of the two is in the build doesn't
+  matter (user, 2026-10-02): don't ask. **Chosen by the user (2026-09-27)** over the Waveshare 2.0"
   240×320 ST7789V IPS (same wiring, labels DIN/CLK/RST/BL; the fallback
   if 1.69" turns out too small). Rejected: 1.8" 128×160 ST7735 (low-res,
   often TN), 1.3" 240×240 (tiny, many have no CS pin), 2.8" ILI9341 (TN,
