@@ -76,12 +76,12 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
   user. The board still runs hw-checks.
 - **Final board: ESP32 "D1 mini" style (ordered 2026-09-30, arrived and
   measured 2026-10-01: `enclosure/MEASUREMENTS.md`, 31.51 x 39.02, no
-  mounting holes, pins not soldered yet)**, pack of 3, CH9102F USB-C (MH-ET LIVE MiniKit layout, ~39 x 31
+  mounting holes)**, pack of 3, CH9102F USB-C (MH-ET LIVE MiniKit layout, ~39 x 31
   mm, 2 x 10 pads per side). Why: on the EPLZON carrier the 30-pin DevKit
   left only one free hole per pin row, no room to wire the modules. Same
   WROOM-32 module (same RAM, no PSRAM), so the firmware and every pin stay
   as they are (table in `docs/WIRING.md`); no carrier (the EPLZON's joined rows would short its inner and outer
-  pins). Agreed 2026-10-01 (the model is built on it), not soldered yet: pin headers
+  pins). Agreed 2026-10-01 (the model is built on it), wired by the user 2026-10-02: pin headers
   pointing up (can side), joints underneath, on both inner rows and the
   right outer row; TFT and knob wires plug on with female Dupont ends
   (the user has a crimp tool and a Dupont kit with 1-6 pin housings;
@@ -98,7 +98,7 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
   `tools/serial_log.py`), MAC `20:50:0d:2a:0a:7c`, ESP32-D0WD-V3 rev 3.1,
   40 MHz crystal, 4 MB flash. Flashed at the default baud without trouble;
   boots, joins WiFi, Mukk connected and sent a track + cover. It and the
-  DevKit both answer as `mukklet.local`: power only one at a time. Same day: TFT wired to it (BLK on IO19), picture fine per the user; knob on the new pins (27/25/32) not confirmed yet.
+  DevKit both answer as `mukklet.local`: power only one at a time. Same day: TFT wired to it (BLK on IO19), picture fine per the user; knob on the new pins (27/25/32): everything connected 2026-10-02, "seems to work fine" per the user.
 - **DevKit: MAC `70:4b:ca:4d:f0:1c`** (ESP32-D0WD-V3 rev 3.1, 40 MHz
   crystal), retired, was on `/dev/ttyUSB0`. Read-only identity check before flashing:
   `esptool -p /dev/ttyACM0 chip-id`. The weather station's board is a
@@ -214,7 +214,7 @@ out"): first draft is a 50 x 82 x 62 wedge, TFT portrait on a panel tilted
 out the back. **ESP32 mini cradle (2026-10-01)**: the mini lies flat on
 the base at the back, can up, 3 mm above the floor, no screws and nothing
 that flexes: antenna end under two lips at the front corners, back end on
-two rests with a stop behind, side guides, and a ledge on the shell's back
+two rests with a stop behind, side guides, and a ledge on the body's back
 wall 0.2 above the USB socket (holds the back down once the base is
 screwed on). Why the ledge sits on the socket: it's the one measured
 height at the back; the board's back corners have LEDs/parts close to the
@@ -287,20 +287,24 @@ Lessons from the TFT measuring and model (2026-09-29/30):
 - OpenSCAD: a `module` can't be defined inside `if`/`else` (parser error
   with only a line number); define it at the top level.
 - The mini's cradle is untested until printed (lip overhangs, the 0.2 gap
-  under the shell's ledge, the tilt-in move was only worked out on paper:
+  under the body's ledge, the tilt-in move was only worked out on paper:
   ~8 degrees fits under the lips, the back end clears the stops).
 - The TFT's plug hanging down behind the screen is what limits the
   carrier: at 82 deep the EPLZON's front passes over it only at >= 8 mm
   standoffs, and its front middle M3 hole sits right over the plug.
 
 ## Next step
-Milestone 3 (cover art) done. Enclosure (paused 2026-09-30, the user will
-come back to it): the user built the cardboard mock-up at 50 x 82 x 62
+Milestone 3 (cover art) done. Enclosure: **print requested 2026-10-02**,
+the user emailed `body`, `front`, `base` to a local FDM shop (PETG if they
+have it, else PLA; pick-up in person) and is waiting for the quote. Before
+that the user built the cardboard mock-up at 50 x 82 x 62
 (from the Miuzei-carrier templates; its floor map is out of date since the
 EPLZON switch, reprint page 2 of `enclosure/cardboard.pdf` if needed).
 Open, in order:
 1. The mock-up's findings (size on the desk, screen tilt, knob reach,
-   window vs the real TFT): not reported yet.
+   window vs the real TFT): never reported; asked again 2026-10-02 before
+   the print order, no answer, and the order went out anyway. Don't ask
+   again: the printed case answers it.
 2. Wiring done (2026-10-02): the user made the cables and connected
    everything to the mini, "seems to work fine" (which way clockwise
    turns the volume was not said). For the TFT's signals at the mini they
@@ -309,6 +313,7 @@ Open, in order:
    `enclosure/README.md`): M3 x 10 round head (base), 2.3 x 8 black pan
    head (front plate), 2 x 4 black pan head (TFT; try one in its 1.79
    holes first, else drill to 2.0).
-4. Send `body`, `front`, `base` (and optionally `test_knob`) to the
-   printing people (the user's plan, 2026-10-02), then go through the
-   checklists in `enclosure/README.md`.
+4. When the parts arrive: go through the checklists in
+   `enclosure/README.md`, assemble with `enclosure/pages/assembly/assembly.html`.
+   After a model change, `enclosure/pages/assembly/render.sh` redoes its
+   pictures.

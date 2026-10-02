@@ -156,16 +156,8 @@ deleted):
 - `pages/caliper.html`: "Mukklet Caliper Guide", what to measure on the
   TFT and the ESP32 mini and how
 - `pages/assembly/assembly.html`: "Mukklet Assembly", 8 renders with
-  labels drawn over them, for the three-part case. The renders, from
-  `pages/assembly/`, all with
-  `openscad -D show_labels=false --colorscheme=Tomorrow --imgsize=1000,750`:
-  - s1: `-D explode=45 -D explode_front=30 --camera=25,41,50,65,0,320,360`
-  - s2: `-D show_body=false -D show_base=false -D show_mini=false -D show_knob=false --camera=25,12,37,70,0,150,190`
-  - s3: `-D show_front=false -D show_base=false -D show_mini=false -D show_tft=false --camera=25,35,40,115,0,335,280`
-  - s4: `-D explode_front=28 -D show_base=false -D show_mini=false --camera=25,25,36,70,0,325,330`
-  - s5: `-D show_body=false -D show_front=false -D show_tft=false -D show_knob=false -D mini_tilt=8 -D mini_back=6 --camera=25,50,8,60,0,140,190` (s6: without the tilt)
-  - s7: `--camera=25,41,34,65,0,150,290`
-  - s8: `-D cut=25 --projection=o --camera=25,41,34,90,0,270,230`
+  labels drawn over them, for the three-part case. `pages/assembly/render.sh`
+  re-renders the pictures (cameras and flags are in it).
 
   The labels are SVG over each picture in a 1000 x 750 box: after a new
   render, check they still point at the right thing.
