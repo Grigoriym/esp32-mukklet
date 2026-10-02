@@ -6,7 +6,7 @@ Run with the IDF python env (has pyserial):
   ~/.espressif/python_env/idf6.2_py3.14_env/bin/python tools/serial_log.py \
       [seconds] [grep-regex]
 
-PORT=/dev/ttyACM0 in the environment picks another port.
+Port /dev/ttyACM0; PORT=/dev/ttyUSB0 in the environment picks another one.
 
 Retries once if nothing matching comes back -- the first read after a flash
 or USB re-enumeration is sometimes empty.
@@ -18,20 +18,25 @@ import time
 
 import serial
 
-PORT = os.environ.get("PORT", "/dev/ttyUSB0")  # the ESP32 mini is likely /dev/ttyACM0
+PORT = os.environ.get("PORT", "/dev/ttyACM0")  # the ESP32 mini; the old DevKit was /dev/ttyUSB0
 MAX_BYTES = 200_000  # 115200 baud can't legitimately produce more in ~20s
 
 
 def capture(seconds):
-    with serial.Serial(PORT, 115200, timeout=0.2) as s:
-        s.dtr = False
-        s.rts = True  # hold EN low -> reset
-        time.sleep(0.1)
-        s.rts = False
-        buf = b""
-        start = time.time()
-        while time.time() - start < seconds and len(buf) < MAX_BYTES:
-            buf += s.read(4096)
+    buf = b""
+    try:
+        with serial.Serial(PORT, 115200, timeout=0.2) as s:
+            s.dtr = False
+            s.rts = True  # hold EN low -> reset
+            time.sleep(0.1)
+            s.rts = False
+            start = time.time()
+            while time.time() - start < seconds and len(buf) < MAX_BYTES:
+                buf += s.read(4096)
+    except serial.SerialException as e:
+        # unplugged (or never there): print what arrived, and fail
+        print(buf.decode(errors="replace"), end="")
+        sys.exit(f"{PORT}: {e}")
     return buf.decode(errors="replace").splitlines()
 
 

@@ -16,7 +16,7 @@
 #define PIN_RST     17
 #define PIN_DC      16
 #define PIN_CS      5
-#define PIN_BLK     4
+#define PIN_BLK     19
 #define PCLK_HZ     (40 * 1000 * 1000)
 #define Y_GAP       20 // controller RAM is 240x320, the panel shows rows 20..299
 // The panel's picture is upside down with the pin header at the bottom;

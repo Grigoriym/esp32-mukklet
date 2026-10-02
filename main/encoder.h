@@ -6,7 +6,7 @@
 
 #include "input.h"
 
-// KY-040 rotary encoder on D25 (CLK) / D26 (DT) / D27 (SW).
+// KY-040 rotary encoder on D27 (CLK) / D25 (DT) / D32 (SW).
 
 // Creates the event queue, then configures the pins, the rotation interrupt
 // and the button polling task. The queue works even if the pins fail.

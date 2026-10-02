@@ -11,21 +11,26 @@
 // y = 0; Z = up, table at z = 0 (rubber feet not modelled).
 //
 // Printed parts:
-//   shell - walls, tilted screen panel with the TFT's 4 screw posts, top
-//           with the knob's snap hooks, a ledge over the USB socket; open
-//           at the bottom
-//   base  - floor plate with the ESP32 mini's cradle, 4 screws up into the
-//           shell's corner bosses
-// Pick one with -D 'part="shell"' (see export.sh). Single parts come out in
+//   body  - side walls, top with the knob's snap hooks, back with a ledge
+//           over the USB socket; open at the bottom and at the front
+//   front - the tilted screen panel, a flat plate between the side walls
+//           with the TFT's 4 screw posts: the TFT is screwed on from behind
+//           while the plate is loose, then 4 screws from the front hold
+//           the plate on the body's two rails
+//   base  - floor plate with the strip under the screen and the ESP32
+//           mini's cradle, 4 screws up into the body's corner bosses
+// Pick one with -D 'part="body"' (see export.sh). Single parts come out in
 // print orientation, "assembly" shows everything in place with stand-in
 // blocks for the modules, "clash" is empty when nothing overlaps.
 
-part = "assembly"; // [assembly, shell, base, test_front, clash, dims]
+part = "assembly"; // [assembly, body, front, base, test_knob, clash, dims]
 cut = -1; // assembly only: >= 0 cuts the printed parts away left of this x
-show_shell = true; // assembly only: untick to see inside
+show_body = true; // assembly only: untick to see inside
+show_front = true;
 show_base = true;
 show_labels = true; // names over the module stand-ins
-explode = 0; // assembly only: lifts the shell, with the TFT and knob in it, this far off the base
+explode = 0; // assembly only: lifts the body, with the knob and the front plate, this far off the base
+explode_front = 0; // ... and pulls the front plate, with the TFT on it, this far forward
 mini_tilt = 0; // assembly only: the mini tilted this many degrees, as it goes into its cradle
 mini_back = 0; // ... and pulled back this far
 
@@ -120,8 +125,20 @@ run = panel_len * sin(tilt); // how far back the panel's top edge is
 
 boss_d = 7;
 boss_pilot = 2.5; // M3 x 10 self-tapping, round head (the user's kit), 10 deep
-boss_in = wall + boss_d / 2 - 1; // centre from the outside; sunk 1 mm into both walls
-boss_xy = [[boss_in, boss_in], [W - boss_in, boss_in], [boss_in, D - boss_in], [W - boss_in, D - boss_in]];
+boss_in = wall + boss_d / 2 - 1; // centre from the outside; sunk 1 mm into the walls
+boss_front = wall + clr + boss_d / 2; // front pair: behind the base's strip under the screen
+boss_xy = [[boss_in, boss_front], [W - boss_in, boss_front], [boss_in, D - boss_in], [W - boss_in, D - boss_in]];
+
+// front plate: drops in between the side walls, flush with their edges,
+// onto a rail along each side wall; 4 x 2.3 x 8 self-tapping pan head
+// screws from the front (the small black kit), heads left proud
+rail_w = 6; // from the side wall's inner face: 1.4 clear of the TFT board
+rail_d = 8; // behind the plate
+front_gap = 0.2; // plate's bottom edge above the base's strip
+front_screw_d = 2.7; // clearance hole in the plate
+front_pilot = 1.9;
+front_screw_x = W / 2 - wall - rail_w / 2;
+front_screw_v = [4.5, panel_len - 4.5]; // up the slope: outside the window's chamfer
 
 // TFT: glass flat against the panel's inner face, the PCB screwed from
 // behind onto 4 posts at its corner holes (4 x M2 x 4 self-tapping: a 6
@@ -152,7 +169,7 @@ ky_back_z = ky_face_z - ky_t;
 
 // ESP32 mini flat on the floor at the back, in a cradle on the base: the
 // antenna end slides under two lips at the front corners, the back drops
-// onto two rests with a stop behind them, and the shell's ledge over the
+// onto two rests with a stop behind them, and the body's ledge over the
 // USB socket holds it down once the base is screwed on. No screws (the
 // board has no holes) and nothing that has to flex
 mini_lift = 3; // underside above the floor: room for the solder joints
@@ -187,7 +204,7 @@ module extrude_x(x0, w) translate([x0, 0, 0]) rotate([90, 0, 90]) linear_extrude
 
 module outer() extrude_x(0, W) profile();
 
-// inside of the shell, open at the bottom
+// inside of the case, open at the bottom
 module cavity() extrude_x(wall, W - 2 * wall) hull() {
   offset(delta = -wall) profile();
   translate([0, -wall - 1]) offset(delta = -wall) profile();
@@ -212,7 +229,7 @@ module stadium(w, h, len) // along y, centred in x/z
 
 tft_holes = [for (sx = [-1, 1], sz = [-1, 1]) [sx * tft_hole_x / 2, sz * tft_hole_z / 2]];
 
-// ------------------------------------------------------------ shell
+// ------------------------------------------------------------ front plate
 // posts flattened on the glass side, tft_glass_gap clear of it, so they fit
 // whatever the holes' exact position
 module tft_mount() tft_frame() difference() {
@@ -230,7 +247,45 @@ module tft_window() tft_frame() translate([0, 0, lit_z]) hull() {
   translate([0, -wall - 0.5, 0]) cube([win_w + 2 * (wall + 1), 1, win_h + 2 * (wall + 1)], center = true);
 }
 
-module bosses() for (p = boss_xy) translate([p.x, p.y, base_t]) cylinder(d = boss_d, h = H);
+module front_holes(d, depth, from = -1) panel_frame() for (sx = [-1, 1], v = front_screw_v)
+  translate([sx * front_screw_x, from, v]) rotate([-90, 0, 0]) cylinder(d = d, h = depth);
+
+module front() difference() {
+  union() {
+    intersection() {
+      outer();
+      panel_frame() box([-W / 2 + wall + clr, 0, -5], [W / 2 - wall - clr, wall, panel_len + 5]);
+      box([0, -1, skirt_h + front_gap], [W, D, H]);
+    }
+    tft_mount();
+  }
+  tft_window();
+  tft_pilots();
+  front_holes(front_screw_d, wall + 2);
+}
+
+// ------------------------------------------------------------ body
+// what the front plate and the base's strip take: everything between the
+// side walls in front of the plate's inner face, and of the strip below it
+// (eps deeper than the plate, so the clash check sees a gap, not a touch)
+module front_cut() {
+  w = wall + eps;
+  extrude_x(wall, W - 2 * wall) polygon([
+    [-5, -5], [wall + clr, -5], [wall + clr, skirt_h + (wall + clr - w * cos(tilt)) / tan(tilt) - w * sin(tilt)],
+    [w * cos(tilt) + 80 * sin(tilt), skirt_h - w * sin(tilt) + 80 * cos(tilt)], [-5, H + 20]]);
+}
+
+// a rail along each side wall, from the floor to the top: the plate lies on
+// them (the cut trims their front to the plate's inner face). Full length,
+// so nothing overhangs with the body printed upside down
+module front_rails() intersection() {
+  panel_frame() for (sx = [-1, 1])
+    box([min(sx * (W / 2 - wall + 0.5), sx * (W / 2 - wall - rail_w)), wall - 0.5, -30],
+        [max(sx * (W / 2 - wall + 0.5), sx * (W / 2 - wall - rail_w)), wall + rail_d, panel_len + 10]);
+  box([0, 0, base_t + eps], [W, D, H]);
+}
+
+module bosses() for (p = boss_xy) translate([p.x, p.y, base_t + eps]) cylinder(d = boss_d, h = H);
 
 module boss_pilots() for (p = boss_xy) translate([p.x, p.y, base_t - 1]) cylinder(d = boss_pilot, h = 11);
 
@@ -253,15 +308,16 @@ module knob_mount() {
 
 module vents() {
   // top, left and right of the knob, over the ESP32: its warm air leaves here
-  for (xs = [[boss_in + 1, knob_x - ky_w / 2 - 3.5], [knob_x + ky_w / 2 + 3.5 - 2, W - boss_in - 1 - 2]])
-    for (x = [xs[0]:4:xs[1]]) box([x, ky_y0 + 4, H - wall - 1], [x + 2, D - boss_d - 4, H + 1]);
+  // (the right side mirrors the left, so the slots sit the same from both edges)
+  for (xl = [boss_in + 1:4:knob_x - ky_w / 2 - 3.5], x = [xl, W - xl - 2])
+    box([x, ky_y0 + 4, H - wall - 1], [x + 2, D - boss_d - 4, H + 1]);
   // back, low: intake, left and right of the USB
-  for (xs = [[boss_d + 2, usb_x - 11], [usb_x + 9, W - boss_d - 2]])
-    for (x = [xs[0]:4:xs[1]]) box([x, D - wall - 1, base_t + 3], [x + 2, D + 1, base_t + 12]);
+  for (xl = [boss_d + 2:4:usb_x - 11], x = [xl, W - xl - 2])
+    box([x, D - wall - 1, base_t + 3], [x + 2, D + 1, base_t + 12]);
 }
 
 // over the USB socket, on the back wall: holds the mini's back end down.
-// Flat underneath, sloped 45 degrees on top (the shell prints upside down)
+// Flat underneath, sloped 45 degrees on top (the body prints upside down)
 module usb_ledge() {
   z0 = mini_z + mini_usb_top + 0.2;
   reach = usb_gap - mini_usb_out + usb_ledge_over;
@@ -273,7 +329,7 @@ module usb_ledge() {
   }
 }
 
-module shell() difference() {
+module body() difference() {
   union() {
     difference() {
       outer();
@@ -283,15 +339,15 @@ module shell() difference() {
       outer();
       union() {
         bosses();
-        tft_mount();
+        front_rails();
         knob_mount();
         usb_ledge();
       }
     }
   }
+  front_cut();
+  front_holes(front_pilot, rail_d - 1.5, wall - eps);
   boss_pilots();
-  tft_window();
-  tft_pilots();
   vents();
   translate([usb_x, D - wall - eps, usb_z]) stadium(usb_hole[0], usb_hole[1], wall + 2); // not into the ledge
   translate([knob_x, knob_y, H - wall - 1]) cylinder(d = knob_hole, h = wall + 2);
@@ -325,8 +381,9 @@ module mini_cradle() {
 module base() {
   x0 = wall + clr;
   y0 = wall + clr;
+  box([x0, 0, 0], [W - x0, wall, skirt_h]); // the strip under the screen
   difference() {
-    box([x0, y0, 0], [W - x0, D - y0, base_t]);
+    box([x0, 0, 0], [W - x0, D - y0, base_t]);
     for (p = boss_xy) translate([p.x, p.y, -1]) {
       cylinder(d = 3.4, h = base_t + 2);
       cylinder(d = 6.5, h = 1 + 2); // M3 head counterbore, 1 mm left
@@ -410,10 +467,10 @@ module labels() {
 }
 
 // ------------------------------------------------------------ output
-// first print: the screen panel and the front of the top, with the knob mount
-module test_front() intersection() {
-  shell();
-  box([-1, -1, skirt_h - 3], [W + 1, ky_y0 + ky_l + 3, H + 1]);
+// test print: the front of the top, with the knob mount
+module test_knob() intersection() {
+  body();
+  box([-1, -1, H - 14], [W + 1, ky_y0 + ky_l + 3, H + 1]);
 }
 
 // assembly only: the printed parts cut away left of x = cut
@@ -423,8 +480,9 @@ module cutaway() intersection() {
   else box([-10, -10, -10], [W + 10, D + 10, H + 10]);
 }
 
-if (part == "shell") translate([0, D, H]) rotate([180, 0, 0]) shell();
-else if (part == "test_front") translate([0, D, H]) rotate([180, 0, 0]) test_front();
+if (part == "body") translate([0, D, H]) rotate([180, 0, 0]) body();
+else if (part == "test_knob") translate([0, D, H]) rotate([180, 0, 0]) test_knob();
+else if (part == "front") rotate([90, 0, 0]) rotate([tilt, 0, 0]) translate([-W / 2, 0, -skirt_h]) front(); // face down
 else if (part == "base") base();
 else if (part == "dims") echo(W = W, D = D, H = H, wall = wall, tilt = tilt, skirt_h = skirt_h, run = run,
   panel_len = panel_len, tft_v = tft_v, tft_w = tft_w, tft_h = tft_h, lit_z = lit_z, win_w = win_w, win_h = win_h,
@@ -435,10 +493,23 @@ else if (part == "clash") {
   // printed parts against every stand-in
   intersection() {
     union() {
-      shell();
+      body();
+      front();
       base();
     }
     stand_ins();
+  }
+  // printed parts against each other
+  intersection() {
+    body();
+    union() {
+      front();
+      base();
+    }
+  }
+  intersection() {
+    front();
+    base();
   }
   // stand-ins against each other (plugs included)
   intersection() {
@@ -455,8 +526,11 @@ else if (part == "clash") {
 }
 else {
   translate([0, 0, explode]) {
-    if (show_shell) cutaway() color("white") shell();
-    tft_standin();
+    if (show_body) cutaway() color("white") body();
+    translate([0, -explode_front, 0]) {
+      if (show_front) cutaway() color("gainsboro") front();
+      tft_standin();
+    }
     knob_standin();
     if (show_labels) labels();
   }

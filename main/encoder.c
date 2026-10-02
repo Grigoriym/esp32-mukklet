@@ -9,9 +9,9 @@
 
 static const char *TAG = "encoder";
 
-#define ENC_CLK_GPIO    GPIO_NUM_25 // channel A
-#define ENC_DT_GPIO     GPIO_NUM_26 // channel B
-#define ENC_SW_GPIO     GPIO_NUM_27 // push button, active low
+#define ENC_CLK_GPIO    GPIO_NUM_27 // channel A
+#define ENC_DT_GPIO     GPIO_NUM_25 // channel B
+#define ENC_SW_GPIO     GPIO_NUM_32 // push button, active low
 #define BTN_POLL_MS     10          // = 1 tick at CONFIG_FREERTOS_HZ=100
 #define BTN_DEBOUNCE_MS 30
 

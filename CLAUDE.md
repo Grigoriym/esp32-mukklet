@@ -61,9 +61,9 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
   the user was told the OLED can be unplugged from D21/D22 (not confirmed
   whether they did).
 - **TFT wiring** (all pins: `docs/WIRING.md`): SCL D18, SDA D23, RES GPIO17 (TX2), DC GPIO16
-  (RX2), CS D5, BLK D4. Keeps I2C D21/D22 and the knob D25/D26/D27 free,
+  (RX2), CS D5, BLK D19 (was D4 until 2026-10-01; on the mini 18/19/23/5/3V3 are 5 pads in a row on the left inner row = one 5-pin housing, and 17/16/GND one 3-pin on the right inner row). Keeps I2C D21/D22 and the knob D27/D25/D32 free,
   avoids D2 (onboard LED).
-- **Knob**: KY-040 on D25 (CLK) / D26 (DT) / D27 (SW), as on the desk
+- **Knob**: KY-040 on D27 (CLK) / D25 (DT) / D32 (SW) (was 25/26/27 until 2026-10-01: moved so GND/27/25/32 are 4 pads in a row on the mini's right outer row, one 4-pin housing, in the KY-040's own CLK, DT, SW order: the user's choice), as on the desk
   display; lift `encoder.c` + `encoder_decode.c` from there.
 - **Prototype wired and checked (2026-09-27)** on a breadboard, every module
   straight to the ESP32 (no daisy-chaining), both on 3V3: OLED VCC/GND/SDA
@@ -76,7 +76,7 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
   user. The board still runs hw-checks.
 - **Final board: ESP32 "D1 mini" style (ordered 2026-09-30, arrived and
   measured 2026-10-01: `enclosure/MEASUREMENTS.md`, 31.51 x 39.02, no
-  mounting holes, pins not soldered yet, not plugged in yet)**, pack of 3, CH9102F USB-C (MH-ET LIVE MiniKit layout, ~39 x 31
+  mounting holes, pins not soldered yet)**, pack of 3, CH9102F USB-C (MH-ET LIVE MiniKit layout, ~39 x 31
   mm, 2 x 10 pads per side). Why: on the EPLZON carrier the 30-pin DevKit
   left only one free hole per pin row, no room to wire the modules. Same
   WROOM-32 module (same RAM, no PSRAM), so the firmware and every pin stay
@@ -84,16 +84,24 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
   pins). Agreed 2026-10-01 (the model is built on it), not soldered yet: pin headers
   pointing up (can side), joints underneath, on both inner rows and the
   right outer row; TFT and knob wires plug on with female Dupont ends
-  (the user has a crimp tool and a Dupont kit with 1-6 pin housings: TFT =
-  4 + 4; needs 26 AWG stranded wire, their 22 AWG is solid); the single
-  3V3 pin feeds both modules through a Y-wire. Seller photos show no
-  mounting holes: held in a cradle (see Enclosure). Expect `/dev/ttyACM0` (CH9102F is CDC-ACM), not `ttyUSB0`:
-  check `ls /dev/tty{USB,ACM}*` and `chip-id` once it's plugged in (`PORT=`
-  for `tools/serial_log.py`). Flash size (4 MB assumed) also from
-  `chip-id` / `esptool flash-id`. The DevKit stays the breadboard board.
-- **This board: MAC `70:4b:ca:4d:f0:1c`** (ESP32-D0WD-V3 rev 3.1, 40 MHz
-  crystal). Read-only identity check before flashing:
-  `esptool -p /dev/ttyUSB0 chip-id`. The weather station's board is a
+  (the user has a crimp tool and a Dupont kit with 1-6 pin housings;
+  needs 26 AWG stranded wire, their 22 AWG is solid); the single
+  3V3 pin feeds both modules through a Y-wire (two wires crimped into one
+  terminal). Housings at the mini: 5-pin + 3-pin for the TFT, 4-pin for
+  the knob, cables 12 / 15 cm (table and the rejected in-order layout:
+  `docs/WIRING.md`). The user wants pins chosen so a cable ends in one
+  housing with the wires in the module's own order; when something
+  already works, move the fewest pins (only BLK moved for the TFT). Seller photos show no
+  mounting holes: held in a cradle (see Enclosure). The DevKit is retired (user, 2026-10-01: "forget about the old board"); its breadboard wiring still has DT on D26.
+- **Mini #1 plugged in and flashed (2026-10-01)**, first bare (nothing wired to
+  it): `/dev/ttyACM0` (CH9102F is CDC-ACM; `PORT=/dev/ttyACM0` for
+  `tools/serial_log.py`), MAC `20:50:0d:2a:0a:7c`, ESP32-D0WD-V3 rev 3.1,
+  40 MHz crystal, 4 MB flash. Flashed at the default baud without trouble;
+  boots, joins WiFi, Mukk connected and sent a track + cover. It and the
+  DevKit both answer as `mukklet.local`: power only one at a time. Same day: TFT wired to it (BLK on IO19), picture fine per the user; knob on the new pins (27/25/32) not confirmed yet.
+- **DevKit: MAC `70:4b:ca:4d:f0:1c`** (ESP32-D0WD-V3 rev 3.1, 40 MHz
+  crystal), retired, was on `/dev/ttyUSB0`. Read-only identity check before flashing:
+  `esptool -p /dev/ttyACM0 chip-id`. The weather station's board is a
   different one; if it's online, `desk.local` answers over WiFi.
 - When it arrived here it ran unknown firmware that printed unreadable
   bytes at **every** baud rate (57600-921600, incl. 115200/74880), yet
@@ -160,9 +168,12 @@ anti-aliased), `gesture` (single/double/long press), `encoder_decode`
 
 ## Build / flash
 ESP-IDF, same setup as the desk display:
-`. ~/esp/esp-idf/export.sh && idf.py -p /dev/ttyUSB0 build flash`.
-If the weather station is plugged in too, the ports shift (`ttyUSB1`):
-check `ls /dev/ttyUSB*` and the MAC above before flashing.
+`. ~/esp/esp-idf/export.sh && idf.py -p /dev/ttyACM0 build flash`
+(the mini; the weather station is a `ttyUSB` board). Check
+`ls /dev/tty{USB,ACM}*` and the MAC above before flashing. The user
+unplugs the mini to work on the wiring: if the port is gone, the flash
+fails with "port is busy or doesn't exist" after a good build; check the
+port first and ask for it to be plugged in.
 If flashing fails with "Serial data stream stopped: Possible serial noise"
 (happened 2026-09-28 at the default and 460800 baud), add `-b 115200`.
 Mukk connects to the real board (`mukklet.local`) by default: to test
@@ -172,7 +183,9 @@ Boot logs (`idf.py monitor` needs a TTY the harness doesn't have):
 `tools/serial_log.py` resets the board and captures, run with the IDF
 python env,
 `~/.espressif/python_env/idf6.2_py3.14_env/bin/python tools/serial_log.py <seconds> "<regex>"`
-(port `/dev/ttyUSB0`, or `PORT=/dev/ttyACM0` in the environment).
+(port `/dev/ttyACM0`, or `PORT=...` in the environment; it resets the
+board, so the screen restarts; if the board is unplugged mid-capture it
+prints what arrived and exits non-zero).
 Checks that need hands (turning the knob): run the capture with
 `run_in_background`, tell the user what to do, read the output when it ends.
 
@@ -210,7 +223,19 @@ the floor, knob board at 48; TFT plug ends ~12 mm in front). Outside still
 50 x 82 x 62 for the cardboard mock-up, but its USB hole is now 16 mm
 lower (z 9, was 25) and 0.25 left of centre seen from the front. The
 EPLZON carrier and the DevKit are out of the model (git history).
-`enclosure/export.sh` = clash check (printed parts vs stand-ins, and
+**Three printed parts since 2026-10-02** (was a one-piece shell + base):
+`body` (side walls, top, back), `front` (the tilted screen panel, a flat
+plate between the side walls on two rails, 4 x 2.3 x 8 screws from the
+front, heads visible: fine by the user) and `base` (floor + the 12 mm
+strip under the screen + the mini's cradle). Why: in the one-piece shell
+no screwdriver could reach the TFT's two top screws (their line hit the
+back wall; found only by drawing a driver along each screw axis, the
+clash check can't see it). The user asked for "modular" themselves.
+`test_front` is gone (the plate is the test); `test_knob` is the top's
+front with the knob mount. Nothing has been printed yet, the desk
+display's case neither, so every fit is untested.
+`enclosure/export.sh` = clash check (printed parts vs stand-ins, printed
+parts vs each other, and
 stand-ins incl. plugs vs each other, and fails on undefined-variable
 warnings) + STLs + renders. TFT measured 2026-09-29 (`MEASUREMENTS.md`,
 "Mukklet Caliper Guide" artifact
@@ -239,11 +264,15 @@ Lessons from the TFT measuring and model (2026-09-29/30):
   clash because the two ran side by side.
 - Screw lengths: check them against what's in front of the pilot (an
   M2 x 6 through the 1.21 TFT board would have poked out of the front).
+- Check tool access, not only clashes: draw the screwdriver along every
+  screw's axis and intersect it with the printed parts (2026-10-02).
+- Printed parts that touch (plate on rails, bosses on the base) need the
+  same `eps` gap as stand-ins, or the part-vs-part clash check fails.
 - "How does it go together" questions: three rounds of prose and ASCII
   drawings didn't land (2026-10-01); renders from the model with labels
   drawn over them did ("Mukklet Assembly" artifact,
   https://claude.ai/artifact/TWDPQ22zmgzkANerb1wxgc, source in
-  `enclosure/artifacts/`). Say first that the shell has no lid: the only
+  `enclosure/artifacts/`; out of date since the three-part split). Say first that the shell has no lid: the only
   opening is the bottom.
 - Artifact pages have no local copy unless saved: both sources are in
   `enclosure/artifacts/`; edit there and republish with the page's `url`.
@@ -264,13 +293,15 @@ EPLZON switch, reprint page 2 of `enclosure/cardboard.pdf` if needed).
 Open, in order:
 1. The mock-up's findings (size on the desk, screen tilt, knob reach,
    window vs the real TFT): not reported yet.
-2. The user solders the mini's 3 pin rows (pins up: both inner rows + the
-   outer row away from the RST button), then plug it in: check the port
-   name, `chip-id`, flash size (see Hardware).
-3. Screws: M3 from the user's self-tapping kit (M3-M6, smallest M3 x 6,
-   round + flat head; use round); a small self-tapping pan-head kit
-   (M2 x 4/5/6, M2.3, M2.6, M3 x 4-6) ordered 2026-09-30 for the TFT
-   (M2 x 4); the carrier's M2 x 6 are moot with the mini. Try an M2 in the
-   TFT's 1.79 holes first, else drill to 2.0.
-4. Test print of `test_front`, and of `base` for the mini's cradle (both
-   checklists in `enclosure/README.md`), then the full print.
+2. Wiring done (2026-10-02): the user made the cables and connected
+   everything to the mini, "seems to work fine" (which way clockwise
+   turns the volume was not said). For the TFT's signals at the mini they
+   planned a 4-pin + a 2-pin housing, power apart (`docs/WIRING.md`).
+3. Screws, all from the user's two self-tapping kits (lists in
+   `enclosure/README.md`): M3 x 10 round head (base), 2.3 x 8 black pan
+   head (front plate), 2 x 4 black pan head (TFT; try one in its 1.79
+   holes first, else drill to 2.0).
+4. Send `body`, `front`, `base` (and optionally `test_knob`) to the
+   printing people (the user's plan, 2026-10-02), then go through the
+   checklists in `enclosure/README.md`. The "Mukklet Assembly" artifact
+   needs redoing for three parts.

@@ -30,7 +30,7 @@ if ! grep -q "Current top level object is empty" <<<"$log"; then
 fi
 
 mkdir -p "stl/$name" renders
-for part in shell base test_front; do
+for part in body front base test_knob; do
     echo "stl/$name/$part.stl"
     log=$(openscad "${defs[@]}" -D "part=\"$part\"" -o "stl/$name/$part.stl" "$scad" 2>&1)
     if grep -qiE "warning|error" <<<"$log"; then
@@ -49,4 +49,5 @@ render front 25,41,40,70,0,330,300
 render back 25,41,40,60,0,150,300
 render inside 25,41,36,50,0,300,260 -D cut=25
 render section 25,41,36,90,0,270,250 --projection=o -D cut=25
+render exploded 25,41,50,65,0,320,360 -D explode=45 -D explode_front=30 -D show_labels=false
 echo OK
