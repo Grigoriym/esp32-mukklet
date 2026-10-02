@@ -3,8 +3,8 @@
 The case model (`enclosure.scad`) is built from these numbers, in mm. The
 ESP32 and KY-040 are the same parts as the desk display's and were measured
 there (`../esp32-desk-display/enclosure/MEASUREMENTS.md`, 2026-09-28). The
-TFT was measured 2026-09-29 with the "Mukklet Caliper Guide" artifact
-(https://claude.ai/artifact/QTPxyAx3xMNtYf33rQmrr3); what was skipped comes
+TFT was measured 2026-09-29 with the "Mukklet Caliper Guide"
+(`pages/caliper.html`); what was skipped comes
 from the photos or standard parts, marked in `enclosure.scad`.
 
 ## TFT (1.69" ST7789V2, GERUI), held pins at the bottom, glass towards you
@@ -35,7 +35,7 @@ from the photos or standard parts, marked in `enclosure.scad`.
 
 ## ESP32 mini (D1 mini layout, CH9102F, "MINI D1 ESP32" V1296), measured from 2026-10-01
 Held metal can towards you, USB socket at the bottom, antenna at the top;
-"left" is the RST button's side. Caliper guide: same artifact as the TFT.
+"left" is the RST button's side. Caliper guide: same page as the TFT.
 - Board width x length: 31.51 x 39.02 (width across the pin rows; length
   antenna edge to the board edge beside the USB socket)
 - Thickness: board alone 1.49; underside to the top of the metal can 4.66;

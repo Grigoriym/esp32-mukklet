@@ -238,8 +238,7 @@ display's case neither, so every fit is untested.
 parts vs each other, and
 stand-ins incl. plugs vs each other, and fails on undefined-variable
 warnings) + STLs + renders. TFT measured 2026-09-29 (`MEASUREMENTS.md`,
-"Mukklet Caliper Guide" artifact
-https://claude.ai/artifact/QTPxyAx3xMNtYf33rQmrr3): ears + a notch at the
+"Mukklet Caliper Guide", `enclosure/pages/caliper.html`): ears + a notch at the
 top with the glass's flat cable wrapping round it. The user skips
 measurements that feel pointless (pixel-area position, hole-to-glass gap,
 standard pin lengths): design around the unknown instead (window = glass
@@ -270,12 +269,15 @@ Lessons from the TFT measuring and model (2026-09-29/30):
   same `eps` gap as stand-ins, or the part-vs-part clash check fails.
 - "How does it go together" questions: three rounds of prose and ASCII
   drawings didn't land (2026-10-01); renders from the model with labels
-  drawn over them did ("Mukklet Assembly" artifact,
-  https://claude.ai/artifact/TWDPQ22zmgzkANerb1wxgc, source in
-  `enclosure/artifacts/`; out of date since the three-part split). Say first that the shell has no lid: the only
-  opening is the bottom.
-- Artifact pages have no local copy unless saved: both sources are in
-  `enclosure/artifacts/`; edit there and republish with the page's `url`.
+  drawn over them did ("Mukklet Assembly",
+  `enclosure/pages/assembly/assembly.html`, redone for three parts
+  2026-10-02). Say first which parts there are and where each opens.
+- The user wants such pages as local HTML files in the repo
+  (`enclosure/pages/`, 2026-10-02), not claude.ai artifacts: write a
+  standalone file and give its path. The two old published copies
+  (links in `enclosure/README.md`) are stale and still online.
+- No headless browser works here (Brave hangs): to check a page's SVG
+  labels, draw them onto the renders with PIL.
 - OpenSCAD: a `module` can't be defined inside `if`/`else` (parser error
   with only a line number); define it at the top level.
 - The mini's cradle is untested until printed (lip overhangs, the 0.2 gap
@@ -303,5 +305,4 @@ Open, in order:
    holes first, else drill to 2.0).
 4. Send `body`, `front`, `base` (and optionally `test_knob`) to the
    printing people (the user's plan, 2026-10-02), then go through the
-   checklists in `enclosure/README.md`. The "Mukklet Assembly" artifact
-   needs redoing for three parts.
+   checklists in `enclosure/README.md`.

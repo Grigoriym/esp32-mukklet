@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mukklet Assembly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+/* Same look as the caliper guide. One column of steps, each a picture from the case model with a short caption. */
+:root{
+  --bg:#EEF2F0; --card:#FFFFFF; --ink:#1B2422; --muted:#5B6964; --line:#D3DCD8; --mark:#D0431B;
+  --paper:#F8F8F8; --on-paper:#1B2422; --on-paper-mark:#C23A14;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121716; --card:#1B2220; --ink:#E4EBE8; --muted:#95A39E; --line:#2E3936; --mark:#FF7A52;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121716; --card:#1B2220; --ink:#E4EBE8; --muted:#95A39E; --line:#2E3936; --mark:#FF7A52;
+}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.5 "Barlow",system-ui,sans-serif;padding:0 16px;padding-block:28px 48px}
+.wrap{max-width:760px;margin:0 auto;display:grid;gap:22px}
+h1,h2{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:2.4rem}
+h2{font-size:1.5rem}
+.lede{color:var(--muted);max-width:60ch;margin:6px 0 0}
+.step{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:12px;min-width:0}
+.head{display:flex;align-items:baseline;gap:12px}
+.num{font:500 .9rem "JetBrains Mono",ui-monospace,monospace;color:var(--mark)}
+.step p{margin:0;max-width:62ch}
+.fig{position:relative;background:var(--paper);border-radius:8px;overflow:hidden;line-height:0}
+.fig img{width:100%;height:auto;display:block}
+.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.a{stroke:var(--on-paper-mark);stroke-width:6;fill:none}
+.ring{stroke:var(--on-paper-mark);stroke-width:4;fill:none}
+.lead{stroke:var(--on-paper);stroke-width:2;fill:none}
+.t{fill:var(--on-paper);font:600 30px "Barlow",sans-serif}
+.tm{fill:var(--on-paper-mark);font:600 30px "Barlow",sans-serif}
+.ah{fill:var(--on-paper-mark)}
+.key{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.9rem;color:var(--muted)}
+.key span::before{content:"";display:inline-block;width:.8em;height:.8em;border-radius:2px;margin-right:6px;background:var(--c);border:1px solid var(--line)}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="h" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+      <path class="ah" d="M0 0L10 5L0 10z"/>
+    </marker>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header>
+    <h1>How the Mukklet case goes together</h1>
+    <p class="lede">The case is three printed parts: a body, a front plate with the screen, and a floor plate with the ESP32 board. Pictures are from the case model; the screws are not drawn.</p>
+    <p class="key"><span style="--c:#fff">body</span><span style="--c:#DCDCDC">front plate</span><span style="--c:#EDE48F">floor plate</span><span style="--c:#4169E1">ESP32 board</span><span style="--c:#C9A227">plugs on the pins</span></p>
+  </header>
+
+  <section class="step">
+    <div class="head"><span class="num">1</span><h2>Three parts</h2></div>
+    <div class="fig"><img src="s1.png" alt="The body lifted above the floor plate, the front plate with the screen pulled forward">
+      <svg viewBox="0 0 1000 750"><text class="t" x="30" y="60">body: open underneath</text><text class="t" x="30" y="96">and at the front</text><text class="t" x="700" y="90">front plate</text><path class="lead" d="M770 100 L760 150"/><text class="t" x="40" y="640">floor plate</text><path class="lead" d="M200 632 L330 570"/><text class="t" x="700" y="700">ESP32 board</text><path class="lead" d="M695 690 L520 545"/></svg></div>
+    <p>The body is the walls, the top and the back. The front plate carries the screen. The floor plate carries the ESP32 board and the low strip under the screen. The knob goes into the body.</p>
+  </section>
+
+  <section class="step">
+    <div class="head"><span class="num">2</span><h2>Screw the screen onto the front plate</h2></div>
+    <div class="fig"><img src="s2.png" alt="The front plate seen from behind, the screen board on its four posts, its plug hanging down">
+      <svg viewBox="0 0 1000 750"><circle class="ring" cx="425" cy="233" r="26"/><circle class="ring" cx="665" cy="197" r="26"/><circle class="ring" cx="365" cy="575" r="26"/><circle class="ring" cx="577" cy="522" r="26"/><text class="tm" x="30" y="60">4 screws, 2 x 4 mm,</text><text class="tm" x="30" y="96">from behind</text><text class="t" x="700" y="700">plug</text><path class="lead" d="M695 690 L610 650"/></svg></div>
+    <p>Lay the plate face down on the desk and put the screen on it, glass down, pins at the bottom. Four short screws go through the board's corner holes into the posts. Then push the cable's plug onto the pins.</p>
+  </section>
+
+  <section class="step">
+    <div class="head"><span class="num">3</span><h2>Snap the knob into the body</h2></div>
+    <div class="fig"><img src="s3.png" alt="The body seen from below and in front, the knob board under the top">
+      <svg viewBox="0 0 1000 750"><text class="t" x="600" y="70">knob board</text><path class="lead" d="M660 80 L540 300"/><text class="t" x="800" y="660">rail</text><path class="lead" d="M815 630 L740 470"/><text class="t" x="230" y="200">rail</text><path class="lead" d="M290 205 L425 300"/></svg></div>
+    <p>Reach in through the open front and push the knob's board up under the top until the two hooks click over it. Then press the cap onto the shaft from outside. The two rails are what the front plate will lie on.</p>
+  </section>
+
+  <section class="step">
+    <div class="head"><span class="num">4</span><h2>Screw the front plate onto the body</h2></div>
+    <div class="fig"><img src="s4.png" alt="The front plate with the screen held in front of the body's open front">
+      <svg viewBox="0 0 1000 750"><circle class="ring" cx="522" cy="330" r="26"/><circle class="ring" cx="730" cy="285" r="26"/><circle class="ring" cx="585" cy="620" r="26"/><circle class="ring" cx="778" cy="552" r="26"/><path class="a" d="M940 450 L850 425" marker-end="url(#h)"/><text class="tm" x="330" y="710">4 screws, 2.3 x 8 mm, from the front</text></svg></div>
+    <p>The plate drops in between the two side walls and lies on the rails. Four screws go in from the front, one at each corner; their heads stay visible.</p>
+  </section>
+
+  <section class="step">
+    <div class="head"><span class="num">5</span><h2>Slide the board under the two tabs</h2></div>
+    <div class="fig"><img src="s5.png" alt="The board held at a slight tilt, about to slide under two tabs on the floor plate">
+      <svg viewBox="0 0 1000 750"><circle class="ring" cx="340" cy="385" r="26"/><circle class="ring" cx="545" cy="300" r="26"/><text class="tm" x="230" y="470">tab</text><text class="tm" x="470" y="240">tab</text><path class="a" d="M940 330 L820 270" marker-end="url(#h)"/><text class="tm" x="740" y="220">slide this way</text></svg></div>
+    <p>The floor plate lies on the desk, on its own. Hold the board with the USB end a little higher and slide the other end forward, under the two tabs.</p>
+  </section>
+
+  <section class="step">
+    <div class="head"><span class="num">6</span><h2>Lay the board flat and plug in the cables</h2></div>
+    <div class="fig"><img src="s6.png" alt="The board lying flat on the floor plate with plugs on its pins">
+      <svg viewBox="0 0 1000 750"><path class="a" d="M900 400 L830 470" marker-end="url(#h)"/><text class="tm" x="760" y="370">lower this end</text><text class="t" x="560" y="90">plugs from the</text><text class="t" x="560" y="126">screen and knob</text><path class="lead" d="M640 136 L650 200"/></svg></div>
+    <p>Lower the USB end until the board lies flat. Two small blocks behind it stop it sliding back. Then push the screen's and the knob's plugs onto the pins.</p>
+  </section>
+
+  <section class="step">
+    <div class="head"><span class="num">7</span><h2>Put the body over it and screw it shut</h2></div>
+    <div class="fig"><img src="s7.png" alt="The closed case from the back, the USB socket visible in its hole">
+      <svg viewBox="0 0 1000 750"><text class="t" x="780" y="720">USB</text><path class="lead" d="M775 710 L680 650"/></svg></div>
+    <p>Lower the body over the floor plate and put in 4 screws (M3 x 10) from underneath. The USB socket ends up behind the hole in the back.</p>
+  </section>
+
+  <section class="step">
+    <div class="head"><span class="num">8</span><h2>Why the board can't move</h2></div>
+    <div class="fig"><img src="s8.png" alt="The closed case cut through the middle, seen from the side">
+      <svg viewBox="0 0 1000 750"><text class="tm" x="235" y="410">ledge on the body</text><path class="lead" d="M300 420 L200 545"/><text class="tm" x="540" y="710">tab</text><path class="lead" d="M545 685 L500 600"/><text class="t" x="30" y="60">back</text><text class="t" x="880" y="60">front</text><text class="t" x="840" y="300">front</text><text class="t" x="840" y="336">plate</text><path class="lead" d="M850 346 L775 400"/></svg></div>
+    <p>This is the closed case cut through the middle. At the front end of the board, the tabs hold it down. At the back end, a small ledge inside the body sits just above the USB socket. Nothing clicks and nothing is glued.</p>
+  </section>
+</div>

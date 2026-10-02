@@ -28,6 +28,9 @@ cut = -1; // assembly only: >= 0 cuts the printed parts away left of this x
 show_body = true; // assembly only: untick to see inside
 show_front = true;
 show_base = true;
+show_tft = true; // the module stand-ins
+show_knob = true;
+show_mini = true;
 show_labels = true; // names over the module stand-ins
 explode = 0; // assembly only: lifts the body, with the knob and the front plate, this far off the base
 explode_front = 0; // ... and pulls the front plate, with the TFT on it, this far forward
@@ -529,11 +532,11 @@ else {
     if (show_body) cutaway() color("white") body();
     translate([0, -explode_front, 0]) {
       if (show_front) cutaway() color("gainsboro") front();
-      tft_standin();
+      if (show_tft) tft_standin();
     }
-    knob_standin();
+    if (show_knob) knob_standin();
     if (show_labels) labels();
   }
   if (show_base) cutaway() color("khaki") base();
-  translate([0, mini_y0 + mini_back, mini_z]) rotate([mini_tilt, 0, 0]) translate([0, -mini_y0, -mini_z]) mini_standin(plug = mini_tilt == 0);
+  if (show_mini) translate([0, mini_y0 + mini_back, mini_z]) rotate([mini_tilt, 0, 0]) translate([0, -mini_y0, -mini_z]) mini_standin(plug = mini_tilt == 0);
 }

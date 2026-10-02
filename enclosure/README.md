@@ -141,23 +141,33 @@ M4, M5, M6; flat and round head) and small black pan head (2 × 4/5/6,
 3. With the base screwed into the body: the USB socket is centred in the
    hole, a cable plugs in fully, and the board's back end can't lift.
 
-## Pictures and artifacts
+## Pictures and pages
 
 `-D explode=45 -D explode_front=30` lifts the body off the base and pulls
 the front plate (with the TFT) forward;
-`-D mini_tilt=8 -D mini_back=6` shows the mini on its way into the cradle.
-`artifacts/` holds the sources of the two claude.ai pages, since the pages
-themselves are the only other copy:
+`-D mini_tilt=8 -D mini_back=6` shows the mini on its way into the cradle;
+`show_body`, `show_front`, `show_base`, `show_tft`, `show_knob`,
+`show_mini` hide single things.
 
-- `artifacts/caliper.html`: "Mukklet Caliper Guide",
-  https://claude.ai/artifact/QTPxyAx3xMNtYf33rQmrr3
-- `artifacts/assembly/`: "Mukklet Assembly" (5 renders with labels drawn
-  over them), https://claude.ai/artifact/TWDPQ22zmgzkANerb1wxgc. **Out of
-  date since the three-part split (2026-10-02)**: it shows the one-piece
-  shell, and `show_shell` is now `show_body`. Renders:
-  `openscad -D show_labels=false --colorscheme=Tomorrow --imgsize=1000,750`
-  plus `-D explode=55 --camera=25,41,55,65,0,150,330` (a1),
-  `-D show_shell=false -D explode=200 -D mini_tilt=8 -D mini_back=6
-  --camera=25,58,8,60,0,140,150` (a2; a3 without the tilt),
-  `--camera=25,41,34,65,0,150,290` (a5),
-  `-D cut=25 --projection=o --camera=25,41,34,90,0,270,230` (a6).
+`pages/` holds two local HTML pages (open the file in a browser; they
+were claude.ai artifacts until 2026-10-02, and those published copies are
+no longer kept up to date):
+
+- `pages/caliper.html`: "Mukklet Caliper Guide", what to measure on the
+  TFT and the ESP32 mini and how (was
+  https://claude.ai/artifact/QTPxyAx3xMNtYf33rQmrr3)
+- `pages/assembly/assembly.html`: "Mukklet Assembly", 8 renders with
+  labels drawn over them, for the three-part case (was
+  https://claude.ai/artifact/TWDPQ22zmgzkANerb1wxgc). The renders, from
+  `pages/assembly/`, all with
+  `openscad -D show_labels=false --colorscheme=Tomorrow --imgsize=1000,750`:
+  - s1: `-D explode=45 -D explode_front=30 --camera=25,41,50,65,0,320,360`
+  - s2: `-D show_body=false -D show_base=false -D show_mini=false -D show_knob=false --camera=25,12,37,70,0,150,190`
+  - s3: `-D show_front=false -D show_base=false -D show_mini=false -D show_tft=false --camera=25,35,40,115,0,335,280`
+  - s4: `-D explode_front=28 -D show_base=false -D show_mini=false --camera=25,25,36,70,0,325,330`
+  - s5: `-D show_body=false -D show_front=false -D show_tft=false -D show_knob=false -D mini_tilt=8 -D mini_back=6 --camera=25,50,8,60,0,140,190` (s6: without the tilt)
+  - s7: `--camera=25,41,34,65,0,150,290`
+  - s8: `-D cut=25 --projection=o --camera=25,41,34,90,0,270,230`
+
+  The labels are SVG over each picture in a 1000 x 750 box: after a new
+  render, check they still point at the right thing.
