@@ -12,21 +12,19 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
 (bring-up tests for new modules; a new screen gets checked there first).
 
 ## Shared ESP32 docs (since 2026-10-02)
-Facts about a *part*, and lessons that hold for any ESP32 project here,
-live in `../grappim-watcher/docs/esp32/` (that repo has no git), not in
-this file:
-- `parts/<part>.md`: `esp32-mini`, `esp32-devkit-30pin`, `tft-st7789v2`,
-  `ky-040`, `oled-ssd1315`: pinout, voltage, current, measured dimensions,
-  mounting, quirks, board MACs and ports, hw-checks status.
-  `parts/README.md`: index of the sheets (its counts are frozen since
-  2026-10-03).
-- **What's owned and free: the Homebox inventory** (`http://192.168.0.139:34899`,
-  since 2026-10-03). `python3 ../grappim-watcher/docs/esp32/inventory/parts.py`
-  lists free parts (`all`, `find <text>`); read-only. Check it before
-  suggesting a part or a purchase. This project holds 1 ESP32 mini, 1 TFT,
-  1 KY-040. When it starts or stops using a part, that entry's `In use` /
+One source of truth per fact, never a copy (the user's rule, 2026-10-03):
+- **Everything about a part** (pinout, voltage, current, measured
+  dimensions, mounting, quirks, MACs and ports, test status, how many and
+  which are free): its entry in the **Homebox inventory**
+  (`http://192.168.0.139:34899`), nowhere else.
+  `python3 ../grappim-watcher/docs/esp32/inventory/parts.py show <part>`
+  prints an entry; plain `parts.py` lists what's free (`all`, `find
+  <text>`). Read-only. Check it before suggesting a part or a purchase.
+  When this project starts or stops using a part, that entry's `In use` /
   `Free` (in its description) has to change: the user does it in the UI,
   or a session through the API with the user's OK, never silently.
+- Lessons that hold for any ESP32 project: `../grappim-watcher/docs/esp32/`
+  (no git there):
 - `WIRING_RULES.md`: which GPIOs are usable, power budget, cable
   conventions (one housing per cable, wires in the module's own order;
   when something already works, move the fewest pins).
@@ -35,7 +33,7 @@ this file:
 - `FIRMWARE_PLAYBOOK.md`: flash and serial-capture traps, config, code
   shape, the four checks.
 
-**Rule: a new fact about a part goes in its sheet there, not here.** This
+**Rule: a new fact about a part goes in its Homebox entry, not here.** This
 file keeps what is this project's own: pins, decisions, milestones, the
 case design. When the printed case arrives, lessons that aren't about
 this case go in `ENCLOSURE_PLAYBOOK.md`.
@@ -63,10 +61,9 @@ this case go in `ENCLOSURE_PLAYBOOK.md`.
 
 ## Hardware
 What each part is (pinout, voltage, dimensions, quirks, MAC, port): its
-sheet, see "Shared ESP32 docs". Here: what this build uses and why.
-- **Board: ESP32 mini #1** (`parts/esp32-mini.md`, `/dev/ttyACM0`) since
-  2026-10-01. Same WROOM-32 module as the DevKit (**no PSRAM**, ~320 KB
-  RAM), so the firmware didn't change. Why: on the EPLZON carrier the
+Homebox entry, see "Shared ESP32 docs". Here: what this build uses and why.
+- **Board: ESP32 mini #1** since
+  2026-10-01. Same module as the DevKit, so the firmware didn't change. Why: on the EPLZON carrier the
   30-pin DevKit left only one free hole per pin row, no room to wire the
   modules. No carrier now (the EPLZON's joined rows would short the mini's
   inner and outer pins) and no mounting holes: held in a cradle (see
@@ -74,12 +71,11 @@ sheet, see "Shared ESP32 docs". Here: what this build uses and why.
   side), joints underneath, on both inner rows and the right outer row;
   the TFT and knob cables plug on with female Dupont ends, the single 3V3
   pin feeds both modules through a Y-wire.
-- **DevKit retired** (`parts/esp32-devkit-30pin.md`; user, 2026-10-01:
+- **DevKit retired** (user, 2026-10-01:
   "forget about the old board"). Its breadboard wiring still has the knob
   on 25/26/27 and BLK on D4. It and the mini both answer as
   `mukklet.local`: power only one at a time.
-- **Screen: 1.69" 240×280 ST7789V2** (`parts/tft-st7789v2.md`), both
-  units checked 2026-09-28; which of the two is in the build doesn't
+- **Screen: 1.69" 240×280 ST7789V2**, which of the two is in the build doesn't
   matter (user, 2026-10-02): don't ask. **Chosen by the user (2026-09-27)** over the Waveshare 2.0"
   240×320 ST7789V IPS (same wiring, labels DIN/CLK/RST/BL; the fallback
   if 1.69" turns out too small). Rejected: 1.8" 128×160 ST7735 (low-res,
@@ -102,7 +98,7 @@ sheet, see "Shared ESP32 docs". Here: what this build uses and why.
   and sent a track + cover); TFT wired to it the same day, picture fine
   per the user; knob on the new pins and everything connected 2026-10-02,
   "seems to work fine" per the user.
-- **OLED** (`parts/oled-ssd1315.md`): milestone 1's prototype screen
+- **OLED**: milestone 1's prototype screen
   (asked Mukk for 64×64 `mono1`), to find out which info is worth
   showing. No I2C code since 2026-09-28.
 
@@ -225,8 +221,8 @@ display's case neither, so every fit is untested.
 parts vs each other, and
 stand-ins incl. plugs vs each other, and fails on undefined-variable
 warnings) + STLs + renders.
-Part dimensions: the part sheets (`enclosure/MEASUREMENTS.md` lists
-which). Generic lessons from this case (measuring, clash check, tool
+Part dimensions: each part's Homebox entry (`enclosure/MEASUREMENTS.md`
+says which parts and what the model does with them). Generic lessons from this case (measuring, clash check, tool
 access, screw lengths, hubs.com, OpenSCAD traps): `ENCLOSURE_PLAYBOOK.md`
 in the shared docs. This case's own notes:
 - hubs.com (the user uploads there): the three parts pass with a 1.2 mm

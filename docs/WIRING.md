@@ -6,10 +6,10 @@ pins were picked so each cable ends in few Dupont housings (see "Housings
 on the mini" below). The 30-pin DevKit on the breadboard is retired and its
 old wiring (knob 25/26/27, BLK D4) no longer matches the firmware.
 
-Part facts are in the shared sheets, `../grappim-watcher/docs/esp32/`:
-the mini's pad rows and silkscreen (`parts/esp32-mini.md`), the TFT's and
-knob's pinouts (`parts/tft-st7789v2.md`, `parts/ky-040.md`), which GPIOs
-are usable and the cable conventions (`WIRING_RULES.md`).
+Part facts (the mini's pad rows and silkscreen, the TFT's and knob's
+pinouts) are in their Homebox entries: `parts.py show <part>` (see
+`CLAUDE.md`). Which GPIOs are usable and the cable conventions:
+`../grappim-watcher/docs/esp32/WIRING_RULES.md`.
 
 ## TFT: ST7789V2 1.69" 240x280
 
@@ -54,7 +54,7 @@ towards the USB end.
   | 2-pin | right inner | IO17 → RES, IO16 → DC |
 - The TFT's VCC and the knob's + share the one 3V3 pad through a Y-wire.
 - The 3-pin housing shifted one pad down puts 5 V on the TFT (why, and
-  the pads to leave empty beside the knob's housing: `parts/esp32-mini.md`).
+  the pads to leave empty beside the knob's housing: the mini's Homebox entry).
 - Cable lengths (estimates from the case size, not measured in the model):
   TFT 12 cm, knob 15 cm, so the base can lie beside the shell with
   everything plugged in. 26 AWG stranded.

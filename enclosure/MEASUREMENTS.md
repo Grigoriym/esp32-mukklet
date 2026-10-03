@@ -1,15 +1,10 @@
 # Part measurements
 
 The case model (`enclosure.scad`) is built from the parts' measured
-dimensions, in mm. The numbers live in the shared part sheets
-(`../grappim-watcher/docs/esp32/parts/`), one per part, under "Mechanical";
-a new measurement of a part goes there, not here.
-
-| Part | Sheet | Measured |
-|---|---|---|
-| TFT 1.69" ST7789V2 | `tft-st7789v2.md` | 2026-09-29 |
-| ESP32 mini | `esp32-mini.md` | 2026-10-01 |
-| KY-040 | `ky-040.md` | 2026-09-28, for the desk display |
+dimensions, in mm. The numbers live only in each part's Homebox entry
+(fields): `python3 ../../grappim-watcher/docs/esp32/inventory/parts.py show
+<part>` (TFT, ESP32 mini, KY-040). A new measurement of a part goes there,
+not here.
 
 The TFT and the mini were measured with the "Mukklet Caliper Guide"
 (`pages/caliper.html`). What was skipped comes from the photos or standard
