@@ -158,7 +158,10 @@ anti-aliased), `gesture` (single/double/long press), `encoder_decode`
 ## Build / flash
 ESP-IDF, same setup as the desk display:
 `. ~/esp/esp-idf/export.sh && idf.py -p /dev/ttyACM0 build flash`
-(the mini; the weather station is a `ttyUSB` board). Flash and serial
+(the mini; the weather station is a `ttyUSB` board).
+Flashing and checking a build on the board: use the `esp32-flash-verify`
+skill (generic routine); this section keeps only what's specific to this
+repo. Other flash and serial
 traps (missing port, identity check by MAC, serial noise, no TTY for
 `idf.py monitor`, checks that need hands, `pkill -f`):
 `FIRMWARE_PLAYBOOK.md` in the shared docs.
