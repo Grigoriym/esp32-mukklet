@@ -18,7 +18,15 @@ this file:
 - `parts/<part>.md`: `esp32-mini`, `esp32-devkit-30pin`, `tft-st7789v2`,
   `ky-040`, `oled-ssd1315`: pinout, voltage, current, measured dimensions,
   mounting, quirks, board MACs and ports, hw-checks status.
-  `parts/README.md`: what's owned / in use / free, tools and stock.
+  `parts/README.md`: index of the sheets (its counts are frozen since
+  2026-10-03).
+- **What's owned and free: the Homebox inventory** (`http://192.168.0.139:34899`,
+  since 2026-10-03). `python3 ../grappim-watcher/docs/esp32/inventory/parts.py`
+  lists free parts (`all`, `find <text>`); read-only. Check it before
+  suggesting a part or a purchase. This project holds 1 ESP32 mini, 1 TFT,
+  1 KY-040. When it starts or stops using a part, that entry's `In use` /
+  `Free` (in its description) has to change: the user does it in the UI,
+  or a session through the API with the user's OK, never silently.
 - `WIRING_RULES.md`: which GPIOs are usable, power budget, cable
   conventions (one housing per cable, wires in the module's own order;
   when something already works, move the fewest pins).
