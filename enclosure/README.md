@@ -102,7 +102,7 @@ Material: PETG preferred (PLA softens ~55 °C). Fit clearance 0.3 mm (`clr`).
 ## Hardware
 
 Screws from the user's two self-tapping kits, silver stainless and small
-black pan head (what's in them: not recorded anywhere yet, see the watcher's checklist).
+black pan head. What's in them: their Homebox entries (`parts.py show screws`).
 
 - 4 × M3 × 10, round head, silver kit (base → body; pilot 2.5)
 - 4 × 2.3 × 8, black kit (front plate → rails; 2.7 hole in the plate,
