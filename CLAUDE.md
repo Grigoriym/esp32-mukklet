@@ -239,9 +239,14 @@ in the shared docs. This case's own notes:
   standoffs, and its front middle M3 hole sat right over the plug.
 
 ## Next step
-Milestone 3 (cover art) done. Enclosure: **print requested 2026-10-02**,
-the user emailed `body`, `front`, `base` to a local FDM shop (PETG if they
-have it, else PLA; pick-up in person) and is waiting for the quote. Before
+Milestone 3 (cover art) done. Enclosure **v1 printed and assembled
+2026-10-07**: cradle, USB, front plate and TFT work; the knob mount
+doesn't hold the board. Findings and the v2 list: "First print" in
+`enclosure/README.md`. The user wants a v2 later; nothing changed in the
+model yet. The list below is from before the print.
+Print history: requested 2026-10-02, the user emailed `body`, `front`,
+`base` to a local FDM shop (PETG if they have it, else PLA; pick-up in
+person). Before
 that the user built the cardboard mock-up at 50 x 82 x 62
 (from the Miuzei-carrier templates; its floor map is out of date since the
 EPLZON switch, reprint page 2 of `enclosure/cardboard.pdf` if needed).

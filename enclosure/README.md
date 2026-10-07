@@ -140,6 +140,38 @@ black pan head. What's in them: their Homebox entries (`parts.py show screws`).
 3. With the base screwed into the body: the USB socket is centred in the
    hole, a cable plugs in fully, and the board's back end can't lift.
 
+## First print (v1, 2026-10-07)
+
+Printed by a local FDM shop, assembled by the user. Works as a case; the
+knob mount needs a v2.
+
+- **Base / cradle: works.** The shop printed support under the two lips
+  (expected, they're overhangs); the user cut it out with a craft knife
+  heated with a lighter. The board slides in, lies flat, no play; USB
+  centred in the hole, a cable plugs in fully, the back end stays down.
+- **Base screws:** the silver kit's "M3" measures 3.64 across the thread
+  (~11.7 long): it doesn't pass the 3.4 holes, so the user drilled them
+  to 4 mm. Into the bosses' 2.5 pilots it went hard but held.
+- **Front plate: works.** TFT screwed on (2 x 4 fine), plate on the body.
+  The 2.3 x 8 screws were hard to drive into the 1.9 pilots and may not
+  be all the way in.
+- **Knob: doesn't hold.**
+  1. The KY-040's header had its plastic strip on the component face;
+     the model assumed the pins stick out past the board's end, so the
+     pad near that end hit it. The user removed the header (to go back on
+     the underside).
+  2. The left hook doesn't catch the board's edge (the right one does):
+     pressing the knob pushes the board down; for now the user holds a
+     balance. The barbs reach only 0.8 under the edge, and the board's
+     thickness (1.6) was assumed.
+  3. Where the hooks put the board, the shaft isn't centred in the 16 mm
+     hole; centring it needs the board pushed right, which the hooks
+     don't allow.
+
+v2 to do: rework the knob mount (deeper barbs or another hold; measure
+the KY-040's thickness, the shaft's position across the board and the
+header's), base holes 4.0, front pilots ~2.1.
+
 ## Pictures and pages
 
 `-D explode=45 -D explode_front=30` lifts the body off the base and pulls
