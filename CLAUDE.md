@@ -215,8 +215,8 @@ no screwdriver could reach the TFT's two top screws (their line hit the
 back wall; found only by drawing a driver along each screw axis, the
 clash check can't see it). The user asked for "modular" themselves.
 `test_front` is gone (the plate is the test); `test_knob` is the top's
-front with the knob mount. Nothing has been printed yet, the desk
-display's case neither, so every fit is untested.
+front with the knob mount. Printed 2026-10-07 (v1, see Next step); the
+desk display's case is still unprinted.
 `enclosure/export.sh` = clash check (printed parts vs stand-ins, printed
 parts vs each other, and
 stand-ins incl. plugs vs each other, and fails on undefined-variable
@@ -231,39 +231,26 @@ in the shared docs. This case's own notes:
 - "Mukklet Assembly", `enclosure/pages/assembly/assembly.html`: labelled
   renders, redone for three parts 2026-10-02. Pages like it are local
   HTML files in `enclosure/pages/`, not claude.ai artifacts.
-- The mini's cradle is untested until printed (lip overhangs, the 0.2 gap
-  under the body's ledge, the tilt-in move was only worked out on paper:
-  ~8 degrees fits under the lips, the back end clears the stops).
+- The mini's cradle works as printed (2026-10-07): the lips came with
+  support to cut out, the tilt-in move and the ledge over the socket work.
 - The TFT's plug hanging down behind the screen is what limits a
   carrier: at 82 deep the EPLZON's front passed over it only at >= 8 mm
   standoffs, and its front middle M3 hole sat right over the plug.
 
 ## Next step
-Milestone 3 (cover art) done. Enclosure **v1 printed and assembled
-2026-10-07**: cradle, USB, front plate and TFT work; the knob mount
-doesn't hold the board. Findings and the v2 list: "First print" in
-`enclosure/README.md`. The user wants a v2 later; nothing changed in the
-model yet. The list below is from before the print.
-Print history: requested 2026-10-02, the user emailed `body`, `front`,
-`base` to a local FDM shop (PETG if they have it, else PLA; pick-up in
-person). Before
-that the user built the cardboard mock-up at 50 x 82 x 62
-(from the Miuzei-carrier templates; its floor map is out of date since the
-EPLZON switch, reprint page 2 of `enclosure/cardboard.pdf` if needed).
+Milestone 3 (cover art) done. Enclosure **v1 printed (local FDM shop) and
+assembled 2026-10-07**: cradle, USB, front plate and TFT work; the knob
+mount doesn't hold the board (the user balances it when pressing). Findings
+and the v2 list: "First print" in `enclosure/README.md`. Nothing changed
+in the model yet.
 Open, in order:
-1. The mock-up's findings (size on the desk, screen tilt, knob reach,
-   window vs the real TFT): never reported; asked again 2026-10-02 before
-   the print order, no answer, and the order went out anyway. Don't ask
-   again: the printed case answers it.
-2. Wiring done (2026-10-02): the user made the cables and connected
-   everything to the mini, "seems to work fine" (which way clockwise
-   turns the volume was not said). For the TFT's signals at the mini they
-   planned a 4-pin + a 2-pin housing, power apart (`docs/WIRING.md`).
-3. Screws, all from the user's two self-tapping kits (lists in
-   `enclosure/README.md`): M3 x 10 round head (base), 2.3 x 8 black pan
-   head (front plate), 2 x 4 black pan head (TFT; try one in its 1.79
-   holes first, else drill to 2.0).
-4. When the parts arrive: go through the checklists in
-   `enclosure/README.md`, assemble with `enclosure/pages/assembly/assembly.html`.
-   After a model change, `enclosure/pages/assembly/render.sh` redoes its
-   pictures.
+1. **Bug fixing** (firmware/Mukk side): next, when the user says so
+   (2026-10-07: "after, not now, i will notify"). No list yet.
+2. **Case v2**, later: the knob mount first, then the hole sizes (README's
+   v2 list). Before modelling the mount, get the KY-040's thickness, the
+   shaft's position across the board and where its header ends up (the
+   user took it off to resolder on the underside).
+3. Which way clockwise turns the volume was never said.
+After a model change, `enclosure/pages/assembly/render.sh` redoes the
+assembly page's pictures and `~/Videos/mukklet-reel/renders/render.sh` the
+reel's clips.
