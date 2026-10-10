@@ -24,6 +24,14 @@ if grep -qE "WARNING: (Ignoring unknown|undefined operation|Unable to convert)" 
     echo "FAIL: model warnings (a variable used before it's defined?)" >&2
     exit 1
 fi
+if grep -q "ERROR:" <<<"$log"; then
+    echo "$log" | grep -E "ERROR:" >&2
+    echo "FAIL: a pre-print check in the model failed" >&2
+    exit 1
+fi
+grep -o "CHECKS: .*" <<<"$log" | sed 's/"$//' || true
+echo "values not measured (ASSUMED in $scad):"
+grep -n "ASSUMED" "$scad" | grep -v "^[0-9]*:// Sizes" | sed 's/^/  /' || true
 if ! grep -q "Current top level object is empty" <<<"$log"; then
     echo "FAIL: parts overlap a module stand-in (open /tmp/enclosure_clash.stl)" >&2
     exit 1

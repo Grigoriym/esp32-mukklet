@@ -7,7 +7,7 @@ OpenSCAD model of the case, lifted from the desk display's
 connectors). `-D cut=25` cuts the printed parts away left of x = 25.
 
 ```
-enclosure/export.sh   # clash check, then stl/enclosure/{body,front,base}.stl + optional/test_knob.stl (gitignored) + renders/enclosure-*.png
+enclosure/export.sh   # clash check + pre-print checks (prints the margins and every ASSUMED value), then stl/enclosure/{body,front,base}.stl + optional/test_knob.stl (gitignored) + renders/enclosure-*.png
 ```
 
 The clash check fails if a printed part overlaps a module stand-in, two
@@ -164,7 +164,11 @@ pixels (measured on v1 with the edge test screen: 3.6 top, 1.25 bottom)
 mostly doesn't show; the window's bottom corners rounded r 5 like the
 pixel area's (~42 px, found with the corner test screen, `EDGE_TEST 2`). The
 base's strip under the screen 0.8 lower (1.0 under the plate): on v1,
-with the plate screwed on, the base wouldn't go fully in at the front. The KY-040 in this
+with the plate screwed on, the base wouldn't go fully in at the front. Front
+plate screws 0.5 further in, for 2 mm of plate beside their holes. The
+model now asserts what the clash check can't see (plastic round holes,
+pilot depth against each screw's reach, the plate-strip gap, thread above
+the knob's nut); see the `enclosure-preprint-review` skill. The KY-040 in this
 build had its header resoldered (2026-10-10): straight pins under the
 board, pointing down; the stubs on top stay below the encoder body. Its
 collar/nut sizes are in Homebox; the measuring page is

@@ -138,6 +138,10 @@ run = panel_len * sin(tilt); // how far back the panel's top edge is
 boss_d = 7;
 boss_pilot = 2.5; // M3 x 10 self-tapping, round head (the user's kit; 3.64 x ~11.7 measured)
 boss_hole = 4.0; // in the base: the v1 3.4 had to be drilled to 4
+boss_cb_d = 6.5; // head counterbore under the base, 2 deep (1 mm of base left)
+boss_cb_h = 2;
+boss_pilot_h = 13; // from 1 mm under the base's top face
+base_screw_l = 11.7; // the silver kit's "M3 x 10", measured
 boss_in = wall + boss_d / 2 - 1; // centre from the outside; sunk 1 mm into the walls
 boss_front = wall + clr + boss_d / 2; // front pair: behind the base's strip under the screen
 boss_xy = [[boss_in, boss_front], [W - boss_in, boss_front], [boss_in, D - boss_in], [W - boss_in, D - boss_in]];
@@ -155,7 +159,8 @@ strip_drop = 0.8; // the base's strip stops this far below the skirt's edge: 1.0
 front_screw_d = 2.4; // clearance hole in the plate
 front_pilot = 1.6; // as the TFT's posts: 2 x 4 went in fine there
 front_pilot_depth = 6; // behind the plate: the screw reaches 4
-front_screw_x = W / 2 - wall - rail_w / 2;
+front_screw_x = W / 2 - wall - rail_w / 2 - 0.5; // 0.5 in from the rail's middle: 2 mm of plate to its edge
+front_screw_l = 6;
 front_screw_v = [4.5, panel_len - 4.5]; // up the slope: outside the window's chamfer
 
 // TFT: glass flat against the panel's inner face, the PCB screwed from
@@ -232,6 +237,33 @@ assert(mini_joint < mini_lift, "solder joints touch the floor");
 assert(tft_hole_z / 2 - tft_pilot / 2 - 0.6 > tft_glass_z0 + tft_glass_h + tft_glass_gap, "TFT post flats cut into the screw holes");
 assert(tft_hole_x / 2 - tft_post_d / 2 > tft_notch_w / 2, "TFT top posts off the ears");
 assert(win_w > tft_lit_w && win_h > tft_lit_h, "window smaller than the pixel area");
+
+// ------------------------------------------------------------ pre-print checks
+// What the clash check can't see (the enclosure-preprint-review skill;
+// v1's misses: holes 0.2 from an edge, pilots too short for the screw, a
+// 0.2 gap that closed). Fails the export.
+function edge_ok(hole_d, centre_to_edge) = centre_to_edge - hole_d / 2 >= max(2, 0.6 * hole_d) - 0.01;
+// plastic round the holes, to the nearest edge of the part they're in
+assert(edge_ok(boss_hole, min(boss_in, boss_front)), "base screw hole too close to the base's edge");
+assert(min(boss_in, boss_front) - boss_cb_d / 2 >= 1.2, "base screw counterbore too close to the base's edge");
+plate_bottom_v = (front_gap + wall * sin(tilt)) / cos(tilt); // the plate's level-cut bottom edge, inner face, along the slope
+assert(edge_ok(front_screw_d, W / 2 - wall - clr - front_screw_x), "front plate screw hole too close to the plate's side");
+assert(edge_ok(front_screw_d, front_screw_v[0] - plate_bottom_v), "front plate screw hole too close to the plate's bottom");
+assert(front_screw_x - front_pilot / 2 >= W / 2 - wall - rail_w + 1, "front pilot too close to the rail's inner edge");
+// pilot depth against the screw's reach: >= 1 mm left at the tip
+base_screw_tip = boss_cb_h + base_screw_l; // the head sits at the counterbore's top
+assert(base_t - 1 + boss_pilot_h - base_screw_tip >= 1, "base screw bottoms out in its pilot");
+assert(front_pilot_depth - (front_screw_l - wall) >= 1, "front plate screw bottoms out in its pilot");
+// the TFT's 2 x 4: 0.1 left at the tip, the post can't be deeper (0.8 to the plate's
+// front); went in fine on v1, so only checked not to go past it
+assert(tft_front + wall - 0.8 - (4 - tft_pcb_t) >= 0, "TFT screw longer than its pilot");
+// gaps that aren't meant to touch: print tolerance + screw-hole play
+assert(front_gap + strip_drop >= 0.8, "front plate too close to the base's strip");
+echo(str("CHECKS: base hole plastic ", min(boss_in, boss_front) - boss_hole / 2, ", counterbore ", min(boss_in, boss_front) - boss_cb_d / 2,
+         "; plate hole to side ", W / 2 - wall - clr - front_screw_x - front_screw_d / 2, ", to bottom ", front_screw_v[0] - plate_bottom_v - front_screw_d / 2,
+         "; pilot spare: base ", base_t - 1 + boss_pilot_h - base_screw_tip, ", front ", front_pilot_depth - (front_screw_l - wall),
+         ", TFT ", tft_front + wall - 0.8 - (4 - tft_pcb_t), "; plate over strip ", front_gap + strip_drop,
+         "; thread above the knob nut ", ky_collar_h - wall - ky_washer_t - ky_nut_t));
 
 // ------------------------------------------------------------ helpers
 module profile() polygon([[0, 0], [0, skirt_h], [run, H], [D, H], [D, 0]]);
@@ -340,7 +372,7 @@ module front_rails() intersection() {
 
 module bosses() for (p = boss_xy) translate([p.x, p.y, base_t + eps]) cylinder(d = boss_d, h = H);
 
-module boss_pilots() for (p = boss_xy) translate([p.x, p.y, base_t - 1]) cylinder(d = boss_pilot, h = 13); // the tip reaches ~12.7
+module boss_pilots() for (p = boss_xy) translate([p.x, p.y, base_t - 1]) cylinder(d = boss_pilot, h = boss_pilot_h);
 
 // two ribs beside the board's long edges at its pin end, down past the
 // board: the nut holds the encoder, these only stop it turning
@@ -431,7 +463,7 @@ module base() {
     box([0, 0, 0], [W, D, base_t]);
     for (p = boss_xy) translate([p.x, p.y, -1]) {
       cylinder(d = boss_hole, h = base_t + 2);
-      cylinder(d = 6.5, h = 1 + 2); // M3 head counterbore, 1 mm left
+      cylinder(d = boss_cb_d, h = 1 + boss_cb_h); // head counterbore
     }
     slots(12, W - 12, mini_y0 + 8, mini_y0 + 30, -1, base_t + 1); // intake under the ESP32
   }
