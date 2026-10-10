@@ -162,7 +162,7 @@ const side=({tab=false,hdr=true}={})=>{
 };
 // top view: board 26 x 19.3 mm at 5 px/mm, pin end left
 const T={x0:60,x1:190,y0:40,y1:136.5};
-const top=()=>{
+const topView=()=>{
   let s=`<rect class="pcb" x="${T.x0}" y="${T.y0}" width="${T.x1-T.x0}" height="${T.y1-T.y0}"/>`;
   for(let i=0;i<5;i++) s+=`<circle class="pin" cx="66" cy="${68+i*10}" r="2.2"/>`;
   s+=`<rect class="metald" x="${K.bx0}" y="${88-31}" width="62" height="62"/><circle class="metal" cx="${K.sx}" cy="88" r="17.5"/><circle class="steel" cx="${K.sx}" cy="88" r="14"/>`;
@@ -214,7 +214,7 @@ const steps=[
  {title:"Where the collar sits on the board",status:"todo",cur:"centred across, ~8.6 from the right edge to the shaft centre (±1)",
   how:["Top view, pin end on the left.","M: outer jaws from the board's bottom long edge to the far side of the collar.","N: outer jaws from the board's right short edge (the end without pins) to the far side of the collar.","I subtract half the collar's diameter (A) to get its centre. This tells me where the small hole goes."],
   send:"M, N",
-  fig:svg(top()+jawsV(70.5,T.y1,147,236,"M")+cap("top view: M",150,170),"Collar position M")+svg(top()+jawsH(129.5,T.x1,92,22,"N")+cap("top view: N",150,170),"Collar position N")},
+  fig:svg(topView()+jawsV(70.5,T.y1,147,236,"M")+cap("top view: M",150,170),"Collar position M")+svg(topView()+jawsH(129.5,T.x1,92,22,"N")+cap("top view: N",150,170),"Collar position N")},
  {title:"The pin header, once resoldered",status:"todo",cur:"right-angle, ~6 past the board's end",
   how:["Only after you've soldered it back on, underneath.","Straight or right-angle pins?","O: outer jaws from the board's top face to the lowest point (the plastic or the pin tips). I subtract the board (D).","P: how far the pins reach past the board's end, if they point sideways."],
   send:"straight/right-angle, O, P",
