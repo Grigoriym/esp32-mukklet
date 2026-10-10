@@ -144,7 +144,7 @@ black pan head. What's in them: their Homebox entries (`parts.py show screws`).
 
 ## Base print checklist
 
-0. The strip under the screen stands 0.2 below the plate's bottom edge and
+0. The strip under the screen stands 1.0 below the plate's bottom edge (v1: 0.2, and they touched) and
    flush with the side walls' front.
 1. ESP32 mini: the antenna end slides under the two lips at a slight tilt
    and the back drops in front of the stops; no play left-right.
@@ -162,7 +162,9 @@ own nut instead of snap hooks (one didn't catch); the window's top edge
 3.4 lower and its bottom 1.05 higher, so the black glass round the
 pixels (measured on v1 with the edge test screen: 3.6 top, 1.25 bottom)
 mostly doesn't show; the window's bottom corners rounded r 5 like the
-pixel area's (~42 px, found with the corner test screen, `EDGE_TEST 2`). The KY-040 in this
+pixel area's (~42 px, found with the corner test screen, `EDGE_TEST 2`). The
+base's strip under the screen 0.8 lower (1.0 under the plate): on v1,
+with the plate screwed on, the base wouldn't go fully in at the front. The KY-040 in this
 build had its header resoldered (2026-10-10): straight pins under the
 board, pointing down; the stubs on top stay below the encoder body. Its
 collar/nut sizes are in Homebox; the measuring page is

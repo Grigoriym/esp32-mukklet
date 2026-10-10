@@ -148,7 +148,10 @@ boss_xy = [[boss_in, boss_front], [W - boss_in, boss_front], [boss_in, D - boss_
 // 2.3 x 8 into 1.9 pilots: too tight, two snapped (2026-10-10)
 rail_w = 6; // from the side wall's inner face: 1.4 clear of the TFT board
 rail_d = 8; // behind the plate
-front_gap = 0.2; // plate's bottom edge above the base's strip
+front_gap = 0.2; // plate's bottom edge above the skirt's edge
+strip_drop = 0.8; // the base's strip stops this far below the skirt's edge: 1.0
+                  // under the plate. v1 had 0.2 and they touched once the
+                  // plate was screwed on: the base wouldn't go fully in (2026-10-10)
 front_screw_d = 2.4; // clearance hole in the plate
 front_pilot = 1.6; // as the TFT's posts: 2 x 4 went in fine there
 front_pilot_depth = 6; // behind the plate: the screw reaches 4
@@ -423,7 +426,7 @@ module mini_cradle() {
 // it sat inside the walls and the holes were 0.2 from its edge)
 module base() {
   x0 = wall + clr;
-  box([x0, 0, 0], [W - x0, wall, skirt_h]); // the strip under the screen, between the side walls
+  box([x0, 0, 0], [W - x0, wall, skirt_h - strip_drop]); // the strip under the screen, between the side walls
   difference() {
     box([0, 0, 0], [W, D, base_t]);
     for (p = boss_xy) translate([p.x, p.y, -1]) {
