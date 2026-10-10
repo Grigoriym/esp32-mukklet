@@ -179,6 +179,11 @@ knob mount needs a v2.
      hole; centring it needs the board pushed right, which the hooks
      don't allow.
 
+The KY-040 in this build had its header resoldered (2026-10-10): straight
+pins under the board, pointing down; the stubs on top stay below the
+encoder body. Its collar/nut sizes are in Homebox; the measuring page is
+`pages/knob/knob.html`.
+
 v2 to do: rework the knob mount (deeper barbs or another hold; measure
 the KY-040's thickness, the shaft's position across the board and the
 header's), front plate screws 2 x 6 instead of 2.3 x 8
