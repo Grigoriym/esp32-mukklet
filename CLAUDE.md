@@ -147,6 +147,11 @@ anti-aliased), `gesture` (single/double/long press), `encoder_decode`
   (backlight 0, no drawing; chosen by the user 2026-09-28 over triple
   press / auto-off). While off, any input only wakes it. Verified on the
   board by the user (2026-09-28).
+- **Window test screens**: `EDGE_TEST` in `main.c` (1 = coloured 2 px frames
+  from each edge, 2 = quarter circles 10..45 px in the bottom corners) replaces
+  the UI, for checking a printed window against the lit area. Keep it 0 in git.
+  On this panel the lit area's bottom corners are rounded (~42 px), the top ones
+  not.
 - IDF 6 gotcha: the WS handler is **not** called for the handshake any
   more; `hello` goes out from `ws_post_handshake_cb`
   (`CONFIG_HTTPD_WS_POST_HANDSHAKE_CB_SUPPORT`).
@@ -217,6 +222,9 @@ clash check can't see it). The user asked for "modular" themselves.
 `test_front` is gone (the plate is the test); `test_knob` is the top's
 front with the knob mount. Printed 2026-10-07 (v1, see Next step); the
 desk display's case is still unprinted.
+Before ordering a print: the `enclosure-preprint-review` skill; the model's
+"pre-print checks" asserts (plastic round holes, pilot depth vs screw reach,
+gaps) run in `export.sh`, which also lists every ASSUMED value.
 `enclosure/export.sh` = clash check (printed parts vs stand-ins, printed
 parts vs each other, and
 stand-ins incl. plugs vs each other, and fails on undefined-variable
@@ -251,7 +259,10 @@ hooks (KY-040 measured, in Homebox; `enclosure/pages/knob/knob.html`).
 Open, in order:
 1. **Bug fixing** (firmware/Mukk side): next, when the user says so
    (2026-10-07: "after, not now, i will notify"). No list yet.
-2. **Case v2**: modelled (README's v2 list), not printed yet.
+2. **Case v2**: sent to the local FDM shop 2026-10-10 (three STLs, PETG
+   asked for). When it's back: the printed-part checklists in
+   `enclosure/README.md` (knob hole 7.3, front pilots, base fully in,
+   EDGE_TEST 1 and 2 for the window).
 3. Which way clockwise turns the volume was never said.
 After a model change, `enclosure/pages/assembly/render.sh` redoes the
 assembly page's pictures and `~/Videos/mukklet-reel/renders/render.sh` the
