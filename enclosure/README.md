@@ -58,9 +58,14 @@ plate, not the whole case, and the plate prints face down.
   (0.3 mm clear of it). Pin header at the bottom, so the picture is
   upright with `FLIP_180 = 1` in `main/display.c`, as now. Its plug hangs
   down and back, ending ~12 mm in front of the ESP32.
-- **Knob**: KY-040 flat under the top, shaft end to the front, pins to the
-  back, pushed up into two snap hooks against 4 pads (as on the desk
-  display). The cap goes on from outside afterwards.
+- **Knob** (v2): KY-040 flat under the top, shaft end to the front, pins
+  to the back. Its threaded M7 collar goes up through a 7.3 hole and the
+  nut that came with it, on its washer, clamps the encoder body against
+  the inside of the top (2.2 of thread left above the nut). Two ribs
+  beside the board's pin end stop it turning (1 mm clear of the board:
+  the shaft's position across it is +-1). The cap goes on from outside
+  afterwards, ~3 above the nut. Header straight down under the pin end,
+  the plug ~6 above the ESP32's plugs. v1's snap hooks didn't hold.
 - **ESP32 mini** (no mounting holes): flat
   on the floor at the back, metal can up, USB end at the back wall, 3 mm
   above the floor (room for the solder joints). Held in a cradle on the
@@ -88,7 +93,8 @@ plate, not the whole case, and the plate prints face down.
   the cables need enough slack to lay the three beside each other.
 
 Assembly order: TFT onto the plate (4 screws from behind), its cable on;
-knob snapped into the body; plate onto the body (4 screws from the front);
+knob up through its hole from inside, washer and nut on from outside;
+plate onto the body (4 screws from the front);
 ESP32 into the cradle, cables on; base on (4 screws from below).
 
 ## Parts to print
@@ -109,8 +115,8 @@ black pan head. What's in them: their Homebox entries (`parts.py show screws`).
 
 - 4 × M3 × 10, round head, silver kit (base → body; 4.0 holes in the
   base, pilot 2.5, 13 deep: the screw's tip reaches ~12.7)
-- 4 × 2.3 × 8, black kit (front plate → rails; 2.7 hole in the plate,
-  pilot 1.9, 6.5 deep)
+- 4 × 2 × 6, black kit (front plate → rails; 2.4 hole in the plate,
+  pilot 1.6, 6 deep: the screw reaches 4; v1's 2.3 × 8 snapped)
 - 4 × 2 × 4, black kit (TFT → posts, pilot 1.6; a 6 would poke out the
   front). The TFT's holes measured 1.79: try one screw first, else drill
   them to 2.0
@@ -131,8 +137,9 @@ black pan head. What's in them: their Homebox entries (`parts.py show screws`).
 
 ## Knob checklist (`test_knob` or `body`)
 
-1. KY-040: it snaps in, the shaft is centred in the 16 mm hole, and the cap
-   turns and presses without rubbing the top.
+1. KY-040: the collar passes the 7.3 hole (else drill it to 7.5), the
+   board sits between the two ribs, the nut tightens with thread to
+   spare, and the cap turns and presses without touching the nut.
 
 ## Base print checklist
 
@@ -184,14 +191,11 @@ pins under the board, pointing down; the stubs on top stay below the
 encoder body. Its collar/nut sizes are in Homebox; the measuring page is
 `pages/knob/knob.html`.
 
-v2 to do: rework the knob mount (deeper barbs or another hold; measure
-the KY-040's thickness, the shaft's position across the board and the
-header's), front plate screws 2 x 6 instead of 2.3 x 8
-(4 into the rail like the TFT's posts: pilot 1.6, ~6 deep so the tip
-never bottoms out, 2.4 hole in the plate).
-Done in the model: base over the whole footprint (the user's photo of
-v1's thin edges round the base holes, 2026-10-10; renders of before /
-after in `pages/assembly/base-v2/`), base holes 4.0, boss pilots 13 deep.
+v2, all in the model (2026-10-10): base over the whole footprint (the
+user's photo of v1's thin edges round the base holes; renders of before /
+after in `pages/assembly/base-v2/`), base holes 4.0, boss pilots 13 deep;
+front plate screws 2 x 6 (pilot 1.6, 6 deep, 2.4 hole in the plate);
+knob held by its own nut instead of hooks (above). Not printed yet.
 
 ## Pictures and pages
 
@@ -215,5 +219,6 @@ deleted):
   render, check they still point at the right thing.
 - `pages/knob/knob.html`: "Mukklet Knob Guide", the v2 knob idea (the
   KY-040's collar through a small hole in the top, held by its nut) and
-  what to measure for it. `v2-nut.png` is from a scratch copy of the
-  model with guessed collar/nut sizes, not from `enclosure.scad`.
+  what to measure for it, with the user's numbers. `v2-nut.png` is from a
+  scratch copy of the model with guessed collar/nut sizes (drawn before
+  the measurements), not from `enclosure.scad`.

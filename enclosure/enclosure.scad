@@ -103,15 +103,23 @@ mini_joint = 2; // solder joints and pin stubs under the board (ASSUMED)
 
 ky_l = 26.18;
 ky_w = 19.29;
-ky_t = 1.6; // ASSUMED
+ky_t = 1.47;
 ky_cap_d = 14.78;
 ky_shaft_y = 16 - ky_cap_d / 2; // shaft centre from the board's short edge
                                 // away from the pins (desk display, +-1)
 ky_cap_h = 31.79 - 15.58; // cap height
-ky_cap_above = 15.58 - ky_t; // board front face to the cap's lower edge
+ky_cap_above = 15.58 - ky_t; // board front face to the cap's lower edge, pushed on fully
 ky_body = 12.5; // EC11 body footprint (ASSUMED, standard part)
-ky_body_h = 7; // EC11 body height above the board (ASSUMED)
-ky_pins = 6; // right-angle pins past the board's end (ASSUMED)
+ky_body_h = 6.38; // EC11 body height above the board
+ky_collar_d = 6.73; // M7 threaded collar round the shaft
+ky_collar_h = 6.86; // above the body
+ky_shaft_d = 6; // (standard EC11)
+ky_shaft_h = 11.83; // past the collar's end
+ky_nut_af = 9.87; // M7 nut across the flats
+ky_nut_t = 2.24;
+ky_washer_t = 0.37;
+ky_washer_d = 11; // ASSUMED (not needed)
+ky_hdr = p + 6; // header re-soldered straight, under the board at the pin end: plastic + pins (ASSUMED: standard)
 ky_dupont = 14; // a plugged-in 5-pin Dupont housing adds this
 
 // ------------------------------------------------------------ case
@@ -135,13 +143,15 @@ boss_front = wall + clr + boss_d / 2; // front pair: behind the base's strip und
 boss_xy = [[boss_in, boss_front], [W - boss_in, boss_front], [boss_in, D - boss_in], [W - boss_in, D - boss_in]];
 
 // front plate: drops in between the side walls, flush with their edges,
-// onto a rail along each side wall; 4 x 2.3 x 8 self-tapping pan head
-// screws from the front (the small black kit), heads left proud
+// onto a rail along each side wall; 4 x 2 x 6 self-tapping pan head
+// screws from the front (the small black kit), heads left proud. v1 had
+// 2.3 x 8 into 1.9 pilots: too tight, two snapped (2026-10-10)
 rail_w = 6; // from the side wall's inner face: 1.4 clear of the TFT board
 rail_d = 8; // behind the plate
 front_gap = 0.2; // plate's bottom edge above the base's strip
-front_screw_d = 2.7; // clearance hole in the plate
-front_pilot = 1.9;
+front_screw_d = 2.4; // clearance hole in the plate
+front_pilot = 1.6; // as the TFT's posts: 2 x 4 went in fine there
+front_pilot_depth = 6; // behind the plate: the screw reaches 4
 front_screw_x = W / 2 - wall - rail_w / 2;
 front_screw_v = [4.5, panel_len - 4.5]; // up the slope: outside the window's chamfer
 
@@ -162,15 +172,23 @@ win_w = tft_glass_w - 2 * tft_lip;
 win_h = tft_glass_h - 2 * tft_lip;
 
 // knob on top, centred: KY-040 board flat under the top, shaft end to the
-// front, pins to the back; held by two snap hooks on its long edges,
-// pushed up against 4 pads
+// front, pins to the back. Its threaded collar goes up through a small hole
+// and the nut that came with it, on a washer, clamps the encoder body
+// against the inside of the top. Two ribs beside the board's pin end stop
+// it turning. v1 had snap hooks: one didn't catch (2026-10-07)
 knob_x = W / 2;
 ky_y0 = 25; // board's front edge
 knob_y = ky_y0 + ky_shaft_y;
-knob_gap = 1; // top surface to the cap's lower edge
-knob_hole = 16;
-ky_face_z = H + knob_gap - ky_cap_above; // board front (component) face
+knob_hole = 7.3; // M7 collar, 6.73 measured: FDM holes come out small
+ky_face_z = H - wall - ky_body_h - 0.01; // board front (component) face; 0.01 so the clash check doesn't see the touching faces
 ky_back_z = ky_face_z - ky_t;
+knob_nut_z = H + ky_washer_t; // nut's underside
+knob_cap_z = ky_face_z + ky_cap_above; // cap's lower edge, pushed on fully: 0.87 above the collar
+rib_gap = 1; // board edge to rib: the shaft's position across the board is +-1
+rib_t = 1.6;
+rib_l = 8; // along the board, at its pin end
+assert(ky_collar_h - wall - ky_washer_t - ky_nut_t >= 1.5, "not enough thread above the nut");
+assert(knob_cap_z > knob_nut_z + ky_nut_t + 1, "cap sits on the nut");
 
 // ESP32 mini flat on the floor at the back, in a cradle on the base: the
 // antenna end slides under two lips at the front corners, the back drops
@@ -304,21 +322,11 @@ module bosses() for (p = boss_xy) translate([p.x, p.y, base_t + eps]) cylinder(d
 
 module boss_pilots() for (p = boss_xy) translate([p.x, p.y, base_t - 1]) cylinder(d = boss_pilot, h = 13); // the tip reaches ~12.7
 
-module knob_mount() {
-  top_in = H - wall + 0.5; // reach into the top wall
-  // pads the board is pushed against, near its corners, clear of the EC11
-  for (sx = [-1, 1], y = [ky_y0 + 2.5, ky_y0 + ky_l - 4])
-    translate([knob_x + sx * (ky_w / 2 - 1.8), y, ky_face_z + eps]) cylinder(d = 3, h = top_in - ky_face_z);
-  // snap hooks on the long edges, beside the shaft
-  for (sx = [-1, 1]) {
-    edge = knob_x + sx * (ky_w / 2 + 0.2);
-    box([min(edge, edge + sx * 1.4), knob_y - 3, ky_back_z - 1.8], [max(edge, edge + sx * 1.4), knob_y + 3, top_in]);
-    // barb: flat face under the board, ramp below for pushing it in
-    hull() {
-      box([min(edge, edge - sx * 1.0), knob_y - 3, ky_back_z - 0.9], [max(edge, edge - sx * 1.0), knob_y + 3, ky_back_z - 0.15]);
-      box([min(edge, edge + sx * 0.5), knob_y - 3, ky_back_z - 1.8], [max(edge, edge + sx * 0.5), knob_y + 3, ky_back_z - 1.7]);
-    }
-  }
+// two ribs beside the board's long edges at its pin end, down past the
+// board: the nut holds the encoder, these only stop it turning
+module knob_mount() for (sx = [-1, 1]) {
+  e = knob_x + sx * (ky_w / 2 + rib_gap);
+  box([min(e, e + sx * rib_t), ky_y0 + ky_l - rib_l, ky_back_z - 1.5], [max(e, e + sx * rib_t), ky_y0 + ky_l, H - wall + 0.5]);
 }
 
 module vents() {
@@ -361,7 +369,7 @@ module body() difference() {
     }
   }
   front_cut();
-  front_holes(front_pilot, rail_d - 1.5, wall - eps);
+  front_holes(front_pilot, front_pilot_depth, wall - eps);
   boss_pilots();
   box([-1, -1, -1], [W + 1, D + 1, base_t]); // the walls stand on the base
   vents();
@@ -454,9 +462,20 @@ module knob_standin(plug = true) {
     box([knob_x - ky_w / 2, ky_y0, ky_back_z], [knob_x + ky_w / 2, ky_y0 + ky_l, ky_face_z]);
     translate([knob_x, knob_y, ky_face_z + ky_body_h / 2]) cube([ky_body, ky_body, ky_body_h], center = true);
   }
-  color("dimgray") box([knob_x - 2.5 * p, ky_y0 + ky_l, ky_back_z], [knob_x + 2.5 * p, ky_y0 + ky_l + ky_pins, ky_face_z + p]);
-  if (plug) color("gold", 0.35) box([knob_x - 2.5 * p - 0.6, ky_y0 + ky_l + ky_pins, ky_back_z - 0.8], [knob_x + 2.5 * p + 0.6, ky_y0 + ky_l + ky_pins + ky_dupont, ky_face_z + p + 0.8]);
-  color("gray") translate([knob_x, knob_y, H + knob_gap]) cylinder(d = ky_cap_d, h = ky_cap_h);
+  bt = ky_face_z + ky_body_h;
+  color("silver") translate([knob_x, knob_y, bt]) {
+    cylinder(d = ky_collar_d, h = ky_collar_h);
+    cylinder(d = ky_shaft_d, h = ky_collar_h + ky_shaft_h);
+  }
+  color("dimgray") translate([knob_x, knob_y, H + 0.01]) {
+    cylinder(d = ky_washer_d, h = ky_washer_t);
+    translate([0, 0, ky_washer_t]) cylinder(d = ky_nut_af / cos(30), h = ky_nut_t, $fn = 6);
+  }
+  // header straight down under the board's pin end, plug below it
+  hy = ky_y0 + ky_l - p / 2;
+  color("dimgray") box([knob_x - 2.5 * p, hy - p / 2, ky_back_z - ky_hdr], [knob_x + 2.5 * p, hy + p / 2, ky_back_z]);
+  if (plug) color("gold", 0.35) box([knob_x - 2.5 * p - 0.6, hy - p / 2 - 0.6, ky_back_z - ky_hdr - ky_dupont], [knob_x + 2.5 * p + 0.6, hy + p / 2 + 0.6, ky_back_z - ky_hdr + p]);
+  color("gray") translate([knob_x, knob_y, knob_cap_z]) cylinder(d = ky_cap_d, h = ky_cap_h);
 }
 
 module stand_ins() {
@@ -480,7 +499,7 @@ module labels() {
   label("ESP32 mini", [W / 2, mini_y0 + 16, mini_z + mini_can], 3);
   label("antenna", [W / 2, mini_y0 + 3, mini_z + mini_t + 1], 16);
   label("USB-C", [usb_x, mini_y1, mini_z + mini_usb_top], 20);
-  label("KY-040", [knob_x, knob_y, H + knob_gap + ky_cap_h], 18);
+  label("KY-040", [knob_x, knob_y, knob_cap_z + ky_cap_h], 18);
 }
 
 // ------------------------------------------------------------ output

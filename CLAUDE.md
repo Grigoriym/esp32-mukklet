@@ -244,14 +244,13 @@ mount doesn't hold the board (the user balances it when pressing). Findings
 and the v2 list: "First print" in `enclosure/README.md`. In the model
 since 2026-10-10: the base covers the whole footprint (walls stand on it;
 v1's base holes were 0.2 from its edge), base holes 4.0, deeper boss
-pilots. Front plate now on 2 x 6 screws (two 2.3 x 8 snapped).
+pilots; front screws 2 x 6 (two 2.3 x 8 snapped in v1); the knob held by
+its own M7 nut through a 7.3 hole (+ two anti-turn ribs) instead of snap
+hooks (KY-040 measured, in Homebox; `enclosure/pages/knob/knob.html`).
 Open, in order:
 1. **Bug fixing** (firmware/Mukk side): next, when the user says so
    (2026-10-07: "after, not now, i will notify"). No list yet.
-2. **Case v2**, later: the knob mount first, then the hole sizes (README's
-   v2 list). Before modelling the mount, get the KY-040's thickness, the
-   shaft's position across the board and where its header ends up (the
-   user took it off to resolder on the underside).
+2. **Case v2**: modelled (README's v2 list), not printed yet.
 3. Which way clockwise turns the volume was never said.
 After a model change, `enclosure/pages/assembly/render.sh` redoes the
 assembly page's pictures and `~/Videos/mukklet-reel/renders/render.sh` the
