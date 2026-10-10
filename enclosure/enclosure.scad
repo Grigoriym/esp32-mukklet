@@ -164,12 +164,17 @@ tft_post_d = 5.5; // 1.95 of wall round the pilot
 tft_glass_gap = 0.3; // posts to the glass
 tft_pilot = 1.6;
 tft_glass_z0 = tft_h / 2 - tft_glass_top - tft_glass_h; // glass bottom edge, from the board centre
-// window: the glass minus the lip, centred on the glass. Leaves 0.5 spare
-// round the pixel area left/right, ~2.4 top/bottom, if it's centred: the
-// test print shows whether pixels get cut off
-lit_z = tft_glass_z0 + tft_glass_h / 2; // window centre above the board centre
+// window: v1's was the glass minus the lip. On the print, with an edge
+// test screen (EDGE_TEST in main/main.c), every edge pixel showed, with
+// black glass between the window's edge and the pixels: ~0.5 left/right,
+// 3.6 at the top (where the flat cable leaves the glass) and 1.25 at the
+// bottom (user, 2026-10-10). v2 brings the top and bottom edges to 0.2
+// outside the pixels
+win_top_in = 3.6 - 0.2; // top edge moved down from v1's
+win_bot_in = 1.25 - 0.2; // bottom edge moved up
+lit_z = tft_glass_z0 + tft_glass_h / 2 + (win_bot_in - win_top_in) / 2; // window centre above the board centre
 win_w = tft_glass_w - 2 * tft_lip;
-win_h = tft_glass_h - 2 * tft_lip;
+win_h = tft_glass_h - 2 * tft_lip - win_top_in - win_bot_in;
 
 // knob on top, centred: KY-040 board flat under the top, shaft end to the
 // front, pins to the back. Its threaded collar goes up through a small hole

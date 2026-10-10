@@ -129,9 +129,10 @@ black pan head. What's in them: their Homebox entries (`parts.py show screws`).
 
 ## Front plate checklist (`front`)
 
-1. TFT: the glass sits flat on the plate, no pixels cut off at the window's
-   edges (the window is the glass minus a 0.5 mm lip; the pixel area's
-   position wasn't measured), the screws pull the board flat.
+1. TFT: the glass sits flat on the plate, the screws pull the board flat.
+   Flash with `EDGE_TEST 1` in `main/main.c`: the red outer frame shows on
+   every side, with only a thin black strip (~0.2 top and bottom, ~0.5
+   left and right) between it and the window's edge.
 2. On the body: the plate drops in between the side walls (0.3 each side),
    lies flush with their edges, and its 4 holes meet the rails' pilots.
 
@@ -157,7 +158,10 @@ What changed after the first print (v1, its findings and files:
 `archive/v1/`): the base covers the whole footprint (v1's screw holes
 ended up 0.2 from its edge), base holes 4.0 and boss pilots 13 deep;
 front plate screws 2 x 6 (v1's 2.3 x 8 snapped); the knob is held by its
-own nut instead of snap hooks (one didn't catch). The KY-040 in this
+own nut instead of snap hooks (one didn't catch); the window's top edge
+3.4 lower and its bottom 1.05 higher, so the black glass round the
+pixels (measured on v1 with the edge test screen: 3.6 top, 1.25 bottom)
+mostly doesn't show. The KY-040 in this
 build had its header resoldered (2026-10-10): straight pins under the
 board, pointing down; the stubs on top stay below the encoder body. Its
 collar/nut sizes are in Homebox; the measuring page is

@@ -12,6 +12,7 @@ static const char *TAG = "main";
 #define WIFI_TIMEOUT_MS 10000 // then carry on, it keeps trying in the background
 #define FRAME_MS        50    // redraw at up to 20 fps: smooth scrolling and progress
 #define VOLUME_STEP     5     // percentage points per knob detent
+#define EDGE_TEST       0     // 1: a fixed test screen to check which pixels the case's window shows
 
 static player_t s_player;
 static bool s_display_ok;
@@ -29,10 +30,40 @@ struct frame {
     int64_t now_ms;
 };
 
+#if EDGE_TEST
+// Frames 2 px wide from each edge inwards, one colour each, grey inside:
+// the outermost colour seen on a side tells how many pixels the window
+// hides there, the grey shows where the lit area ends against the glass.
+static void draw_edge_test(canvas_t *c)
+{
+    static const uint16_t ring[] = {RGB(255, 0, 0),   RGB(0, 255, 0),   RGB(0, 80, 255),   RGB(255, 255, 0),
+                                    RGB(255, 0, 255), RGB(0, 255, 255), RGB(255, 255, 255)};
+    const int n = sizeof(ring) / sizeof(ring[0]);
+    canvas_fill(c, 0, 0, CANVAS_W, CANVAS_H, RGB(110, 110, 110));
+    for (int i = 0; i < n; i++) {
+        int d = 2 * i;
+        canvas_fill(c, d, d, CANVAS_W - 2 * d, 2, ring[i]);
+        canvas_fill(c, d, CANVAS_H - d - 2, CANVAS_W - 2 * d, 2, ring[i]);
+        canvas_fill(c, d, d, 2, CANVAS_H - 2 * d, ring[i]);
+        canvas_fill(c, CANVAS_W - d - 2, d, 2, CANVAS_H - 2 * d, ring[i]);
+    }
+    canvas_text_center(c, &FONT_TITLE, 90, "Edge test", RGB(255, 255, 255));
+    canvas_text_center(c, &FONT_TEXT, 130, "outside in, 2 px each:", RGB(230, 230, 230));
+    canvas_text_center(c, &FONT_TEXT, 154, "red green blue", RGB(230, 230, 230));
+    canvas_text_center(c, &FONT_TEXT, 178, "yellow magenta cyan", RGB(230, 230, 230));
+    canvas_text_center(c, &FONT_TEXT, 202, "white", RGB(230, 230, 230));
+}
+#endif
+
 static void draw_strip(canvas_t *c, void *ctx)
 {
     const struct frame *f = ctx;
+#if EDGE_TEST
+    (void)f;
+    draw_edge_test(c);
+#else
     ui_render(c, &f->in, f->now_ms);
+#endif
 }
 
 static void render(void)
