@@ -17,8 +17,9 @@
 //           with the TFT's 4 screw posts: the TFT is screwed on from behind
 //           while the plate is loose, then 4 screws from the front hold
 //           the plate on the body's two rails
-//   base  - floor plate with the strip under the screen and the ESP32
-//           mini's cradle, 4 screws up into the body's corner bosses
+//   base  - floor plate, the whole footprint (the body's walls stand on
+//           it), with the strip under the screen and the ESP32 mini's
+//           cradle, 4 screws up into the body's corner bosses
 // Pick one with -D 'part="body"' (see export.sh). Single parts come out in
 // print orientation, "assembly" shows everything in place with stand-in
 // blocks for the modules, "clash" is empty when nothing overlaps.
@@ -127,7 +128,8 @@ H = skirt_h + panel_len * cos(tilt);
 run = panel_len * sin(tilt); // how far back the panel's top edge is
 
 boss_d = 7;
-boss_pilot = 2.5; // M3 x 10 self-tapping, round head (the user's kit), 10 deep
+boss_pilot = 2.5; // M3 x 10 self-tapping, round head (the user's kit; 3.64 x ~11.7 measured)
+boss_hole = 4.0; // in the base: the v1 3.4 had to be drilled to 4
 boss_in = wall + boss_d / 2 - 1; // centre from the outside; sunk 1 mm into the walls
 boss_front = wall + clr + boss_d / 2; // front pair: behind the base's strip under the screen
 boss_xy = [[boss_in, boss_front], [W - boss_in, boss_front], [boss_in, D - boss_in], [W - boss_in, D - boss_in]];
@@ -300,7 +302,7 @@ module front_rails() intersection() {
 
 module bosses() for (p = boss_xy) translate([p.x, p.y, base_t + eps]) cylinder(d = boss_d, h = H);
 
-module boss_pilots() for (p = boss_xy) translate([p.x, p.y, base_t - 1]) cylinder(d = boss_pilot, h = 11);
+module boss_pilots() for (p = boss_xy) translate([p.x, p.y, base_t - 1]) cylinder(d = boss_pilot, h = 13); // the tip reaches ~12.7
 
 module knob_mount() {
   top_in = H - wall + 0.5; // reach into the top wall
@@ -361,6 +363,7 @@ module body() difference() {
   front_cut();
   front_holes(front_pilot, rail_d - 1.5, wall - eps);
   boss_pilots();
+  box([-1, -1, -1], [W + 1, D + 1, base_t]); // the walls stand on the base
   vents();
   translate([usb_x, D - wall - eps, usb_z]) stadium(usb_hole[0], usb_hole[1], wall + 2); // not into the ledge
   translate([knob_x, knob_y, H - wall - 1]) cylinder(d = knob_hole, h = wall + 2);
@@ -391,14 +394,15 @@ module mini_cradle() {
   }
 }
 
+// the whole footprint, so the screw holes have plastic all round (in v1
+// it sat inside the walls and the holes were 0.2 from its edge)
 module base() {
   x0 = wall + clr;
-  y0 = wall + clr;
-  box([x0, 0, 0], [W - x0, wall, skirt_h]); // the strip under the screen
+  box([x0, 0, 0], [W - x0, wall, skirt_h]); // the strip under the screen, between the side walls
   difference() {
-    box([x0, 0, 0], [W - x0, D - y0, base_t]);
+    box([0, 0, 0], [W, D, base_t]);
     for (p = boss_xy) translate([p.x, p.y, -1]) {
-      cylinder(d = 3.4, h = base_t + 2);
+      cylinder(d = boss_hole, h = base_t + 2);
       cylinder(d = 6.5, h = 1 + 2); // M3 head counterbore, 1 mm left
     }
     slots(12, W - 12, mini_y0 + 8, mini_y0 + 30, -1, base_t + 1); // intake under the ESP32

@@ -78,9 +78,12 @@ plate, not the whole case, and the plate prints face down.
 - **Vents**: top slots left and right of the knob, over the ESP32; low slots
   on the back beside the USB; slots in the floor under the ESP32. No
   sensors, so no sensor bay: only the ESP32's warmth to let out.
-- **Base**: floor plate with the 12 mm strip under the screen standing on
-  its front edge (on the body it would be a 46 mm bridge when printed),
-  held by 4 × M3 screws from below into the body's corner bosses. The
+- **Base**: floor plate over the whole 50 x 82 footprint, the body's
+  walls standing on it (v2; in v1 it sat inside the walls and its screw
+  holes ended up 0.2 from its edge), with the 12 mm strip under the
+  screen standing on its front edge between the side walls (on the body
+  it would be a 46 mm bridge when printed), held by 4 × M3 screws from
+  below into the body's corner bosses. The
   ESP32 is on the base, the TFT on the plate and the knob in the body, so
   the cables need enough slack to lay the three beside each other.
 
@@ -104,7 +107,8 @@ Material: PETG preferred (PLA softens ~55 °C). Fit clearance 0.3 mm (`clr`).
 Screws from the user's two self-tapping kits, silver stainless and small
 black pan head. What's in them: their Homebox entries (`parts.py show screws`).
 
-- 4 × M3 × 10, round head, silver kit (base → body; pilot 2.5)
+- 4 × M3 × 10, round head, silver kit (base → body; 4.0 holes in the
+  base, pilot 2.5, 13 deep: the screw's tip reaches ~12.7)
 - 4 × 2.3 × 8, black kit (front plate → rails; 2.7 hole in the plate,
   pilot 1.9, 6.5 deep)
 - 4 × 2 × 4, black kit (TFT → posts, pilot 1.6; a 6 would poke out the
@@ -177,9 +181,12 @@ knob mount needs a v2.
 
 v2 to do: rework the knob mount (deeper barbs or another hold; measure
 the KY-040's thickness, the shaft's position across the board and the
-header's), base holes 4.0, front plate screws 2 x 6 instead of 2.3 x 8
+header's), front plate screws 2 x 6 instead of 2.3 x 8
 (4 into the rail like the TFT's posts: pilot 1.6, ~6 deep so the tip
 never bottoms out, 2.4 hole in the plate).
+Done in the model: base over the whole footprint (the user's photo of
+v1's thin edges round the base holes, 2026-10-10; renders of before /
+after in `pages/assembly/base-v2/`), base holes 4.0, boss pilots 13 deep.
 
 ## Pictures and pages
 
