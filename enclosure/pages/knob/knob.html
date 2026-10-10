@@ -114,6 +114,7 @@ svg.fig{width:100%;height:auto;display:block;background:var(--bg);border-radius:
     <p>Pull the cap off first (if it has a small screw on its side, loosen that). Every side view shows the board <b>flat, encoder on top, the pin end on the left</b>. Every top view looks down on the encoder, pin end on the left.</p>
     <ul>
       <li>Any of your 5 KY-040s will do: they're the same part.</li>
+      <li>The caliper is drawn in light grey: the jaws closing on two faces, or the thin depth rod sticking out of its end.</li>
       <li>The grey numbers are what I'd assume without you. Yours replace them.</li>
       <li>Send the letters with the numbers, e.g. "A 6.9".</li>
     </ul>
@@ -131,6 +132,14 @@ const dh=(x1,x2,y,t,dy=-7)=>`<line class="d" x1="${x1}" y1="${y}" x2="${x2}" y2=
 const dv=(x,y1,y2,t,anchor="start")=>`<line class="d" x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" marker-start="url(#a)" marker-end="url(#a)"/><text class="t" x="${anchor==="start"?x+7:x-7}" y="${(y1+y2)/2+4}" text-anchor="${anchor}">${t}</text>`;
 const outV=(x,y1,y2,t,anchor="start")=>`<line class="d" x1="${x}" y1="${y1-18}" x2="${x}" y2="${y1}" marker-end="url(#a)"/><line class="d" x1="${x}" y1="${y2+18}" x2="${x}" y2="${y2}" marker-end="url(#a)"/><text class="t" x="${anchor==="start"?x+8:x-8}" y="${(y1+y2)/2+4}" text-anchor="${anchor}">${t}</text>`;
 const outH=(x1,x2,y,t)=>`<line class="d" x1="${x1-18}" y1="${y}" x2="${x1}" y2="${y}" marker-end="url(#a)"/><line class="d" x1="${x2+18}" y1="${y}" x2="${x2}" y2="${y}" marker-end="url(#a)"/><text class="t" x="${x2+24}" y="${y+4}">${t}</text>`;
+// the caliper, drawn in steel: outer jaws closing on two faces, or the depth rod.
+// jawsH: jaws hang down from a beam at yBeam, inner faces at x1 and x2, tips at yTip
+const jawsH=(x1,x2,yTip,yBeam,t)=>`<rect class="steel" x="${x1-16}" y="${yBeam-9}" width="${x2-x1+32}" height="9"/><polygon class="steel" points="${x1-8},${yBeam} ${x1},${yBeam} ${x1},${yTip} ${x1-8},${yTip-6}"/><polygon class="steel" points="${x2},${yBeam} ${x2+8},${yBeam} ${x2+8},${yTip-6} ${x2},${yTip}"/><text class="t" x="${x2+22}" y="${yBeam-1}">${t}</text>`;
+// jawsV: jaws reach sideways from a beam at xBeam, inner faces at y1 (top) and y2 (bottom), tips at xTip
+const jawsV=(y1,y2,xTip,xBeam,t)=>{const a=Math.min(xTip,xBeam),b=Math.max(xTip,xBeam),bx=xBeam>xTip?xBeam:xBeam-9,tx=xBeam>xTip?xBeam+14:xBeam-14;
+  return `<rect class="steel" x="${bx}" y="${y1-18}" width="9" height="${y2-y1+36}"/><rect class="steel" x="${a}" y="${y1-7}" width="${b-a}" height="7"/><rect class="steel" x="${a}" y="${y2}" width="${b-a}" height="7"/><text class="t" x="${tx}" y="${(y1+y2)/2+4}" text-anchor="${xBeam>xTip?"start":"end"}">${t}</text>`};
+// depth: the caliper's end rests on a face at yEnd (bar from x0 to x1), the rod reaches to yRod at x
+const depth=(x,yEnd,yRod,x0,x1,t,up=false)=>`<rect class="steel" x="${x0}" y="${up?yEnd:yEnd-9}" width="${x1-x0}" height="9"/><rect class="steel" x="${x-1.5}" y="${Math.min(yEnd,yRod)}" width="3" height="${Math.abs(yRod-yEnd)}"/><text class="t" x="${x1+6}" y="${up?yEnd+8:yEnd-1}">${t}</text>`;
 const ext=(x1,y1,x2,y2)=>`<line class="ext" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
 const cap=(t,x=150,y=182)=>`<text class="cap" x="${x}" y="${y}" text-anchor="middle">${t}</text>`;
 const svg=(inner,label)=>`<svg class="fig" viewBox="0 0 300 190" role="img" aria-label="${label}">${inner}</svg>`;
@@ -161,9 +170,9 @@ const top=()=>{
 };
 const nut=()=>{
   // nut seen flat (left) and from the side (right); washer under it
-  let s=`<polygon class="metald" points="${[0,1,2,3,4,5].map(i=>{const a=Math.PI/3*i;return `${85+38*Math.cos(a)},${88+38*Math.sin(a)}`}).join(" ")}"/><circle class="hole" cx="85" cy="88" r="17.5"/>`;
-  s+=`<rect class="metald" x="190" y="70" width="76" height="12"/><rect class="metal" x="182" y="82" width="92" height="4"/>`;
-  s+=`<text class="lab" x="228" y="60" text-anchor="middle">nut</text><text class="lab" x="228" y="104" text-anchor="middle">washer</text>`;
+  let s=`<polygon class="metald" points="${[0,1,2,3,4,5].map(i=>{const a=Math.PI/3*i;return `${75+38*Math.cos(a)},${92+38*Math.sin(a)}`}).join(" ")}"/><circle class="hole" cx="75" cy="92" r="17.5"/>`;
+  s+=`<rect class="metald" x="180" y="62" width="76" height="12"/><rect class="metal" x="176" y="124" width="84" height="4"/>`;
+  s+=`<text class="lab" x="218" y="96" text-anchor="middle">nut, side</text><text class="lab" x="218" y="150" text-anchor="middle">washer, side</text>`;
   return s;
 };
 
@@ -173,43 +182,43 @@ const steps=[
  {title:"Collar: thread diameter",status:"todo",cur:"7 (M7, the usual EC11)",
   how:["Big outer jaws across the threaded collar, right below the shaft."],
   send:"A",
-  fig:svg(side()+outH(K.cx0,K.cx1,93,"A"),"Collar diameter")},
+  fig:svg(side()+jawsH(K.cx0,K.cx1,100,20,"A"),"Collar diameter")},
  {title:"Collar: how tall",status:"todo",cur:"5",
-  how:["From the top of the metal encoder body to the end of the thread (where the smooth shaft starts).","The depth rod on the body's top works well, or the jaws' outer edges."],
+  how:["From the end of the thread (where the smooth shaft starts) down to the top of the metal encoder body.","Hold the caliper's end on the thread's end, beside the shaft, and let the depth rod go down to the body."],
   send:"B",
-  fig:svg(side()+ext(K.cx1,K.cT,236,K.cT)+ext(K.bx1,K.bodyT,236,K.bodyT)+dv(232,K.cT,K.bodyT,"B"),"Collar height")},
+  fig:svg(side()+depth(170,K.cT,K.bodyT,162,232,"B"),"Collar height")},
  {title:"Encoder body height",status:"todo",cur:"7",
-  how:["From the board's top face to the top of the metal body, where the collar starts. That face will press against the inside of the case's top.","If the body's top isn't flat, measure to its highest point."],
+  how:["From the top of the metal body (where the collar starts) down to the board's top face. The body's top will press against the inside of the case's top.","Caliper's end on the body's top, depth rod down beside the body to the board. If the body's top isn't flat, use its highest point."],
   send:"C",
-  fig:svg(side()+ext(K.bx1,K.bodyT,236,K.bodyT)+ext(K.x1,K.top,236,K.top)+dv(232,K.bodyT,K.top,"C"),"Encoder body height")},
+  fig:svg(side()+depth(184,K.bodyT,K.top,160,240,"C"),"Encoder body height")},
  {title:"Board thickness",status:"todo",cur:"1.6",
-  how:["The bare board at a corner, away from the parts and the pins."],
+  how:["Outer jaws on the bare board at a corner, away from the parts and the pins."],
   send:"D",
-  fig:svg(side()+outV(186,K.top,K.bot,"D"),"Board thickness")},
+  fig:svg(side()+jawsV(K.top,K.bot,180,240,"D"),"Board thickness")},
  {title:"Shaft above the collar",status:"todo",cur:"~10",
-  how:["From the end of the thread to the tip of the shaft."],
+  how:["From the tip of the shaft down to the end of the thread.","Caliper's end on the shaft's tip, depth rod down beside the shaft onto the thread's end."],
   send:"E",
-  fig:svg(side()+ext(K.sx1,K.sT,236,K.sT)+ext(K.cx1,K.cT,236,K.cT)+dv(232,K.sT,K.cT,"E"),"Shaft length")},
+  fig:svg(side()+depth(163,K.sT,K.cT,138,232,"E"),"Shaft length")},
  {title:"The cap",status:"todo",cur:"pushed on until it stops",
-  how:["Does the cap have a small screw on its side? (If yes, it can sit at any height and F isn't needed.)","F: how deep the hole in the cap is: the depth rod into the hole, from the cap's bottom face."],
+  how:["Does the cap have a small screw on its side? (If yes, it can sit at any height and F isn't needed.)","F: how deep the hole in the cap is. Cap upside down, caliper's end across the open face, depth rod down into the hole."],
   send:"screw yes/no, F",
-  fig:svg(`<rect class="metald" x="110" y="40" width="80" height="100" rx="4"/><rect class="hole" x="135" y="80" width="30" height="60"/><rect class="metal" x="190" y="96" width="14" height="10"/><text class="lab" x="210" y="105">screw?</text>`+ext(135,80,92,80)+ext(110,140,92,140)+dv(96,80,140,"F","end")+cap("cap, cut through, open side down",150,170),"The cap")},
+  fig:svg(`<rect class="metald" x="110" y="40" width="80" height="100" rx="4"/><rect class="hole" x="135" y="80" width="30" height="60"/><rect class="metal" x="190" y="96" width="14" height="10"/><text class="lab" x="210" y="105">screw?</text>`+depth(150,140,80,96,204,"F",true)+cap("cap, cut through, open side down",150,176),"The cap")},
  {title:"Nut and washer",status:"todo",cur:"nut 9 across the flats, 2 thick; washer 0.5",
-  how:["G: the nut across two opposite flat sides (not across the corners).","H: the nut's thickness.","I: the washer's thickness, and J: its outer diameter.","If there are two nuts in the bag (some EC11s come with one thin, one thick), measure the one you'd use."],
+  how:["G: outer jaws on two opposite flat sides of the nut (not the corners).","H: outer jaws on the nut's two faces: its thickness.","I: the washer's thickness the same way, and J: its outer diameter.","If there are two nuts in the bag (some EC11s come with one thin, one thick), measure the one you'd use."],
   send:"G, H, I, J",
-  fig:svg(nut()+dv(140,88-32.9,88+32.9,"G")+ext(85+19,88-32.9,144,88-32.9)+ext(85+19,88+32.9,144,88+32.9)+dv(280,70,82,"H")+ext(266,70,284,70)+outV(176,82,86,"I","end")+ext(182,86,182,124)+ext(274,86,274,124)+dh(182,274,120,"J",14),"Nut and washer")},
+  fig:svg(nut()+jawsV(92-32.9,92+32.9,60,140,"G")+jawsV(62,74,236,276,"H")+`<text class="t" x="268" y="130">I</text>`+dh(176,260,168,"J",14),"Nut and washer")},
  {title:"A tab beside the collar?",status:"todo",cur:"none",
   how:["Many EC11s have a small metal tab sticking up from the body's top, beside the collar, meant to stop it turning in a panel.","If yours has one: K how tall it is, and L from the collar's side to the tab's far side. If not, send \"no tab\"."],
   send:"K, L, or \"no tab\"",
   fig:svg(side({tab:true})+`<circle cx="${K.bx1-10}" cy="${K.bodyT-3}" r="11" fill="none" stroke="var(--dim)" stroke-width="2"/><path class="lead" d="M${K.bx1} ${K.bodyT-10} L215 70"/><text class="t" x="218" y="68">tab?</text>`,"Locating tab")},
  {title:"Where the collar sits on the board",status:"todo",cur:"centred across, ~8.6 from the right edge to the shaft centre (±1)",
-  how:["Top view, pin end on the left.","M: from the board's bottom long edge to the near side of the collar.","N: from the board's right short edge (the end without pins) to the near side of the collar.","I add half the collar's diameter (A) to get its centre. This tells me where the small hole goes."],
+  how:["Top view, pin end on the left.","M: outer jaws from the board's bottom long edge to the far side of the collar.","N: outer jaws from the board's right short edge (the end without pins) to the far side of the collar.","I subtract half the collar's diameter (A) to get its centre. This tells me where the small hole goes."],
   send:"M, N",
-  fig:svg(top()+ext(K.sx,105.5,236,105.5)+ext(T.x1,T.y1,236,T.y1)+dv(232,105.5,T.y1,"M")+ext(164.5,88,164.5,24)+ext(T.x1,T.y0,T.x1,24)+dh(164.5,T.x1,28,"N",-5)+cap("top view",150,170),"Collar position")},
+  fig:svg(top()+jawsV(70.5,T.y1,147,236,"M")+cap("top view: M",150,170),"Collar position M")+svg(top()+jawsH(129.5,T.x1,92,22,"N")+cap("top view: N",150,170),"Collar position N")},
  {title:"The pin header, once resoldered",status:"todo",cur:"right-angle, ~6 past the board's end",
-  how:["Only after you've soldered it back on, underneath.","Straight or right-angle pins?","O: from the board's underside to the lowest point (the plastic or the pin tips).","P: how far the pins reach past the board's end, if they point sideways."],
+  how:["Only after you've soldered it back on, underneath.","Straight or right-angle pins?","O: outer jaws from the board's top face to the lowest point (the plastic or the pin tips). I subtract the board (D).","P: how far the pins reach past the board's end, if they point sideways."],
   send:"straight/right-angle, O, P",
-  fig:svg(side()+ext(K.x0+9,K.bot+29,40,K.bot+29)+ext(K.x0,K.bot,40,K.bot)+outV(44,K.bot,K.bot+29,"O","end")+cap("header under the board, pin end",180,182),"Pin header")},
+  fig:svg(side()+jawsV(K.top,K.bot+29,90,30,"O")+cap("header under the board, pin end",190,184),"Pin header")},
 ];
 
 let first=true;
