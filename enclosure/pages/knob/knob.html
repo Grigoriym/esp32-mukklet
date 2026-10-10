@@ -58,7 +58,7 @@ h2{font-size:1.5rem;margin-bottom:12px}
 .part{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
 .step h3{font-size:1.25rem;width:100%}
 .chip{margin-left:auto;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;padding:2px 8px;border-radius:99px;border:1px solid currentColor}
-.chip.done{color:var(--done)} .chip.now{color:var(--now)} .chip.todo{color:var(--muted)}
+.chip.done{color:var(--done)} .chip.skip{color:var(--muted)} .chip.now{color:var(--now)} .chip.todo{color:var(--muted)}
 ol.how{margin:0;padding-left:1.2em;display:grid;gap:4px}
 .val{font:500 .95rem "JetBrains Mono",ui-monospace,monospace;color:var(--done)}
 .note{font-size:.9rem;color:var(--muted);margin:0}
@@ -179,39 +179,39 @@ const nut=()=>{
 // ---- steps -------------------------------------------------------------
 // status: done | now | todo ; the first "todo" becomes "now"
 const steps=[
- {title:"Collar: thread diameter",status:"todo",cur:"7 (M7, the usual EC11)",
+ {title:"Collar: thread diameter",status:"done",val:"A = 6.73 (M7)",cur:"7 (M7, the usual EC11)",
   how:["Big outer jaws across the threaded collar, right below the shaft."],
   send:"A",
   fig:svg(side()+jawsH(K.cx0,K.cx1,100,20,"A"),"Collar diameter")},
- {title:"Collar: how tall",status:"todo",cur:"5",
+ {title:"Collar: how tall",status:"done",val:"B = 6.86, body top to the collar's end",cur:"5",
   how:["From the end of the thread (where the smooth shaft starts) down to the top of the metal encoder body.","Hold the caliper's end on the thread's end, beside the shaft, and let the depth rod go down to the body."],
   send:"B",
   fig:svg(side()+depth(170,K.cT,K.bodyT,162,232,"B"),"Collar height")},
- {title:"Encoder body height",status:"todo",cur:"7",
+ {title:"Encoder body height",status:"done",val:"C = 6.38",cur:"7",
   how:["From the top of the metal body (where the collar starts) down to the board's top face. The body's top will press against the inside of the case's top.","Caliper's end on the body's top, depth rod down beside the body to the board. If the body's top isn't flat, use its highest point."],
   send:"C",
   fig:svg(side()+depth(184,K.bodyT,K.top,160,240,"C"),"Encoder body height")},
- {title:"Board thickness",status:"todo",cur:"1.6",
+ {title:"Board thickness",status:"done",val:"D = 1.47",cur:"1.6",
   how:["Outer jaws on the bare board at a corner, away from the parts and the pins."],
   send:"D",
   fig:svg(side()+jawsV(K.top,K.bot,180,240,"D"),"Board thickness")},
- {title:"Shaft above the collar",status:"todo",cur:"~10",
+ {title:"Shaft above the collar",status:"done",val:"E = 11.83 (and a 0.52 gap between the collar and the shaft)",cur:"~10",
   how:["From the tip of the shaft down to the end of the thread.","Caliper's end on the shaft's tip, depth rod down beside the shaft onto the thread's end."],
   send:"E",
   fig:svg(side()+depth(163,K.sT,K.cT,138,232,"E"),"Shaft length")},
- {title:"The cap",status:"todo",cur:"pushed on until it stops",
+ {title:"The cap",status:"skip",val:"no screw; F not needed: pushed on fully its lower edge is 15.58 above the board's underside (measured before), 0.87 above the collar's end",cur:"pushed on until it stops",
   how:["Does the cap have a small screw on its side? (If yes, it can sit at any height and F isn't needed.)","F: how deep the hole in the cap is. Cap upside down, caliper's end across the open face, depth rod down into the hole."],
   send:"screw yes/no, F",
   fig:svg(`<rect class="metald" x="110" y="40" width="80" height="100" rx="4"/><rect class="hole" x="135" y="80" width="30" height="60"/><rect class="metal" x="190" y="96" width="14" height="10"/><text class="lab" x="210" y="105">screw?</text>`+depth(150,140,80,96,204,"F",true)+cap("cap, cut through, open side down",150,176),"The cap")},
- {title:"Nut and washer",status:"todo",cur:"nut 9 across the flats, 2 thick; washer 0.5",
+ {title:"Nut and washer",status:"done",val:"G = 9.87, H = 2.24, I = 0.37 (J not needed)",cur:"nut 9 across the flats, 2 thick; washer 0.5",
   how:["G: outer jaws on two opposite flat sides of the nut (not the corners).","H: outer jaws on the nut's two faces: its thickness.","I: the washer's thickness the same way, and J: its outer diameter.","If there are two nuts in the bag (some EC11s come with one thin, one thick), measure the one you'd use."],
   send:"G, H, I, J",
   fig:svg(nut()+jawsV(92-32.9,92+32.9,60,140,"G")+jawsV(62,74,236,276,"H")+`<text class="t" x="268" y="130">I</text>`+dh(176,260,168,"J",14),"Nut and washer")},
- {title:"A tab beside the collar?",status:"todo",cur:"none",
+ {title:"A tab beside the collar?",status:"done",val:"no tab",cur:"none",
   how:["Many EC11s have a small metal tab sticking up from the body's top, beside the collar, meant to stop it turning in a panel.","If yours has one: K how tall it is, and L from the collar's side to the tab's far side. If not, send \"no tab\"."],
   send:"K, L, or \"no tab\"",
   fig:svg(side({tab:true})+`<circle cx="${K.bx1-10}" cy="${K.bodyT-3}" r="11" fill="none" stroke="var(--dim)" stroke-width="2"/><path class="lead" d="M${K.bx1} ${K.bodyT-10} L215 70"/><text class="t" x="218" y="68">tab?</text>`,"Locating tab")},
- {title:"Where the collar sits on the board",status:"todo",cur:"centred across, ~8.6 from the right edge to the shaft centre (±1)",
+ {title:"Where the collar sits on the board",status:"skip",val:"not needed: the small hole puts the collar in place; the board only needs room round it (~8.6 from the right edge, centred across, ±1)",cur:"centred across, ~8.6 from the right edge to the shaft centre (±1)",
   how:["Top view, pin end on the left.","M: outer jaws from the board's bottom long edge to the far side of the collar.","N: outer jaws from the board's right short edge (the end without pins) to the far side of the collar.","I subtract half the collar's diameter (A) to get its centre. This tells me where the small hole goes."],
   send:"M, N",
   fig:svg(topView()+jawsV(70.5,T.y1,147,236,"M")+cap("top view: M",150,170),"Collar position M")+svg(topView()+jawsH(129.5,T.x1,92,22,"N")+cap("top view: N",150,170),"Collar position N")},
@@ -224,7 +224,7 @@ const steps=[
 let first=true;
 document.getElementById("steps").innerHTML=steps.map((s,i)=>{
   let st=s.status; if(st==="todo"&&first){st="now";first=false;}
-  const chip={done:"done",now:"next",todo:"to do"}[st];
+  const chip={done:"done",now:"next",todo:"to do",skip:"not needed"}[st];
   return `<article class="step ${st==="now"?"now":""}">
     <div class="head"><span class="num">${String(i+1).padStart(2,"0")}</span><span class="part">Knob</span><span class="chip ${st}">${chip}</span><h3>${s.title}</h3></div>
     ${s.fig}
