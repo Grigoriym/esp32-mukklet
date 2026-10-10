@@ -241,8 +241,10 @@ in the shared docs. This case's own notes:
 Milestone 3 (cover art) done. Enclosure **v1 printed (local FDM shop) and
 assembled 2026-10-07**: cradle, USB, front plate and TFT work; the knob
 mount doesn't hold the board (the user balances it when pressing). Findings
-and the v2 list: "First print" in `enclosure/README.md`. Nothing changed
-in the model yet.
+and the v2 list: "First print" in `enclosure/README.md`. In the model
+since 2026-10-10: the base covers the whole footprint (walls stand on it;
+v1's base holes were 0.2 from its edge), base holes 4.0, deeper boss
+pilots. Front plate now on 2 x 6 screws (two 2.3 x 8 snapped).
 Open, in order:
 1. **Bug fixing** (firmware/Mukk side): next, when the user says so
    (2026-10-07: "after, not now, i will notify"). No list yet.
