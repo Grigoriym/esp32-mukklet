@@ -159,9 +159,9 @@ knob mount needs a v2.
   cause: the 1.9 pilot prints smaller (FDM holes come out ~0.2-0.4
   undersized), so a 2.3 screw cuts a lot of plastic, and the pilot is
   only 0.5 deeper than the screw reaches; the small black screws are
-  hardened and snap at the neck rather than twist. 2 x 6 screws from the
-  same kit went in easily into the two free holes (already cut by the
-  2.3s) and hold the plate for now.
+  hardened and snap at the neck rather than twist. The user got the
+  shanks out; 2 x 6 screws from the same kit went in easily into all
+  four holes (already cut by the 2.3s) and hold the plate for now.
 - **Knob: doesn't hold.**
   1. The KY-040's header had its plastic strip on the component face;
      the model assumed the pins stick out past the board's end, so the
