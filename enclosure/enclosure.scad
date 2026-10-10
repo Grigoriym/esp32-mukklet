@@ -175,6 +175,11 @@ win_bot_in = 1.25 - 0.2; // bottom edge moved up
 lit_z = tft_glass_z0 + tft_glass_h / 2 + (win_bot_in - win_top_in) / 2; // window centre above the board centre
 win_w = tft_glass_w - 2 * tft_lip;
 win_h = tft_glass_h - 2 * tft_lip - win_top_in - win_bot_in;
+// the pixel area's two bottom corners are rounded (the top ones aren't):
+// with the corner test screen (EDGE_TEST 2) a 40 px arc was just cut,
+// 45 px whole (user, 2026-10-10): ~42 px = 4.9 mm at 0.1165 mm/px. The
+// window's bottom corners follow, a little outside them
+win_r = 5;
 
 // knob on top, centred: KY-040 board flat under the top, shaft end to the
 // front, pins to the back. Its threaded collar goes up through a small hole
@@ -276,12 +281,19 @@ module tft_pilots() tft_frame() for (h = tft_holes)
 // eps-thin slabs: with those, hubs.com's checker showed a skin across the
 // whole window (the mesh itself had none); this version passes it
 win_edge = 1.2;
+// a w x h slab across the window, y from y0 to y0 + t, bottom corners rounded
+module win_slab(w, h, y0, t, r) hull() {
+  for (sx = [-1, 1]) {
+    translate([sx * (w / 2 - r), y0, -h / 2 + r]) rotate([-90, 0, 0]) cylinder(r = r, h = t, $fn = 48);
+    translate([min(sx * w / 2, sx * (w / 2 - r)), y0, h / 2 - r]) cube([r, t, r]);
+  }
+}
 module tft_window() tft_frame() translate([0, 0, lit_z]) {
   c = wall - win_edge + 1; // chamfer's spread at 1 mm in front of the face
-  translate([-win_w / 2, -wall - 1, -win_h / 2]) cube([win_w, wall + 2, win_h]);
+  win_slab(win_w, win_h, -wall - 1, wall + 2, win_r);
   hull() {
-    translate([-win_w / 2, -win_edge, -win_h / 2]) cube([win_w, 0.5, win_h]);
-    translate([-win_w / 2 - c, -wall - 1.5, -win_h / 2 - c]) cube([win_w + 2 * c, 0.5, win_h + 2 * c]);
+    win_slab(win_w, win_h, -win_edge, 0.5, win_r);
+    win_slab(win_w + 2 * c, win_h + 2 * c, -wall - 1.5, 0.5, win_r + c);
   }
 }
 

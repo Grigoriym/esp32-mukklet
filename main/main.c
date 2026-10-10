@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "display.h"
 #include "encoder.h"
 #include "link.h"
@@ -12,7 +13,7 @@ static const char *TAG = "main";
 #define WIFI_TIMEOUT_MS 10000 // then carry on, it keeps trying in the background
 #define FRAME_MS        50    // redraw at up to 20 fps: smooth scrolling and progress
 #define VOLUME_STEP     5     // percentage points per knob detent
-#define EDGE_TEST       0     // 1: a fixed test screen to check which pixels the case's window shows
+#define EDGE_TEST       0     // test screens for the case's window: 1 = edges, 2 = the bottom corners' rounding
 
 static player_t s_player;
 static bool s_display_ok;
@@ -53,14 +54,49 @@ static void draw_edge_test(canvas_t *c)
     canvas_text_center(c, &FONT_TEXT, 178, "yellow magenta cyan", RGB(230, 230, 230));
     canvas_text_center(c, &FONT_TEXT, 202, "white", RGB(230, 230, 230));
 }
+
+// Quarter circles 2 px wide in both bottom corners, each touching the two
+// edges, radius 10..45 px: an arc smaller than the panel's rounding gets
+// cut off at the corner, so the smallest arc seen whole gives its radius.
+static void draw_corner_test(canvas_t *c)
+{
+    static const uint16_t col[] = {RGB(255, 0, 0),   RGB(0, 255, 0),   RGB(0, 80, 255),    RGB(255, 255, 0),
+                                   RGB(255, 0, 255), RGB(0, 255, 255), RGB(255, 255, 255), RGB(255, 140, 0)};
+    static const char *name[] = {"red", "green", "blue", "yellow", "magenta", "cyan", "white", "orange"};
+    const int n = sizeof(col) / sizeof(col[0]);
+    canvas_fill(c, 0, 0, CANVAS_W, CANVAS_H, RGB(70, 70, 70));
+    for (int i = 0; i < n; i++) {
+        int rad = 10 + 5 * i;
+        for (int y = CANVAS_H - rad; y < CANVAS_H; y++) {
+            for (int x = 0; x < rad; x++) {
+                float dx = rad - (x + 0.5f), dy = (y + 0.5f) - (CANVAS_H - rad);
+                float d = dx * dx + dy * dy;
+                if (d <= (float)rad * rad && d >= (rad - 2.0f) * (rad - 2.0f)) {
+                    canvas_fill(c, x, y, 1, 1, col[i]);
+                    canvas_fill(c, CANVAS_W - 1 - x, y, 1, 1, col[i]);
+                }
+            }
+        }
+    }
+    canvas_text_center(c, &FONT_TITLE, 30, "Corner test", RGB(255, 255, 255));
+    canvas_text_center(c, &FONT_TEXT, 62, "smallest arc seen whole?", RGB(230, 230, 230));
+    char line[32];
+    for (int i = 0; i < n; i++) {
+        snprintf(line, sizeof(line), "%s %d", name[i], 10 + 5 * i);
+        canvas_text_center(c, &FONT_TEXT, 92 + 18 * i, line, col[i]);
+    }
+}
 #endif
 
 static void draw_strip(canvas_t *c, void *ctx)
 {
     const struct frame *f = ctx;
-#if EDGE_TEST
+#if EDGE_TEST == 1
     (void)f;
     draw_edge_test(c);
+#elif EDGE_TEST == 2
+    (void)f;
+    draw_corner_test(c);
 #else
     ui_render(c, &f->in, f->now_ms);
 #endif

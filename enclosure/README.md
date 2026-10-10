@@ -161,7 +161,8 @@ front plate screws 2 x 6 (v1's 2.3 x 8 snapped); the knob is held by its
 own nut instead of snap hooks (one didn't catch); the window's top edge
 3.4 lower and its bottom 1.05 higher, so the black glass round the
 pixels (measured on v1 with the edge test screen: 3.6 top, 1.25 bottom)
-mostly doesn't show. The KY-040 in this
+mostly doesn't show; the window's bottom corners rounded r 5 like the
+pixel area's (~42 px, found with the corner test screen, `EDGE_TEST 2`). The KY-040 in this
 build had its header resoldered (2026-10-10): straight pins under the
 board, pointing down; the stubs on top stay below the encoder body. Its
 collar/nut sizes are in Homebox; the measuring page is
