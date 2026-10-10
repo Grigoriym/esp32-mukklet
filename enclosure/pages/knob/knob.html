@@ -88,24 +88,15 @@ svg.fig{width:100%;height:auto;display:block;background:var(--bg);border-radius:
 <div class="wrap">
   <header>
     <h1>What to measure on the knob</h1>
-    <p class="lede">In v1 the knob board hangs on two snap hooks, and one of them doesn't catch. For v2 the plan is to bolt it to the top with the nut that came with the KY-040. These are the numbers I need to model that.</p>
+    <p class="lede">The KY-040 is bolted to the top with the nut that came with it. These are the measurements the mount is modelled from.</p>
   </header>
 
   <section class="panel">
-    <h2>The idea</h2>
-    <div class="pair">
-      <div class="shot">
-        <h3>v1: hooks (now)</h3>
-        <div class="fig2"><img src="v1-hooks.png" alt="Cut through the top of the case at the knob: the knob board hangs under the top on two posts, held by hooks under its edges">
-          <svg viewBox="0 0 1010 922"><text class="L" x="20" y="60">big hole, 16 mm</text><path class="ld" d="M150 72 L500 440"/><text class="L" x="20" y="830">post</text><path class="ld" d="M90 800 L330 620"/><text class="Lm" x="560" y="850">hook's catch</text><path class="ld" d="M640 815 L620 780"/><text class="L" x="790" y="620">board</text><path class="ld" d="M830 635 L780 715"/></svg></div>
-        <p>The board is pushed up against 4 posts and only the hooks keep it there. The shaft's position depends on where the hooks put the board.</p>
-      </div>
-      <div class="shot">
-        <h3>v2: nut on the collar (idea)</h3>
-        <div class="fig2"><img src="v2-nut.png" alt="The same cut with the new mount: the encoder's threaded collar goes up through a small hole in the top, a washer and nut clamp it from outside, the cap sits above the nut">
-          <svg viewBox="0 0 1010 922"><text class="Lm" x="20" y="380">nut + washer</text><path class="ld" d="M250 392 L520 420"/><text class="L" x="20" y="440">small hole</text><path class="ld" d="M180 452 L530 468"/><text class="L" x="20" y="560">encoder body</text><text class="L" x="20" y="596">pressed against the top</text><path class="ld" d="M300 572 L490 530"/><text class="L" x="790" y="560">board</text><path class="ld" d="M830 575 L770 630"/><text class="L" x="790" y="120">cap</text><path class="ld" d="M800 130 L768 180"/></svg></div>
-        <p>The encoder's threaded collar goes up through a small hole and the nut holds it from outside. Nothing has to flex, and the hole centres the shaft. The sizes in this picture are guesses; the cards below replace them.</p>
-      </div>
+    <h2>The v2 mount</h2>
+    <div class="shot">
+      <div class="fig2" style="max-width:520px"><img src="v2-knob.png" alt="Cut through the top of the case at the knob: the encoder's threaded collar goes up through a small hole in the top, a washer and nut clamp it from outside, the cap sits above the nut, the plug hangs down from the pins under the board">
+        <svg viewBox="0 0 1000 1200"><text class="L" x="20" y="250">cap</text><path class="ld" d="M90 240 L490 240"/><text class="Lm" x="20" y="440">nut + washer</text><path class="ld" d="M235 452 L540 470"/><text class="L" x="20" y="590">top, 7.3 hole</text><path class="ld" d="M240 560 L560 515"/><text class="L" x="790" y="610">encoder</text><text class="L" x="790" y="646">body</text><path class="ld" d="M785 600 L740 590"/><text class="L" x="820" y="760">board</text><path class="ld" d="M840 730 L780 675"/><text class="L" x="420" y="1000">plug</text><path class="ld" d="M415 990 L370 960"/></svg></div>
+      <p>From the case model, cut through the knob. The encoder's threaded collar goes up through a small hole and its own nut, on the washer, clamps the encoder body against the inside of the top. Two ribs beside the board's pin end (hidden behind the board here) stop it turning. v1's snap hooks are in <code>enclosure/archive/v1/</code>.</p>
     </div>
   </section>
 
