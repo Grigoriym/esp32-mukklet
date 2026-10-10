@@ -13,7 +13,7 @@ static const char *TAG = "main";
 #define WIFI_TIMEOUT_MS 10000 // then carry on, it keeps trying in the background
 #define FRAME_MS        50    // redraw at up to 20 fps: smooth scrolling and progress
 #define VOLUME_STEP     5     // percentage points per knob detent
-#define EDGE_TEST       0     // test screens for the case's window: 1 = edges, 2 = the bottom corners' rounding
+#define EDGE_TEST       0     // case window test screens: 1 = edges, 2 = bottom corners
 
 static player_t s_player;
 static bool s_display_ok;
@@ -31,7 +31,7 @@ struct frame {
     int64_t now_ms;
 };
 
-#if EDGE_TEST
+#if EDGE_TEST == 1
 // Frames 2 px wide from each edge inwards, one colour each, grey inside:
 // the outermost colour seen on a side tells how many pixels the window
 // hides there, the grey shows where the lit area ends against the glass.
@@ -54,7 +54,7 @@ static void draw_edge_test(canvas_t *c)
     canvas_text_center(c, &FONT_TEXT, 178, "yellow magenta cyan", RGB(230, 230, 230));
     canvas_text_center(c, &FONT_TEXT, 202, "white", RGB(230, 230, 230));
 }
-
+#elif EDGE_TEST == 2
 // Quarter circles 2 px wide in both bottom corners, each touching the two
 // edges, radius 10..45 px: an arc smaller than the panel's rounding gets
 // cut off at the corner, so the smallest arc seen whole gives its radius.
