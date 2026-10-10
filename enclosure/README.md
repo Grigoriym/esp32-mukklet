@@ -154,7 +154,12 @@ knob mount needs a v2.
   to 4 mm. Into the bosses' 2.5 pilots it went hard but held.
 - **Front plate: works.** TFT screwed on (2 x 4 fine), plate on the body.
   The 2.3 x 8 screws were hard to drive into the 1.9 pilots and may not
-  be all the way in.
+  be all the way in. Taking the plate off (2026-10-10), two of them
+  snapped under the head and left their shanks in the rails. Likely
+  cause: the 1.9 pilot prints smaller (FDM holes come out ~0.2-0.4
+  undersized), so a 2.3 screw cuts a lot of plastic, and the pilot is
+  only 0.5 deeper than the screw reaches; the small black screws are
+  hardened and snap at the neck rather than twist.
 - **Knob: doesn't hold.**
   1. The KY-040's header had its plastic strip on the component face;
      the model assumed the pins stick out past the board's end, so the
@@ -170,7 +175,9 @@ knob mount needs a v2.
 
 v2 to do: rework the knob mount (deeper barbs or another hold; measure
 the KY-040's thickness, the shaft's position across the board and the
-header's), base holes 4.0, front pilots ~2.1.
+header's), base holes 4.0, front pilots 2.1-2.2 and >= 2 deeper than
+the screw reaches, or heat-set brass inserts with M2/M2.5 machine screws
+(the case gets opened again and again).
 
 ## Pictures and pages
 
