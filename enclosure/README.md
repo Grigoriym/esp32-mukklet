@@ -208,3 +208,7 @@ deleted):
 
   The labels are SVG over each picture in a 1000 x 750 box: after a new
   render, check they still point at the right thing.
+- `pages/knob/knob.html`: "Mukklet Knob Guide", the v2 knob idea (the
+  KY-040's collar through a small hole in the top, held by its nut) and
+  what to measure for it. `v2-nut.png` is from a scratch copy of the
+  model with guessed collar/nut sizes, not from `enclosure.scad`.

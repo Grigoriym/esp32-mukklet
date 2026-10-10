@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mukklet Knob Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+/* Same look as the caliper guide and the assembly page: the idea first (two renders), then one card per measurement. */
+:root{
+  --bg:#EEF2F0; --card:#FFFFFF; --ink:#1B2422; --muted:#5B6964; --line:#D3DCD8;
+  --pcb:#2F5FA8; --pcb2:#244C88; --metal:#B9C0C4; --metal-d:#8A949A; --steel:#C9D0D3;
+  --dim:#D0431B; --now:#D0431B; --done:#2E7D55; --hole:#EEF2F0; --gold:#C9A227; --plas:#2A2A2A; --case:#DDE3E0;
+  --paper:#F8F8F8; --on-paper:#1B2422; --on-paper-mark:#C23A14;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121716; --card:#1B2220; --ink:#E4EBE8; --muted:#95A39E; --line:#2E3936;
+    --pcb:#3A6CB8; --pcb2:#2C5796; --metal:#8E989D; --metal-d:#6C767B; --steel:#6E787C;
+    --dim:#FF7A52; --now:#FF7A52; --done:#5CC08C; --hole:#121716; --case:#3A4441;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121716; --card:#1B2220; --ink:#E4EBE8; --muted:#95A39E; --line:#2E3936;
+  --pcb:#3A6CB8; --pcb2:#2C5796; --metal:#8E989D; --metal-d:#6C767B; --steel:#6E787C;
+  --dim:#FF7A52; --now:#FF7A52; --done:#5CC08C; --hole:#121716; --case:#3A4441;
+}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.5 "Barlow",system-ui,sans-serif;padding:0 16px;padding-block:28px 48px}
+.wrap{max-width:1040px;margin:0 auto;display:grid;gap:28px}
+h1,h2,h3{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:2.4rem;letter-spacing:.01em}
+h2{font-size:1.5rem;margin-bottom:12px}
+.lede{color:var(--muted);max-width:62ch;margin:6px 0 0}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+.panel p{margin:0;max-width:70ch}
+.panel p+p{margin-top:10px}
+.panel ul{margin:8px 0 0;padding-left:1.2em;display:grid;gap:4px}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.shot{display:grid;gap:8px;align-content:start;min-width:0}
+.shot h3{font-size:1.2rem}
+.shot p{margin:0;font-size:.95rem}
+.fig2{position:relative;background:var(--paper);border-radius:8px;overflow:hidden;line-height:0}
+.fig2 img{width:100%;height:auto;display:block}
+.fig2 svg{position:absolute;inset:0;width:100%;height:100%}
+.L{fill:var(--on-paper);font:600 34px "Barlow",sans-serif}
+.Lm{fill:var(--on-paper-mark);font:600 34px "Barlow",sans-serif}
+.ld{stroke:var(--on-paper);stroke-width:2.5;fill:none}
+.ring{stroke:var(--on-paper-mark);stroke-width:5;fill:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:10px;align-content:start;min-width:0}
+.step.now{border:2px solid var(--now)}
+.head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.num{font:500 .85rem "JetBrains Mono",ui-monospace,monospace;color:var(--muted)}
+.part{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.step h3{font-size:1.25rem;width:100%}
+.chip{margin-left:auto;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;padding:2px 8px;border-radius:99px;border:1px solid currentColor}
+.chip.done{color:var(--done)} .chip.now{color:var(--now)} .chip.todo{color:var(--muted)}
+ol.how{margin:0;padding-left:1.2em;display:grid;gap:4px}
+.val{font:500 .95rem "JetBrains Mono",ui-monospace,monospace;color:var(--done)}
+.note{font-size:.9rem;color:var(--muted);margin:0}
+.send{font-size:.9rem;margin:0}
+.send b{font-family:"JetBrains Mono",ui-monospace,monospace;font-weight:500}
+svg.fig{width:100%;height:auto;display:block;background:var(--bg);border-radius:8px}
+.pcb{fill:var(--pcb)} .pcb2{fill:var(--pcb2)} .metal{fill:var(--metal)} .metald{fill:var(--metal-d)}
+.steel{fill:var(--steel);stroke:var(--ink);stroke-width:1} .hole{fill:var(--hole)} .pin{fill:var(--gold)} .plas{fill:var(--plas)}
+.case{fill:var(--case)}
+.d{stroke:var(--dim);stroke-width:2;fill:none}
+.ext{stroke:var(--dim);stroke-width:1;stroke-dasharray:3 3;fill:none}
+.t{fill:var(--dim);font:600 13px "Barlow",sans-serif}
+.lab{fill:var(--ink);font:500 13px "Barlow",sans-serif}
+.cap{fill:var(--muted);font:500 12px "Barlow",sans-serif}
+.lead{stroke:var(--muted);stroke-width:1;fill:none}
+.arr{fill:var(--dim)}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arr" d="M0 0L10 5L0 10z"/>
+    </marker>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header>
+    <h1>What to measure on the knob</h1>
+    <p class="lede">In v1 the knob board hangs on two snap hooks, and one of them doesn't catch. For v2 the plan is to bolt it to the top with the nut that came with the KY-040. These are the numbers I need to model that.</p>
+  </header>
+
+  <section class="panel">
+    <h2>The idea</h2>
+    <div class="pair">
+      <div class="shot">
+        <h3>v1: hooks (now)</h3>
+        <div class="fig2"><img src="v1-hooks.png" alt="Cut through the top of the case at the knob: the knob board hangs under the top on two posts, held by hooks under its edges">
+          <svg viewBox="0 0 1010 922"><text class="L" x="20" y="60">big hole, 16 mm</text><path class="ld" d="M150 72 L500 440"/><text class="L" x="20" y="830">post</text><path class="ld" d="M90 800 L330 620"/><text class="Lm" x="560" y="850">hook's catch</text><path class="ld" d="M640 815 L620 780"/><text class="L" x="790" y="620">board</text><path class="ld" d="M830 635 L780 715"/></svg></div>
+        <p>The board is pushed up against 4 posts and only the hooks keep it there. The shaft's position depends on where the hooks put the board.</p>
+      </div>
+      <div class="shot">
+        <h3>v2: nut on the collar (idea)</h3>
+        <div class="fig2"><img src="v2-nut.png" alt="The same cut with the new mount: the encoder's threaded collar goes up through a small hole in the top, a washer and nut clamp it from outside, the cap sits above the nut">
+          <svg viewBox="0 0 1010 922"><text class="Lm" x="20" y="380">nut + washer</text><path class="ld" d="M250 392 L520 420"/><text class="L" x="20" y="440">small hole</text><path class="ld" d="M180 452 L530 468"/><text class="L" x="20" y="560">encoder body</text><text class="L" x="20" y="596">pressed against the top</text><path class="ld" d="M300 572 L490 530"/><text class="L" x="790" y="560">board</text><path class="ld" d="M830 575 L770 630"/><text class="L" x="790" y="120">cap</text><path class="ld" d="M800 130 L768 180"/></svg></div>
+        <p>The encoder's threaded collar goes up through a small hole and the nut holds it from outside. Nothing has to flex, and the hole centres the shaft. The sizes in this picture are guesses; the cards below replace them.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>How to hold it</h2>
+    <p>Pull the cap off first (if it has a small screw on its side, loosen that). Every side view shows the board <b>flat, encoder on top, the pin end on the left</b>. Every top view looks down on the encoder, pin end on the left.</p>
+    <ul>
+      <li>Any of your 5 KY-040s will do: they're the same part.</li>
+      <li>The grey numbers are what I'd assume without you. Yours replace them.</li>
+      <li>Send the letters with the numbers, e.g. "A 6.9".</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Measurements</h2>
+    <div class="grid" id="steps"></div>
+  </section>
+</div>
+
+<script>
+// ---- drawing helpers (from the caliper guide) ---------------------------
+const dh=(x1,x2,y,t,dy=-7)=>`<line class="d" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" marker-start="url(#a)" marker-end="url(#a)"/><text class="t" x="${(x1+x2)/2}" y="${y+dy+(dy>0?6:0)}" text-anchor="middle">${t}</text>`;
+const dv=(x,y1,y2,t,anchor="start")=>`<line class="d" x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" marker-start="url(#a)" marker-end="url(#a)"/><text class="t" x="${anchor==="start"?x+7:x-7}" y="${(y1+y2)/2+4}" text-anchor="${anchor}">${t}</text>`;
+const outV=(x,y1,y2,t,anchor="start")=>`<line class="d" x1="${x}" y1="${y1-18}" x2="${x}" y2="${y1}" marker-end="url(#a)"/><line class="d" x1="${x}" y1="${y2+18}" x2="${x}" y2="${y2}" marker-end="url(#a)"/><text class="t" x="${anchor==="start"?x+8:x-8}" y="${(y1+y2)/2+4}" text-anchor="${anchor}">${t}</text>`;
+const outH=(x1,x2,y,t)=>`<line class="d" x1="${x1-18}" y1="${y}" x2="${x1}" y2="${y}" marker-end="url(#a)"/><line class="d" x1="${x2+18}" y1="${y}" x2="${x2}" y2="${y}" marker-end="url(#a)"/><text class="t" x="${x2+24}" y="${y+4}">${t}</text>`;
+const ext=(x1,y1,x2,y2)=>`<line class="ext" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+const cap=(t,x=150,y=182)=>`<text class="cap" x="${x}" y="${y}" text-anchor="middle">${t}</text>`;
+const svg=(inner,label)=>`<svg class="fig" viewBox="0 0 300 190" role="img" aria-label="${label}">${inner}</svg>`;
+
+// KY-040 side view, cap off, ~5 px/mm: board x 60..190 (26 mm), pin end left.
+// Shaft centre ~8.6 mm from the right edge: x 147.
+const K={x0:60,x1:190,top:140,bot:148,bodyT:105,bx0:116,bx1:178,cT:80,cx0:129.5,cx1:164.5,sT:28,sx0:133,sx1:161,sx:147};
+const side=({tab=false,hdr=true}={})=>{
+  let s=`<rect class="pcb" x="${K.x0}" y="${K.top}" width="${K.x1-K.x0}" height="${K.bot-K.top}"/>`;
+  s+=`<rect class="metald" x="${K.bx0}" y="${K.bodyT}" width="${K.bx1-K.bx0}" height="${K.top-K.bodyT}"/>`;
+  s+=`<rect class="metal" x="${K.cx0}" y="${K.cT}" width="${K.cx1-K.cx0}" height="${K.bodyT-K.cT}"/>`;
+  for(let y=K.cT+3;y<K.bodyT;y+=4) s+=`<line x1="${K.cx0}" y1="${y}" x2="${K.cx1}" y2="${y+2}" stroke="var(--metal-d)" stroke-width="1"/>`;
+  s+=`<rect class="steel" x="${K.sx0}" y="${K.sT}" width="${K.sx1-K.sx0}" height="${K.cT-K.sT}"/><rect class="metal" x="${K.sx0+12}" y="${K.sT}" width="${K.sx1-K.sx0-12}" height="22"/>`;
+  if(tab) s+=`<rect class="metal" x="${K.bx1-12}" y="${K.bodyT-6}" width="4" height="6" stroke="var(--dim)" stroke-width="1.5"/>`;
+  if(hdr) s+=`<rect class="plas" x="${K.x0+2}" y="${K.bot}" width="12" height="13"/>`+[0].map(()=>`<rect class="pin" x="${K.x0+6}" y="${K.bot+13}" width="3" height="16"/>`).join("");
+  s+=`<text class="lab" x="30" y="40">shaft</text><path class="lead" d="M62 37 L${K.sx0-2} 45"/>`;
+  s+=`<text class="lab" x="30" y="78">collar (thread)</text><path class="lead" d="M112 82 L${K.cx0-2} 90"/>`;
+  s+=`<text class="lab" x="30" y="114">encoder body</text><path class="lead" d="M110 118 L${K.bx0-2} 122"/>`;
+  return s;
+};
+// top view: board 26 x 19.3 mm at 5 px/mm, pin end left
+const T={x0:60,x1:190,y0:40,y1:136.5};
+const top=()=>{
+  let s=`<rect class="pcb" x="${T.x0}" y="${T.y0}" width="${T.x1-T.x0}" height="${T.y1-T.y0}"/>`;
+  for(let i=0;i<5;i++) s+=`<circle class="pin" cx="66" cy="${68+i*10}" r="2.2"/>`;
+  s+=`<rect class="metald" x="${K.bx0}" y="${88-31}" width="62" height="62"/><circle class="metal" cx="${K.sx}" cy="88" r="17.5"/><circle class="steel" cx="${K.sx}" cy="88" r="14"/>`;
+  return s;
+};
+const nut=()=>{
+  // nut seen flat (left) and from the side (right); washer under it
+  let s=`<polygon class="metald" points="${[0,1,2,3,4,5].map(i=>{const a=Math.PI/3*i;return `${85+38*Math.cos(a)},${88+38*Math.sin(a)}`}).join(" ")}"/><circle class="hole" cx="85" cy="88" r="17.5"/>`;
+  s+=`<rect class="metald" x="190" y="70" width="76" height="12"/><rect class="metal" x="182" y="82" width="92" height="4"/>`;
+  s+=`<text class="lab" x="228" y="60" text-anchor="middle">nut</text><text class="lab" x="228" y="104" text-anchor="middle">washer</text>`;
+  return s;
+};
+
+// ---- steps -------------------------------------------------------------
+// status: done | now | todo ; the first "todo" becomes "now"
+const steps=[
+ {title:"Collar: thread diameter",status:"todo",cur:"7 (M7, the usual EC11)",
+  how:["Big outer jaws across the threaded collar, right below the shaft."],
+  send:"A",
+  fig:svg(side()+outH(K.cx0,K.cx1,93,"A"),"Collar diameter")},
+ {title:"Collar: how tall",status:"todo",cur:"5",
+  how:["From the top of the metal encoder body to the end of the thread (where the smooth shaft starts).","The depth rod on the body's top works well, or the jaws' outer edges."],
+  send:"B",
+  fig:svg(side()+ext(K.cx1,K.cT,236,K.cT)+ext(K.bx1,K.bodyT,236,K.bodyT)+dv(232,K.cT,K.bodyT,"B"),"Collar height")},
+ {title:"Encoder body height",status:"todo",cur:"7",
+  how:["From the board's top face to the top of the metal body, where the collar starts. That face will press against the inside of the case's top.","If the body's top isn't flat, measure to its highest point."],
+  send:"C",
+  fig:svg(side()+ext(K.bx1,K.bodyT,236,K.bodyT)+ext(K.x1,K.top,236,K.top)+dv(232,K.bodyT,K.top,"C"),"Encoder body height")},
+ {title:"Board thickness",status:"todo",cur:"1.6",
+  how:["The bare board at a corner, away from the parts and the pins."],
+  send:"D",
+  fig:svg(side()+outV(186,K.top,K.bot,"D"),"Board thickness")},
+ {title:"Shaft above the collar",status:"todo",cur:"~10",
+  how:["From the end of the thread to the tip of the shaft."],
+  send:"E",
+  fig:svg(side()+ext(K.sx1,K.sT,236,K.sT)+ext(K.cx1,K.cT,236,K.cT)+dv(232,K.sT,K.cT,"E"),"Shaft length")},
+ {title:"The cap",status:"todo",cur:"pushed on until it stops",
+  how:["Does the cap have a small screw on its side? (If yes, it can sit at any height and F isn't needed.)","F: how deep the hole in the cap is: the depth rod into the hole, from the cap's bottom face."],
+  send:"screw yes/no, F",
+  fig:svg(`<rect class="metald" x="110" y="40" width="80" height="100" rx="4"/><rect class="hole" x="135" y="80" width="30" height="60"/><rect class="metal" x="190" y="96" width="14" height="10"/><text class="lab" x="210" y="105">screw?</text>`+ext(135,80,92,80)+ext(110,140,92,140)+dv(96,80,140,"F","end")+cap("cap, cut through, open side down",150,170),"The cap")},
+ {title:"Nut and washer",status:"todo",cur:"nut 9 across the flats, 2 thick; washer 0.5",
+  how:["G: the nut across two opposite flat sides (not across the corners).","H: the nut's thickness.","I: the washer's thickness, and J: its outer diameter.","If there are two nuts in the bag (some EC11s come with one thin, one thick), measure the one you'd use."],
+  send:"G, H, I, J",
+  fig:svg(nut()+dv(140,88-32.9,88+32.9,"G")+ext(85+19,88-32.9,144,88-32.9)+ext(85+19,88+32.9,144,88+32.9)+dv(280,70,82,"H")+ext(266,70,284,70)+outV(176,82,86,"I","end")+ext(182,86,182,124)+ext(274,86,274,124)+dh(182,274,120,"J",14),"Nut and washer")},
+ {title:"A tab beside the collar?",status:"todo",cur:"none",
+  how:["Many EC11s have a small metal tab sticking up from the body's top, beside the collar, meant to stop it turning in a panel.","If yours has one: K how tall it is, and L from the collar's side to the tab's far side. If not, send \"no tab\"."],
+  send:"K, L, or \"no tab\"",
+  fig:svg(side({tab:true})+`<circle cx="${K.bx1-10}" cy="${K.bodyT-3}" r="11" fill="none" stroke="var(--dim)" stroke-width="2"/><path class="lead" d="M${K.bx1} ${K.bodyT-10} L215 70"/><text class="t" x="218" y="68">tab?</text>`,"Locating tab")},
+ {title:"Where the collar sits on the board",status:"todo",cur:"centred across, ~8.6 from the right edge to the shaft centre (±1)",
+  how:["Top view, pin end on the left.","M: from the board's bottom long edge to the near side of the collar.","N: from the board's right short edge (the end without pins) to the near side of the collar.","I add half the collar's diameter (A) to get its centre. This tells me where the small hole goes."],
+  send:"M, N",
+  fig:svg(top()+ext(K.sx,105.5,236,105.5)+ext(T.x1,T.y1,236,T.y1)+dv(232,105.5,T.y1,"M")+ext(164.5,88,164.5,24)+ext(T.x1,T.y0,T.x1,24)+dh(164.5,T.x1,28,"N",-5)+cap("top view",150,170),"Collar position")},
+ {title:"The pin header, once resoldered",status:"todo",cur:"right-angle, ~6 past the board's end",
+  how:["Only after you've soldered it back on, underneath.","Straight or right-angle pins?","O: from the board's underside to the lowest point (the plastic or the pin tips).","P: how far the pins reach past the board's end, if they point sideways."],
+  send:"straight/right-angle, O, P",
+  fig:svg(side()+ext(K.x0+9,K.bot+29,40,K.bot+29)+ext(K.x0,K.bot,40,K.bot)+outV(44,K.bot,K.bot+29,"O","end")+cap("header under the board, pin end",180,182),"Pin header")},
+];
+
+let first=true;
+document.getElementById("steps").innerHTML=steps.map((s,i)=>{
+  let st=s.status; if(st==="todo"&&first){st="now";first=false;}
+  const chip={done:"done",now:"next",todo:"to do"}[st];
+  return `<article class="step ${st==="now"?"now":""}">
+    <div class="head"><span class="num">${String(i+1).padStart(2,"0")}</span><span class="part">Knob</span><span class="chip ${st}">${chip}</span><h3>${s.title}</h3></div>
+    ${s.fig}
+    <ol class="how">${s.how.map(h=>`<li>${h}</li>`).join("")}</ol>
+    ${s.val?`<p class="val">${s.val}</p>`:`<p class="note">My guess: ${s.cur}</p>`}
+    <p class="send">Send: <b>${s.send}</b></p>
+  </article>`;
+}).join("");
+</script>
