@@ -264,7 +264,10 @@ Open, in order:
    anti-turn ribs, not a problem. Window checked the same day: `EDGE_TEST 1`
    red (outermost ring) visible on every side, `EDGE_TEST 2` only the
    panel's own ~42 px rounding (white 40 partly, orange 45 whole), as on
-   the bare panel: the window hides nothing.
+   the bare panel: the window hides nothing. The mini sits looser than in
+   v1 (same cradle in the model, both PETG: print variance), the USB end
+   wobbles a little when pushed; "barely noticeable and fine" per the
+   user. For a possible v3: grip the USB end better.
 3. Which way clockwise turns the volume was never said.
 After a model change, `enclosure/pages/assembly/render.sh` redoes the
 assembly page's pictures and `~/Videos/mukklet-reel/renders/render.sh` the
