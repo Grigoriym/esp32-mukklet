@@ -15,7 +15,7 @@ current design is `../../enclosure.scad` (v2).
 
 ## What the first print showed
 
-Printed by a local FDM shop, assembled by the user. Works as a case; the
+Printed in PETG by a local FDM shop (10 EUR, per its message), assembled by the user. Works as a case; the
 knob mount needs a v2.
 
 - **Base / cradle: works.** The shop printed support under the two lips
