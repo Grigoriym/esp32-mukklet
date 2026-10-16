@@ -259,8 +259,9 @@ hooks (KY-040 measured, in Homebox; `enclosure/pages/knob/knob.html`).
 Open, in order:
 1. **Bug fixing** (firmware/Mukk side): next, when the user says so
    (2026-10-07: "after, not now, i will notify"). No list yet.
-2. **Case v2**: sent to the local FDM shop 2026-10-10 (three STLs, PETG
-   asked for). When it's back: the printed-part checklists in
+2. **Case v2**: printed (local FDM shop) and assembled 2026-10-16,
+   "fine" per the user; the knob board sits a bit crooked between the
+   anti-turn ribs, not a problem. Still to go through: the printed-part checklists in
    `enclosure/README.md` (knob hole 7.3, front pilots, base fully in,
    EDGE_TEST 1 and 2 for the window).
 3. Which way clockwise turns the volume was never said.
