@@ -11,7 +11,7 @@
 // y = 0; Z = up, table at z = 0 (rubber feet not modelled).
 //
 // Printed parts:
-//   body  - side walls, top with the knob's snap hooks, back with a ledge
+//   body  - side walls, top with the knob's hole and anti-turn ribs, back with a ledge
 //           over the USB socket; open at the bottom and at the front
 //   front - the tilted screen panel, a flat plate between the side walls
 //           with the TFT's 4 screw posts: the TFT is screwed on from behind
