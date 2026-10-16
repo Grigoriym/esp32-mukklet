@@ -261,9 +261,10 @@ Open, in order:
    (2026-10-07: "after, not now, i will notify"). No list yet.
 2. **Case v2**: printed (local FDM shop) and assembled 2026-10-16,
    "fine" per the user; the knob board sits a bit crooked between the
-   anti-turn ribs, not a problem. Still to go through: the printed-part checklists in
-   `enclosure/README.md` (knob hole 7.3, front pilots, base fully in,
-   EDGE_TEST 1 and 2 for the window).
+   anti-turn ribs, not a problem. Window checked the same day: `EDGE_TEST 1`
+   red (outermost ring) visible on every side, `EDGE_TEST 2` only the
+   panel's own ~42 px rounding (white 40 partly, orange 45 whole), as on
+   the bare panel: the window hides nothing.
 3. Which way clockwise turns the volume was never said.
 After a model change, `enclosure/pages/assembly/render.sh` redoes the
 assembly page's pictures and `~/Videos/mukklet-reel/renders/render.sh` the
