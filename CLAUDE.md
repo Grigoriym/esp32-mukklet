@@ -28,7 +28,7 @@ One source of truth per fact, never a copy (the user's rule, 2026-10-03):
   conventions (one housing per cable, wires in the module's own order;
   when something already works, move the fewest pins).
 - `ENCLOSURE_PLAYBOOK.md`: measuring, modelling, OpenSCAD and clash-check
-  traps, hubs.com findings, explaining a case with labelled renders.
+  traps, explaining a case with labelled renders.
 - `FIRMWARE_PLAYBOOK.md`: flash and serial-capture traps, config, code
   shape, the four checks.
 
@@ -230,11 +230,8 @@ stand-ins incl. plugs vs each other, and fails on undefined-variable
 warnings) + STLs + renders.
 Part dimensions: each part's Homebox entry (`enclosure/MEASUREMENTS.md`
 says which parts and what the model does with them). Generic lessons from this case (measuring, clash check, tool
-access, screw lengths, hubs.com, OpenSCAD traps): `ENCLOSURE_PLAYBOOK.md`
+access, screw lengths, OpenSCAD traps): `ENCLOSURE_PLAYBOOK.md`
 in the shared docs. This case's own notes:
-- hubs.com (the user uploads there): the three parts pass with a 1.2 mm
-  straight edge before the window's chamfer and 5.5 mm posts; its 95 EUR
-  quote was too expensive for the user (2026-10-02).
 - "Mukklet Assembly", `enclosure/pages/assembly/assembly.html`: labelled
   renders, redone for three parts 2026-10-02. Pages like it are local
   HTML files in `enclosure/pages/`, not claude.ai artifacts.
@@ -245,7 +242,7 @@ in the shared docs. This case's own notes:
   standoffs, and its front middle M3 hole sat right over the plug.
 
 ## Next step
-Milestone 3 (cover art) done. Enclosure **v1 printed (local FDM shop) and
+Milestone 3 (cover art) done. Enclosure **v1 printed and
 assembled 2026-10-07**: cradle, USB, front plate and TFT work; the knob
 mount doesn't hold the board (the user balances it when pressing). Findings
 in `enclosure/archive/v1/README.md` (v1 files archived there); v2 in
@@ -258,7 +255,7 @@ hooks (KY-040 measured, in Homebox; `enclosure/pages/knob/knob.html`).
 Open, in order:
 1. **Bug fixing** (firmware/Mukk side): next, when the user says so
    (2026-10-07: "after, not now, i will notify"). No list yet.
-2. **Case v2**: printed (local FDM shop) and assembled 2026-10-16,
+2. **Case v2**: printed and assembled 2026-10-16,
    "fine" per the user; the knob board sits a bit crooked between the
    anti-turn ribs, not a problem. Window checked the same day: `EDGE_TEST 1`
    red (outermost ring) visible on every side, `EDGE_TEST 2` only the
