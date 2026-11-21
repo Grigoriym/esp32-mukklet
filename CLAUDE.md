@@ -14,15 +14,14 @@ mDNS + `esp_http_server`, host tests, CI, secrets) and `../esp32-hw-checks`
 ## Shared ESP32 docs (since 2026-10-02)
 One source of truth per fact, never a copy (the user's rule, 2026-10-03):
 - **Everything about a part** (pinout, voltage, current, measured
-  dimensions, mounting, quirks, MACs and ports, test status, how many and
-  which are free): its entry in the **Homebox inventory**
+  dimensions, mounting, quirks, MACs and ports, test status, how many owned):
+  its entry in the **Homebox inventory**
   (`http://192.168.0.139:34899`), nowhere else.
   `python3 ../grappim-watcher/docs/esp32/inventory/parts.py show <part>`
-  prints an entry; plain `parts.py` lists what's free (`all`, `find
-  <text>`). Read-only. Check it before suggesting a part or a purchase.
-  When this project starts or stops using a part, that entry's `In use` /
-  `Free` (in its description) has to change: the user does it in the UI,
-  or a session through the API with the user's OK, never silently.
+  prints an entry; plain `parts.py` lists everything (`find
+  <text>` searches). Read-only. Check it before suggesting a part or a
+  purchase. It doesn't track what's free or which project uses a part:
+  ask the user.
 - Lessons that hold for any ESP32 project: `../grappim-watcher/docs/esp32/`
   (no git there):
 - `WIRING_RULES.md`: which GPIOs are usable, power budget, cable
